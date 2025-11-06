@@ -15,6 +15,8 @@ builder.Services.AddDataServices();
 
 builder.Services.AddExceptionHandler<ExceptionHandler>();
 
+builder.Services.AddProblemDetails();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
