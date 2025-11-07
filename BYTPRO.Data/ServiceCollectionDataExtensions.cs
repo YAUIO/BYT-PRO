@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using BYTPRO.Data.Models;
+using BYTPRO.JsonEntityFramework.Context;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BYTPRO.Data;
 
@@ -6,7 +8,14 @@ public static class ServiceCollectionDataExtensions
 {
     public static IServiceCollection AddDataServices(this IServiceCollection services)
     {
-        // services.AddScoped<IService, Service>();
+        var context = new JsonContextBuilder()
+            .AddJsonEntity<Person>()
+            .WithFileName("person")
+            .BuildEntity()
+            .WithRoot(new DirectoryInfo(""))
+            .Build();
+        
+        services.AddSingleton(context);
         return services;
     }
 }

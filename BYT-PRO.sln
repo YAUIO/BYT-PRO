@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BYTPRO.Data", "BYTPRO.Data\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BYTPRO.Test", "BYTPRO.Test\BYTPRO.Test.csproj", "{D53CEAEF-0104-4EC0-AC8D-743F12E2E07C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BYTPRO.JsonEntityFramework", "BYTPRO.JsonEntityFramework\BYTPRO.JsonEntityFramework.csproj", "{2C7817EE-DA08-47D0-97EB-17738DFB48D1}"
+EndProject
 Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{C103FB47-BE38-4190-A048-F64AEC722479}.Debug|Any CPU.ActiveCfg = Release|Any CPU
@@ -44,6 +46,10 @@ Global
 		{D53CEAEF-0104-4EC0-AC8D-743F12E2E07C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D53CEAEF-0104-4EC0-AC8D-743F12E2E07C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D53CEAEF-0104-4EC0-AC8D-743F12E2E07C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C7817EE-DA08-47D0-97EB-17738DFB48D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C7817EE-DA08-47D0-97EB-17738DFB48D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C7817EE-DA08-47D0-97EB-17738DFB48D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C7817EE-DA08-47D0-97EB-17738DFB48D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
