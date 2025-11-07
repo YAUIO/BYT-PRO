@@ -55,9 +55,9 @@ public class JsonContext
                 asJson.Append(JsonSerializer.Serialize(ent));
                 asJson.Append(",\n");
             }
-            asJson.Append('}');
             var len = ",\n".Length;
             asJson.Remove(asJson.Length - len, len);
+            asJson.Append('}');
             
             File.Delete(json.Path);
             await File.WriteAllTextAsync(json.Path, asJson.ToString());
