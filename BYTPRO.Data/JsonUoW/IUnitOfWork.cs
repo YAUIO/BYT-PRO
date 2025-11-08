@@ -6,6 +6,7 @@ namespace BYTPRO.Data.JsonUoW;
 public interface IUnitOfWork
 {
     public JsonEntitySet<Person> Persons { get; }
+    public JsonEntitySet<Order> Orders { get; }
 
     Task SaveChangesAsync();
 }

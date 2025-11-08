@@ -3,15 +3,15 @@ using BYTPRO.Data.Models;
 
 namespace BYTPRO.Data.JsonRepositories;
 
-public class PersonRepository(IUnitOfWork uow) : IPersonRepository
+public class OrderRepository(IUnitOfWork uow) : IOrderRepository
 { 
-    public void Add(Person person)
+    public void Add(Order order)
     {
-        uow.Persons.Add(person);
+        uow.Orders.Add(order);
     }
 
-    public IEnumerable<Person> GetAll()
+    public IEnumerable<Order> GetAll()
     {
-        return uow.Persons.ToList();
+        return uow.Orders.ToList();
     }
 }

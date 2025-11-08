@@ -1,4 +1,8 @@
-﻿namespace BYTPRO.JsonEntityFramework.Context;
+﻿using System.Collections;
+using System.Reflection;
+using IEnumerable = System.Collections.IEnumerable;
+
+namespace BYTPRO.JsonEntityFramework.Context;
 
 public class JsonEntityBuilder<TJEntity>(JsonContextBuilder contextBuilder)
 {
@@ -10,23 +14,29 @@ public class JsonEntityBuilder<TJEntity>(JsonContextBuilder contextBuilder)
         return this;
     }
     
-    public JsonEntityBuilder<TJEntity> WithOne<TEntity>(string name)
+    public JsonEntityBuilder<TJEntity> WithOne<TEntity>(PropertyInfo property)
     {
-        _entityConfiguration.One.Add(new JsonConnection(name, typeof(TEntity)));
+        throw new NotSupportedException("Not needed yet");
+        
+        if (property.PropertyType != typeof(TEntity))
+            throw new InvalidOperationException($"{property.PropertyType} property is invalid type");
+        
+        _entityConfiguration.One.Add(property);
         _entityConfiguration = _entityConfiguration with { One = _entityConfiguration.One };
         return this;
     }
     
-    public JsonEntityBuilder<TJEntity> WithMany<TEntity>(string name)
+    public JsonEntityBuilder<TJEntity> WithMany<TEntity>(PropertyInfo property)
     {
-        _entityConfiguration.Many.Add(new JsonConnection(name, typeof(List<TEntity>)));
-        _entityConfiguration = _entityConfiguration with { Many = _entityConfiguration.Many };
-        return this;
-    }
-    
-    public JsonEntityBuilder<TJEntity> WithManyUnique<TEntity>(string name)
-    {
-        _entityConfiguration.Many.Add(new JsonConnection(name, typeof(HashSet<TEntity>)));
+        throw new NotSupportedException("Not needed yet");
+        
+        if (!property.PropertyType.IsAssignableTo(typeof(IEnumerable)))
+            throw new InvalidOperationException($"{property.PropertyType} property is not a collection");
+        
+        if (property.PropertyType.GetGenericArguments()[0] != typeof(TEntity))
+            throw new InvalidOperationException($"{property.PropertyType} property is invalid generic type");
+        
+        _entityConfiguration.Many.Add(property);
         _entityConfiguration = _entityConfiguration with { Many = _entityConfiguration.Many };
         return this;
     }

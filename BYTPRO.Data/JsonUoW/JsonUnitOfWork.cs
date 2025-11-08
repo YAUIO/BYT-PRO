@@ -7,6 +7,8 @@ public class JsonUnitOfWork(JsonContext context) : IUnitOfWork
 {
     public JsonEntitySet<Person> Persons => context.GetTable<Person>();
 
+    public JsonEntitySet<Order> Orders => context.GetTable<Order>();
+
     public async Task SaveChangesAsync()
     {
         await context.SaveChangesAsync();

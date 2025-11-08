@@ -1,22 +1,20 @@
 ﻿using System.Collections;
+using System.Reflection;
 
 namespace BYTPRO.JsonEntityFramework.Context;
 
-public class JsonEntitySet<TJEntity> : ISet<TJEntity>
+public class JsonEntitySet<TJEntity>(JsonEntityConfiguration config, string path) : ISet<TJEntity>
 {
-    private dynamic Table { get; set; }
-    
-    public string Path { get; }
+    private dynamic Table { get; } = Activator.CreateInstance(typeof(HashSet<>).MakeGenericType(typeof(TJEntity)))
+                                          ?? throw new InvalidOperationException($"Error while creating {config.Target.Name} table");
+
+    public string Path { get; } = path;
 
     private bool _isSaved;
-    
-    public JsonEntitySet(JsonEntityConfiguration config, string path)
-    {
-        Table = Activator.CreateInstance(typeof(HashSet<>).MakeGenericType(typeof(TJEntity)))
-                ?? throw new InvalidOperationException($"Error while creating {config.Target.Name} table");
-        Path = path;
-        _isSaved = false;
-    }
+
+    internal List<PropertyInfo> One = config.One;
+
+    internal List<PropertyInfo> Many = config.Many;
 
     public void MarkSaved()
     {
@@ -28,7 +26,7 @@ public class JsonEntitySet<TJEntity> : ISet<TJEntity>
         return _isSaved;
     }
 
-    public Type GetType()
+    public new Type GetType()
     {
         return typeof(TJEntity);
     }

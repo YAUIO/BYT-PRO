@@ -2,6 +2,7 @@
 using BYTPRO.Data.JsonUoW;
 using BYTPRO.Data.Models;
 using BYTPRO.JsonEntityFramework.Context;
+using BYTPRO.JsonEntityFramework.Extensions;
 using Xunit.Abstractions;
 
 namespace BYTPRO.Test.Data;
@@ -13,14 +14,19 @@ public class ContextTests
     {
         var context = new JsonContextBuilder()
             .AddJsonEntity<Person>()
-            .WithFileName("person")
-            .BuildEntity()
+                .WithFileName("person")
+                .BuildEntity()
+            .AddJsonEntity<Order>()
+                .WithFileName("order")
+                .BuildEntity()
             .WithRoot(new DirectoryInfo("F:\\DbTest"))
             .Build();
 
         var uow = new JsonUnitOfWork(context);
 
         var repo = new PersonRepository(uow);
+        
+        var orderRepo = new OrderRepository(uow);
         
         repo.Add(new Person()
         {
@@ -42,7 +48,17 @@ public class ContextTests
             Phone = "123",
         });
         
+        orderRepo.Add(new Order()
+        {
+            Id = 1,
+            Status = "new",
+            CreationDate = DateTime.Today,
+            Customer = repo.GetAll().ToList()[0],
+        });
+        
         Assert.Equal(2, repo.GetAll().ToList().Count);
+        
+        Assert.Single(orderRepo.GetAll().ToList());
 
         await context.SaveChangesAsync();
 

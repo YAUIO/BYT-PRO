@@ -1,3 +1,5 @@
-﻿namespace BYTPRO.JsonEntityFramework.Context;
+﻿using System.Reflection;
 
-public record JsonEntityConfiguration(Type Target, string? FileName, List<JsonConnection> One, List<JsonConnection> Many);
+namespace BYTPRO.JsonEntityFramework.Context;
+
+public record JsonEntityConfiguration(Type Target, string? FileName, List<PropertyInfo> One, List<PropertyInfo> Many);

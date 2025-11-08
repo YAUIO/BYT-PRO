@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using System.Text.Json;
+using BYTPRO.JsonEntityFramework.Extensions;
 
 namespace BYTPRO.JsonEntityFramework.Context;
 

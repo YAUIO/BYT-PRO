@@ -2,7 +2,7 @@
 using System.Text;
 using System.Text.Json;
 
-namespace BYTPRO.JsonEntityFramework.Context;
+namespace BYTPRO.JsonEntityFramework.Extensions;
 
 public static class JsonSerialize
 {
@@ -16,7 +16,11 @@ public static class JsonSerialize
             asJson.Append(",\n");
         }
         var len = ",\n".Length;
-        asJson.Remove(asJson.Length - len, len);
+        if (asJson.Length >= len)
+        {
+            asJson.Remove(asJson.Length - len, len);
+        }
+
         asJson.Append('}');
         return asJson.ToString();
     }
