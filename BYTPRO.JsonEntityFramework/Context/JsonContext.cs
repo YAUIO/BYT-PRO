@@ -5,14 +5,14 @@ namespace BYTPRO.JsonEntityFramework.Context;
 
 public class JsonContext
 {
-    public HashSet<JsonEntitySet> tables { get; private set; }
+    private HashSet<dynamic> Tables { get; set; }
 
     private DirectoryInfo Root { get; }
     
     public JsonContext(HashSet<JsonEntityConfiguration> entities, DirectoryInfo root)
     {
         Root = root;
-        tables = [];
+        Tables = [];
 
         if (!Root.Exists)
         {
@@ -22,13 +22,13 @@ public class JsonContext
         foreach (var ent in entities)
         {
             var path = Root.FullName + $"/{ent.FileName ?? ent.Target.Name}.json";
-            
-            var set = new JsonEntitySet(ent, path);
-            tables.Add(set);
+
+            var set = Activator.CreateInstance(typeof(JsonEntitySet<>).MakeGenericType(ent.Target), args: [ent, path]);
+            Tables.Add(set ?? throw new InvalidOperationException("Null table created"));
             
             if (!File.Exists(path))
             {
-                File.Create(path);
+                File.Create(path).Close();
             }
             else
             {
@@ -41,37 +41,15 @@ public class JsonContext
     
     public async Task SaveChangesAsync()
     {
-        foreach (var json in tables)
+        foreach (var json in Tables.Where(json => !json.IsSaved()))
         {
-            if (!json.IsNeedsSaving())
-            {
-                continue;
-            }
-
-            var asJson = new StringBuilder();
-            asJson.Append('{');
-            foreach (var ent in json.Table)
-            {
-                asJson.Append(JsonSerializer.Serialize(ent));
-                asJson.Append(",\n");
-            }
-            var len = ",\n".Length;
-            asJson.Remove(asJson.Length - len, len);
-            asJson.Append('}');
-            
-            File.Delete(json.Path);
-            await File.WriteAllTextAsync(json.Path, asJson.ToString());
-
+            await File.WriteAllTextAsync(json.Path, JsonSerialize.GetJson(json));
             json.MarkSaved();
         }
     }
 
-    public DynamicSet<T> GetTable<T>()
+    public JsonEntitySet<T> GetTable<T>()
     {
-        return new (
-            tables.Where(j => j.Type == typeof(T))
-            .Select(j => j.Table)
-            .Single()
-        );
+        return Tables.Single(j => j.GetType() == typeof(T));
     }
 }

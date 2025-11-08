@@ -1,32 +1,138 @@
-﻿namespace BYTPRO.JsonEntityFramework.Context;
+﻿using System.Collections;
 
-public class JsonEntitySet
+namespace BYTPRO.JsonEntityFramework.Context;
+
+public class JsonEntitySet<TJEntity> : ISet<TJEntity>
 {
-    public dynamic Table { get; private set; }
-
-    private dynamic SavedTable { get; set; }
-    
-    public Type Type { get; }
+    private dynamic Table { get; set; }
     
     public string Path { get; }
+
+    private bool _isSaved;
     
     public JsonEntitySet(JsonEntityConfiguration config, string path)
     {
-        Type = config.Target;
-        Table = Activator.CreateInstance(typeof(HashSet<>).MakeGenericType(Type))
-                ?? throw new InvalidOperationException($"Error while creating {config.Target.Name} table");
-        SavedTable = Activator.CreateInstance(typeof(HashSet<>).MakeGenericType(Type))
+        Table = Activator.CreateInstance(typeof(HashSet<>).MakeGenericType(typeof(TJEntity)))
                 ?? throw new InvalidOperationException($"Error while creating {config.Target.Name} table");
         Path = path;
+        _isSaved = false;
     }
 
     public void MarkSaved()
     {
-        SavedTable = Enumerable.ToList(Table);
+        _isSaved = true;
     }
 
-    public bool IsNeedsSaving()
+    public bool IsSaved()
     {
-        return !Table.SetEquals(SavedTable);
+        return _isSaved;
     }
+
+    public Type GetType()
+    {
+        return typeof(TJEntity);
+    }
+
+    public void Add(TJEntity item)
+    {
+        Table.Add(item);
+    }
+
+    public IEnumerator<TJEntity> GetEnumerator()
+    {
+        return Table.GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
+
+    void ICollection<TJEntity>.Add(TJEntity item)
+    {
+        if (Table.Add(item)) _isSaved = false;
+    }
+
+    public void ExceptWith(IEnumerable<TJEntity> other)
+    {
+        Table.ExceptWith(other);
+    }
+
+    public void IntersectWith(IEnumerable<TJEntity> other)
+    {
+        Table.IntersectWith(other);
+    }
+
+    public bool IsProperSubsetOf(IEnumerable<TJEntity> other)
+    {
+        return Table.IsProperSubsetOf(other);
+    }
+
+    public bool IsProperSupersetOf(IEnumerable<TJEntity> other)
+    {
+        return Table.IsProperSupersetOf(other);
+    }
+
+    public bool IsSubsetOf(IEnumerable<TJEntity> other)
+    {
+        return Table.IsSubsetOf(other);
+    }
+
+    public bool IsSupersetOf(IEnumerable<TJEntity> other)
+    {
+        return Table.IsSupersetOf(other);
+    }
+
+    public bool Overlaps(IEnumerable<TJEntity> other)
+    {
+        return Table.Overlaps(other);
+    }
+
+    public bool SetEquals(IEnumerable<TJEntity> other)
+    {
+        return Table.SetEquals(other);
+    }
+
+    public void SymmetricExceptWith(IEnumerable<TJEntity> other)
+    {
+        Table.SymmetricExceptWith(other);
+    }
+
+    public void UnionWith(IEnumerable<TJEntity> other)
+    {
+        Table.UnionWith(other);
+    }
+
+    bool ISet<TJEntity>.Add(TJEntity item)
+    {
+        bool added = Table.Add(item);
+        if (added) _isSaved = false;
+        return added;
+    }
+
+    public void Clear()
+    {
+        Table.Clear();
+        _isSaved = false;
+    }
+
+    public bool Contains(TJEntity item)
+    {
+        return Table.Contains(item);
+    }
+
+    public void CopyTo(TJEntity[] array, int arrayIndex)
+    {
+        Table.CopyTo(array, arrayIndex);
+    }
+
+    public bool Remove(TJEntity item)
+    {
+        bool removed = Table.Remove(item);
+        if (removed) _isSaved = false;
+        return removed;
+    }
+
+    public int Count => Table.Count;
+    public bool IsReadOnly => false;
 }

@@ -1,19 +1,17 @@
-﻿using BYTPRO.Data.Models;
-using BYTPRO.JsonEntityFramework.Context;
+﻿using BYTPRO.Data.JsonUoW;
+using BYTPRO.Data.Models;
 
 namespace BYTPRO.Data.JsonRepositories;
 
-public class PersonRepository(JsonContext context)
-{
-    private readonly DynamicSet<Person> _persons = context.GetTable<Person>();
-
+public class PersonRepository(IUnitOfWork uow) : IPersonRepository
+{ 
     public void Add(Person person)
     {
-        _persons.Add(person);
+        uow.Persons.Add(person);
     }
 
-    public List<Person> GetAll()
+    public IEnumerable<Person> GetAll()
     {
-        return _persons.ToList();
+        return uow.Persons.ToList();
     }
 }

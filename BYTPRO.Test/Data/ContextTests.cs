@@ -1,4 +1,5 @@
 ﻿using BYTPRO.Data.JsonRepositories;
+using BYTPRO.Data.JsonUoW;
 using BYTPRO.Data.Models;
 using BYTPRO.JsonEntityFramework.Context;
 using Xunit.Abstractions;
@@ -17,7 +18,9 @@ public class ContextTests
             .WithRoot(new DirectoryInfo("F:\\DbTest"))
             .Build();
 
-        var repo = new PersonRepository(context);
+        var uow = new JsonUnitOfWork(context);
+
+        var repo = new PersonRepository(uow);
         
         repo.Add(new Person()
         {
@@ -39,8 +42,16 @@ public class ContextTests
             Phone = "123",
         });
         
-        Assert.Equal(2, repo.GetAll().Count);
+        Assert.Equal(2, repo.GetAll().ToList().Count);
 
         await context.SaveChangesAsync();
+
+        using var file = new StreamReader(File.OpenRead(@"F:\DbTest\person.json"));
+        
+        var content = await file.ReadToEndAsync();
+        
+        Assert.Equal(uow.Persons.GetJson(), content);
+        
+        file.Close();
     }
 }
