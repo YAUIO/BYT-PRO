@@ -33,7 +33,7 @@ public class JsonEntitySet<TJEntity>(JsonEntityConfiguration config, string path
 
     public void Add(TJEntity item)
     {
-        Table.Add(item);
+        if (Table.Add(item)) _isSaved = false;
     }
 
     public IEnumerator<TJEntity> GetEnumerator()

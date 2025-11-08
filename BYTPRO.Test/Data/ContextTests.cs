@@ -28,7 +28,7 @@ public class ContextTests
         
         var orderRepo = new OrderRepository(uow);
         
-        repo.Add(new Person()
+        await repo.Add(new Person()
         {
             Id = 1,
             Name = "name",
@@ -38,7 +38,7 @@ public class ContextTests
             Phone = "123",
         });
         
-        repo.Add(new Person()
+        await repo.Add(new Person()
         {
             Id = 2,
             Name = "name",
@@ -48,7 +48,7 @@ public class ContextTests
             Phone = "123",
         });
         
-        orderRepo.Add(new Order()
+        await orderRepo.Add(new Order()
         {
             Id = 1,
             Status = "new",
@@ -59,8 +59,6 @@ public class ContextTests
         Assert.Equal(2, repo.GetAll().ToList().Count);
         
         Assert.Single(orderRepo.GetAll().ToList());
-
-        await context.SaveChangesAsync();
 
         using var file = new StreamReader(File.OpenRead(@"F:\DbTest\person.json"));
         

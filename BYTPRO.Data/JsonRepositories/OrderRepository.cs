@@ -5,9 +5,10 @@ namespace BYTPRO.Data.JsonRepositories;
 
 public class PersonRepository(IUnitOfWork uow) : IPersonRepository
 { 
-    public void Add(Person person)
+    public async Task Add(Person person)
     {
         uow.Persons.Add(person);
+        await uow.SaveChangesAsync();
     }
 
     public IEnumerable<Person> GetAll()

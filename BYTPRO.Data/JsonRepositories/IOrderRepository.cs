@@ -4,7 +4,7 @@ namespace BYTPRO.Data.JsonRepositories;
 
 public interface IOrderRepository
 {
-    public void Add(Order order);
+    public Task Add(Order order);
 
     public IEnumerable<Order> GetAll();
 }
