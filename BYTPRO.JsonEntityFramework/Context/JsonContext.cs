@@ -1,6 +1,4 @@
-﻿using System.Text;
-using System.Text.Json;
-using BYTPRO.JsonEntityFramework.Extensions;
+﻿using BYTPRO.JsonEntityFramework.Extensions;
 
 namespace BYTPRO.JsonEntityFramework.Context;
 
@@ -31,7 +29,9 @@ public class JsonContext
             
             if (!File.Exists(path))
             {
-                File.Create(path).Close();
+                var stream = File.Create(path);
+                stream.Write("{}"u8);
+                stream.Close();
             }
             else
             {
@@ -46,7 +46,7 @@ public class JsonContext
     {
         foreach (var json in Tables.Where(json => !json.IsSaved()))
         {
-            await File.WriteAllTextAsync(json.Path, JsonSerialize.GetJson(json));
+            await File.WriteAllTextAsync(json.Path, JsonSerialize.ToJson(json));
             json.MarkSaved();
         }
     }
