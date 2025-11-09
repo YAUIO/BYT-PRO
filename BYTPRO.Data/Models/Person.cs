@@ -1,13 +1,15 @@
-﻿using BYTPRO.Data.Validation;
+﻿using BYTPRO.Data.JsonUoW;
+using BYTPRO.Data.Validation;
 using BYTPRO.Data.Validation.Validators;
+using BYTPRO.JsonEntityFramework.Context;
 
 namespace BYTPRO.Data.Models;
 
 public abstract class Person
 {
     // ----------< Class Extent >----------
-    private static readonly List<Person> Extent = [];
-    public static IReadOnlyList<Person> All => Extent.AsReadOnly();
+    private static readonly JsonEntitySet<Person> Extent = JsonUnitOfWork.Persons;
+    public static IReadOnlyList<Person> All => Extent.ToList().AsReadOnly();
 
 
     // ----------< Attributes >----------
@@ -101,7 +103,9 @@ public abstract class Person
         Phone = phone;
         Email = email;
         Password = password;
-
+        
         Extent.Add(this);
+
+        JsonUnitOfWork.SaveChanges();
     }
 }

@@ -4,6 +4,8 @@ namespace BYTPRO.JsonEntityFramework.Context;
 
 public class JsonContext
 {
+    public static JsonContext Context { get; private set; }
+    
     private HashSet<dynamic> Tables { get; set; }
 
     private DirectoryInfo Root { get; }
@@ -40,6 +42,13 @@ public class JsonContext
                 // set.Table.Add();
             }
         }
+
+        Context = this;
+    }
+    
+    public JsonEntitySet<T> GetTable<T>()
+    {
+        return Tables.Single(j => j.GetType() == typeof(T));
     }
     
     public async Task SaveChangesAsync()
@@ -51,8 +60,12 @@ public class JsonContext
         }
     }
 
-    public JsonEntitySet<T> GetTable<T>()
+    public void SaveChanges()
     {
-        return Tables.Single(j => j.GetType() == typeof(T));
+        foreach (var json in Tables.Where(json => !json.IsSaved()))
+        {
+            File.WriteAllText(json.Path, JsonSerialize.ToJson(json));
+            json.MarkSaved();
+        }
     }
 }
