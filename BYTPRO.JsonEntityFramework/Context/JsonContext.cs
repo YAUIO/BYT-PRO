@@ -15,6 +15,8 @@ public class JsonContext
         Root = root;
         Tables = [];
 
+        Root.Create();
+
         if (!Root.Exists)
         {
             throw new FileNotFoundException("Root directory not found");

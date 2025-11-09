@@ -18,7 +18,7 @@ public static class ServiceCollectionDataExtensions
             .AddJsonEntity<Order>()
                 .WithFileName("order")
                 .BuildEntity()
-            .WithRoot(new DirectoryInfo(""))
+            .WithRoot(new DirectoryInfo($"{Directory.GetCurrentDirectory()}/Db"))
             .Build();
         
         services.AddSingleton(context);
