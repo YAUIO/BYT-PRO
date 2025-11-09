@@ -5,21 +5,26 @@ using System.Linq;
 
 public static class CollectionValidator
 {
-    public static void NotNullOrEmpty<T>(IEnumerable<T>? collection, string fieldName)
+    public static bool NotNullOrEmpty<T>(this IEnumerable<T>? collection, string fieldName)
     {
         if (collection == null || !collection.Any())
             throw new ValidationException($"{fieldName} cannot be null or empty.");
+        
+        return true;
     }
 
-    public static void AllStringsNotNullOrEmpty(IEnumerable<string?>? collection, string fieldName)
+    public static bool AllStringsNotNullOrEmpty(this IEnumerable<string?> collection, string fieldName)
     {
-        NotNullOrEmpty(collection, fieldName);
+        var enumerable = collection.ToList();
+        enumerable.NotNullOrEmpty(fieldName);
 
-        IList<string?> list = collection as IList<string?> ?? collection.ToList();
+        var list = collection as IList<string?> ?? enumerable.ToList();
 
-        for (int i = 0; i < list.Count; i++)
+        for (var i = 0; i < list.Count; i++)
         {
-            StringValidator.NotNullOrEmpty(list[i], $"{fieldName}[{i}]");
+            list[i].NotNullOrEmpty($"{fieldName}[{i}]");
         }
+        
+        return true;
     }
 }
