@@ -1,3 +1,4 @@
+using BYTPRO.Data.JsonUoW;
 using BYTPRO.Data.Models.Employees;
 using BYTPRO.Data.Models.Enums;
 
@@ -14,8 +15,9 @@ public class RegionalEmployee(
     decimal salary,
     EmploymentType employmentType,
     string badgeNumber,
-    SupervisionScope scope)
-    : Employee(id, name, surname, phone, email, password, pesel, salary, employmentType)
+    SupervisionScope scope,
+    IUnitOfWork uow)
+    : Employee(id, name, surname, phone, email, password, pesel, salary, employmentType, uow)
 {
     public string BadgeNumber { get; set; } = badgeNumber;
     

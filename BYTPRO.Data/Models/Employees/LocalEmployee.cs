@@ -1,3 +1,4 @@
+using BYTPRO.Data.JsonUoW;
 using BYTPRO.Data.Models.Branches;
 using BYTPRO.Data.Models.Employees;
 using BYTPRO.Data.Models.Enums;
@@ -14,8 +15,9 @@ public class LocalEmployee(
     string pesel,
     decimal salary,
     EmploymentType employmentType,
-    string breakSchedule)
-    : Employee(id, name, surname, phone, email, password, pesel, salary, employmentType)
+    string breakSchedule,
+    IUnitOfWork uow)
+    : Employee(id, name, surname, phone, email, password, pesel, salary, employmentType, uow)
 {
     public List<string> TrainingsCompleted { get; set; } = [];
     

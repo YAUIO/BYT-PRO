@@ -1,3 +1,4 @@
+using BYTPRO.Data.JsonUoW;
 using BYTPRO.Data.Models.Enums;
 
 namespace BYTPRO.Data.Models.Employees;
@@ -12,8 +13,9 @@ public class Consultant(
     string pesel,
     decimal salary,
     EmploymentType employmentType,
-    string specialization)
-    : Employee(id, name, surname, phone, email, password, pesel, salary, employmentType)
+    string specialization,
+    IUnitOfWork uow)
+    : Employee(id, name, surname, phone, email, password, pesel, salary, employmentType, uow)
 {
     public string Specialization { get; set; } = specialization;
     

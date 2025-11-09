@@ -4,21 +4,19 @@ using BYTPRO.JsonEntityFramework.Context;
 
 namespace BYTPRO.Data.JsonUoW;
 
-public static class JsonUnitOfWork
+public class JsonUnitOfWork(JsonContext context) : IUnitOfWork
 {
-    private static readonly JsonContext Context = JsonContext.Context;
-    
-    public static JsonEntitySet<Person> Persons => Context.GetTable<Person>();
+    public JsonEntitySet<Person> Persons => context.GetTable<Person>();
 
-    public static JsonEntitySet<Order> Orders => Context.GetTable<Order>();
+    public JsonEntitySet<Order> Orders => context.GetTable<Order>();
 
-    public static async Task SaveChangesAsync()
+    public async Task SaveChangesAsync()
     {
-        await Context.SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
     
-    public static void SaveChanges()
+    public void SaveChanges()
     {
-        Context.SaveChanges();
+        context.SaveChanges();
     }
 }

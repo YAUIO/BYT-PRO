@@ -1,3 +1,4 @@
+using BYTPRO.Data.JsonUoW;
 using BYTPRO.Data.Models.Enums;
 
 namespace BYTPRO.Data.Models.Employees;
@@ -11,8 +12,9 @@ public abstract class Employee(
     string password,
     string pesel,
     decimal salary,
-    EmploymentType employmentType)
-    : Person(id, name, surname, phone, email, password)
+    EmploymentType employmentType,
+    IUnitOfWork uow)
+    : Person(id, name, surname, phone, email, password, uow)
 {
     public string Pesel { get; set; } = pesel;
     
