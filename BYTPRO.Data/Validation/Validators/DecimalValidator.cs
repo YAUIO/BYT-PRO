@@ -2,7 +2,7 @@ namespace BYTPRO.Data.Validation.Validators;
 
 public static class DecimalValidator
 {
-    public static bool Positive(this decimal value, string fieldName)
+    public static bool IsPositive(this decimal value, string fieldName)
     {
         if (value <= 0)
             throw new ValidationException($"{fieldName} must be positive.");
@@ -10,7 +10,7 @@ public static class DecimalValidator
         return true;
     }
 
-    public static bool NonNegative(this decimal value, string fieldName)
+    public static bool IsNonNegative(this decimal value, string fieldName)
     {
         if (value < 0)
             throw new ValidationException($"{fieldName} cannot be negative.");
@@ -18,7 +18,7 @@ public static class DecimalValidator
         return true;
     }
 
-    public static bool InRange(this decimal value, decimal min, decimal max, string fieldName)
+    public static bool IsInRange(this decimal value, decimal min, decimal max, string fieldName)
     {
         if (value < min || value > max)
             throw new ValidationException($"{fieldName} must be between {min} and {max}.");

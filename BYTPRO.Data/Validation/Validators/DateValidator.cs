@@ -2,7 +2,7 @@ namespace BYTPRO.Data.Validation.Validators;
 
 public static class DateValidator
 {
-    public static bool NotDefault(this DateTime value, string fieldName)
+    public static bool IsNotDefault(this DateTime value, string fieldName)
     {
         if (value == default)
             throw new ValidationException($"{fieldName} must be a valid date.");
@@ -10,7 +10,7 @@ public static class DateValidator
         return true;
     }
 
-    public static bool Before(this DateTime start, DateTime end, string startName, string endName)
+    public static bool IsBefore(this DateTime start, DateTime end, string startName, string endName)
     {
         if (end < start)
             throw new ValidationException($"{endName} must be after {startName}.");

@@ -6,9 +6,9 @@ public static partial class EmailValidator
 {
     private static readonly Regex EmailRegex = CompileEmailRegex();
 
-    public static bool Validate(this string email, string fieldName = "Email")
+    public static bool IsEmail(this string email, string fieldName = "Email")
     {
-        email.NotNullOrEmpty(fieldName);
+        email.IsNotNullOrEmpty(fieldName);
 
         if (!EmailRegex.IsMatch(email))
             throw new ValidationException($"{fieldName} is not a valid email.");

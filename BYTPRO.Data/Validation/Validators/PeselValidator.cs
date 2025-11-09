@@ -6,9 +6,9 @@ public static partial class PeselValidator
 {
     private static readonly Regex PeselRegex = CreatePeselRegex();
 
-    public static bool Validate(this string pesel, string fieldName = "PESEL")
+    public static bool IsPesel(this string pesel, string fieldName = "PESEL")
     {
-        pesel.NotNullOrEmpty(fieldName);
+        pesel.IsNotNullOrEmpty(fieldName);
 
         if (!PeselRegex.IsMatch(pesel))
             throw new ValidationException($"{fieldName} must consist of exactly 11 digits.");
