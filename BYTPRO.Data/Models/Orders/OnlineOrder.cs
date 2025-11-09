@@ -18,25 +18,24 @@ public class OnlineOrder(
     
     public PickupPoint DestinationPickupPoint { get; set; } = destinationPickupPoint;
     
-    public void PayExternally()
+    public void PayExternally() // TODO move data storing to persistence, out of models, and business logic to services
     {
         IsPaid = true;
         Console.WriteLine($"Order {Id} marked as paid externally.");
     }
 
-    public void MarkAsDelivered()
+    public void MarkAsDelivered() // TODO move data storing to persistence, out of models, and business logic to services
     {
         Status = OrderStatus.Completed;
         Console.WriteLine($"Order {Id} marked as delivered.");
     }
 
-    public void AutoCancelAwaiting()
+    public void AutoCancelAwaiting() // TODO move data storing to persistence, out of models, and business logic to services
     {
-        if (Status == OrderStatus.AwaitingCollection)
-        {
-            Status = OrderStatus.Cancelled;
-            CancellationDate = DateTime.Now;
-            Console.WriteLine($"Order {Id} auto-cancelled.");
-        }
+        if (Status != OrderStatus.AwaitingCollection) return;
+
+        Status = OrderStatus.Cancelled;
+        CancellationDate = DateTime.Now;
+        Console.WriteLine($"Order {Id} auto-cancelled.");
     }
 }

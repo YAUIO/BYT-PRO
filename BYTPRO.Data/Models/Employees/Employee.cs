@@ -15,10 +15,12 @@ public abstract class Employee(
     : Person(id, name, surname, phone, email, password)
 {
     public string Pesel { get; set; } = pesel;
+    
     public decimal Salary { get; set; } = salary;
+    
     public EmploymentType EmploymentType { get; set; } = employmentType;
     
-    public void ChangeEmploymentType(EmploymentType newType)
+    public void ChangeEmploymentType(EmploymentType newType) // TODO move data storing to persistence, out of models
     {
         this.EmploymentType = newType;
         Console.WriteLine($"Employee {Name} {Surname} new employment type: {newType}");

@@ -18,7 +18,6 @@ public class RegionalEmployee(
     : Employee(id, name, surname, phone, email, password, pesel, salary, employmentType)
 {
     public string BadgeNumber { get; set; } = badgeNumber;
-    public SupervisionScope SupervisionScope { get; set; } = scope;
-
     
+    public SupervisionScope SupervisionScope { get; set; } = scope;
 }

@@ -18,6 +18,8 @@ public abstract class Cashier(
     : Employee(id, name, surname, phone, email, password, pesel, salary, employmentType)
 {
     public int RegisterCode { get; set; } = registerCode;
+    
     public int PinCode { get; set; } = pinCode;
+    
     public bool CanMakeReturn { get; } = canMakeReturn;
 }

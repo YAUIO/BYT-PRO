@@ -10,7 +10,7 @@ public class BranchOrder(
 {
     public DateTime ExpectedDeliveryDate { get; set; } = expectedDeliveryDate;
 
-    public void MarkAsDelivered()
+    public void MarkAsDelivered() // TODO move data storing to persistence, out of models, and business logic to services
     {
         Status = OrderStatus.Completed;
         Console.WriteLine($"Branch order {Id} marked as delivered.");

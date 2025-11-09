@@ -16,5 +16,6 @@ public class Consultant(
     : Employee(id, name, surname, phone, email, password, pesel, salary, employmentType)
 {
     public string Specialization { get; set; } = specialization;
-    public List<string> Languages { get; set; } = new List<string>();
+    
+    public List<string> Languages { get; set; } = [];
 }

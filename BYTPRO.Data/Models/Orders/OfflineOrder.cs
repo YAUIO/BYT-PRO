@@ -10,5 +10,6 @@ public class OfflineOrder(
     : Order(id, creationDate)
 {
     public string? Phone { get; set; } = phone;
+    
     public Store OriginStore { get; set; } = originStore;
 }
