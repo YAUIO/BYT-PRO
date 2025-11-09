@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using BYTPRO.Data.Validation;
 using BYTPRO.Data.Validation.Validators;
 
 namespace BYTPRO.Data.Models;
