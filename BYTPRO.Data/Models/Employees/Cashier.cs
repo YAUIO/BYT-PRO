@@ -1,3 +1,4 @@
+using BYTPRO.Data.JsonUoW;
 using BYTPRO.Data.Models.Enums;
 
 namespace BYTPRO.Data.Models.Employees;
@@ -14,8 +15,9 @@ public abstract class Cashier(
     EmploymentType employmentType,
     int registerCode,
     int pinCode,
-    bool canMakeReturn)
-    : Employee(id, name, surname, phone, email, password, pesel, salary, employmentType)
+    bool canMakeReturn,
+    IUnitOfWork uow)
+    : Employee(id, name, surname, phone, email, password, pesel, salary, employmentType, uow)
 {
     public int RegisterCode { get; set; } = registerCode;
     

@@ -1,15 +1,18 @@
 ﻿using BYTPRO.Data.JsonUoW;
+using BYTPRO.Data.Models.Attributes;
 using BYTPRO.Data.Validation;
 using BYTPRO.Data.Validation.Validators;
+using BYTPRO.JsonEntityFramework.Attributes;
 using BYTPRO.JsonEntityFramework.Context;
 
 namespace BYTPRO.Data.Models;
 
+[HasExtent]
 public abstract class Person
 {
     // ----------< Class Extent >----------
-    private static readonly JsonEntitySet<Person> Extent = JsonUnitOfWork.Persons;
-    public static IReadOnlyList<Person> All => Extent.ToList().AsReadOnly();
+    private readonly JsonEntitySet<Person> _extent;
+    public IReadOnlyList<Person> All => _extent.ToList().AsReadOnly();
 
 
     // ----------< Attributes >----------
@@ -27,7 +30,7 @@ public abstract class Person
         init
         {
             value.IsNonNegative(nameof(Id));
-            if (Extent.Any(p => p.Id == value))
+            if (_extent.Any(p => p.Id == value))
                 throw new ValidationException($"Person with Id {value} already exists.");
             _id = value;
         }
@@ -71,7 +74,7 @@ public abstract class Person
         set
         {
             value.IsEmail();
-            if (Extent.Any(p => p.Email.Equals(value)))
+            if (_extent.Any(p => p.Email.Equals(value)))
                 throw new ValidationException($"Email '{value}' already exists.");
             _email = value;
         }
@@ -95,7 +98,8 @@ public abstract class Person
         string surname,
         string phone,
         string email,
-        string password)
+        string password,
+        IUnitOfWork uow)
     {
         Id = id;
         Name = name;
@@ -103,9 +107,11 @@ public abstract class Person
         Phone = phone;
         Email = email;
         Password = password;
-        
-        Extent.Add(this);
 
-        JsonUnitOfWork.SaveChanges();
+        _extent = uow.Persons;
+        
+        _extent.Add(this);
+
+        uow.SaveChanges();
     }
 }

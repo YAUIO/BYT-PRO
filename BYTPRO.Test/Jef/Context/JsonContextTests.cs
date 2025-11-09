@@ -9,7 +9,7 @@ public class JsonContextTests
 
     private static int _contexts;
     
-    public static JsonContext GetTestContext(int sets = 0)
+    public static JsonContext GetTestContext(int sets = 0, string? root = null)
     {
         if (Directory.Exists(DbRoot) && _contexts == 0 && sets == 0) Directory.Delete(DbRoot, true);
         else if (!Directory.Exists(DbRoot)) Directory.CreateDirectory(DbRoot);
@@ -20,7 +20,7 @@ public class JsonContextTests
             .AddJsonEntity<TestModel>()
                 .WithFileName("test")
                 .BuildEntity()
-            .WithRoot(new DirectoryInfo($"{DbRoot}/{_contexts}_{sets}"))
+            .WithRoot(new DirectoryInfo(root ?? $"{DbRoot}/{_contexts}_{sets}"))
             .Build();
     }
 
@@ -30,6 +30,37 @@ public class JsonContextTests
         var context = GetTestContext();
 
         Assert.True(File.Exists(context.GetTable<TestModel>().Path));
+    }
+    
+    [Fact]
+    public void TestFileLoading()
+    {
+        var root = $"{DbRoot}/TestLoading/";
+        
+        var context = GetTestContext(root:root);
+        
+        var model = new TestModel()
+        {
+            Id = 1,
+            Value = "value",
+        };
+
+        Assert.True(File.Exists(context.GetTable<TestModel>().Path));
+        
+        context.GetTable<TestModel>()
+            .Add(model);
+        context.SaveChanges();
+        
+        var newContext = new JsonContextBuilder()
+            .AddJsonEntity<TestModel>()
+                .WithFileName("test")
+                .BuildEntity()
+            .WithRoot(new DirectoryInfo(root))
+            .Build();
+
+        Assert.Contains(model, newContext.GetTable<TestModel>());
+        
+        Assert.Equal(context.GetTable<TestModel>(), newContext.GetTable<TestModel>());
     }
 
     [Fact]
@@ -49,7 +80,7 @@ public class JsonContextTests
 
         table.Add(model);
 
-        Assert.Equal("{}", await File.ReadAllTextAsync(table.Path));
+        Assert.Equal("[]", await File.ReadAllTextAsync(table.Path));
 
         await context.SaveChangesAsync();
 
@@ -108,5 +139,83 @@ public class JsonContextTests
         await context.SaveChangesAsync();
 
         Assert.Equal(table.ToJson(), await File.ReadAllTextAsync(table.Path));
+    }
+    
+    [Fact]
+    public void TestSaveChangesUpdatesOnAdd()
+    {
+        var context = GetTestContext();
+
+        var table = context.GetTable<TestModel>();
+
+        var model = new TestModel()
+        {
+            Id = 1,
+            Value = "value",
+        };
+
+        Assert.Equal(table.ToJson(), File.ReadAllText(table.Path));
+
+        table.Add(model);
+
+        Assert.Equal("[]", File.ReadAllText(table.Path));
+
+        context.SaveChanges();
+
+        Assert.NotEmpty(File.ReadAllText(table.Path));
+
+        Assert.Equal(table.ToJson(), File.ReadAllText(table.Path));
+    }
+
+    [Fact]
+    public void TestSaveChangesUpdatesOnDelete()
+    {
+        var context = GetTestContext();
+
+        var table = context.GetTable<TestModel>();
+
+        var model = new TestModel()
+        {
+            Id = 1,
+            Value = "value",
+        };
+
+        table.Add(model);
+
+        context.SaveChanges();
+
+        Assert.Equal(table.ToJson(), File.ReadAllText(table.Path));
+
+        table.Remove(model);
+
+        context.SaveChanges();
+
+        Assert.Equal(table.ToJson(), File.ReadAllText(table.Path));
+    }
+    
+    [Fact]
+    public void TestSaveChangesUpdatesOnClear()
+    {
+        var context = GetTestContext();
+
+        var table = context.GetTable<TestModel>();
+
+        var model = new TestModel()
+        {
+            Id = 1,
+            Value = "value",
+        };
+
+        table.Add(model);
+
+        context.SaveChanges();
+
+        Assert.Equal(table.ToJson(), File.ReadAllText(table.Path));
+
+        table.Clear();
+
+        context.SaveChanges();
+
+        Assert.Equal(table.ToJson(), File.ReadAllText(table.Path));
     }
 }

@@ -3,7 +3,7 @@ using BYTPRO.JsonEntityFramework.Extensions;
 
 namespace BYTPRO.Test.Jef.Context;
 
-public class JsonSerializeTests
+public class JsonSerializerExtensionsTests
 {
     [Fact]
     public void TestToJsonContainsObject()
@@ -16,12 +16,16 @@ public class JsonSerializeTests
 
         List<TestModel> list = [model];
 
-        Assert.Contains(JsonSerializer.Serialize(model), list.ToJson());
+        Assert.Contains($"Id", list.ToJson());
+        Assert.Contains($"{model.Id}", list.ToJson());
+        
+        Assert.Contains($"Value", list.ToJson());
+        Assert.Contains($"{model.Value}", list.ToJson());
     }
     
     [Fact]
     public void TestToJsonReturnsNotEmptyForEmpty()
     {
-        Assert.Equal("{}", new List<TestModel>().ToJson());
+        Assert.Equal("[]", new List<TestModel>().ToJson());
     }
 }

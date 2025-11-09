@@ -1,3 +1,4 @@
+using BYTPRO.Data.JsonUoW;
 using BYTPRO.Data.Models.Enums;
 using BYTPRO.Data.Models.Orders;
 
@@ -10,8 +11,9 @@ public class Customer(
     string phone,
     string email,
     string password,
-    DateTime registrationDate)
-    : Person(id, name, surname, phone, email, password)
+    DateTime registrationDate,
+    IUnitOfWork uow)
+    : Person(id, name, surname, phone, email, password, uow)
 {
     public DateTime RegistrationDate { get; set; } = registrationDate;
 

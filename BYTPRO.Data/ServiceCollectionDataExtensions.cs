@@ -22,6 +22,8 @@ public static class ServiceCollectionDataExtensions
             .Build();
         
         services.AddSingleton(context);
+
+        services.AddScoped<IUnitOfWork, JsonUnitOfWork>();
         
         return services;
     }
