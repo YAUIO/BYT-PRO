@@ -6,7 +6,7 @@ namespace BYTPRO.JsonEntityFramework.Extensions;
 
 public static class JsonSerialize
 {
-    public static string GetJson(this IEnumerable collection)
+    public static string ToJson(this IEnumerable collection)
     {
         var asJson = new StringBuilder();
         asJson.Append('{');
