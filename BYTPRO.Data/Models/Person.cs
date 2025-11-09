@@ -1,26 +1,107 @@
-﻿namespace BYTPRO.Data.Models;
+﻿using BYTPRO.Data.Validation;
+using BYTPRO.Data.Validation.Validators;
 
-public abstract class Person(int id, string name, string surname, string phone, string email, string password)
+namespace BYTPRO.Data.Models;
+
+public abstract class Person
 {
-    public int Id { get; set; } = id;
-    
-    public string Name { get; set; } = name;
-    
-    public string Surname { get; set; } = surname;
-    
-    public string Phone { get; set; } = phone;
-    
-    public string Email { get; set; } = email;
-    
-    public string Password { get; set; } = password;
+    // ----------< Class Extent >----------
+    private static readonly List<Person> Extent = [];
+    public static IReadOnlyList<Person> All => Extent.AsReadOnly();
 
-    public virtual void Login()
+
+    // ----------< Attributes >----------
+    private readonly int _id;
+    private readonly string _name;
+    private readonly string _surname;
+    private string _phone;
+    private string _email;
+    private string _password;
+
+    // ----------< Properties with validation >----------
+    public int Id
     {
-        Console.WriteLine($"User {Email} is logging in...");
+        get => _id;
+        init
+        {
+            value.IsNonNegative(nameof(Id));
+            if (Extent.Any(p => p.Id == value))
+                throw new ValidationException($"Person with Id {value} already exists.");
+            _id = value;
+        }
     }
-    public static bool CheckEmailExistence(string email) // TODO move data storing to persistence, out of models
+
+    public string Name
     {
-        Console.WriteLine($"Checking if email {email} exists...");
-        return false; 
+        get => _name;
+        init
+        {
+            value.IsNotNullOrEmpty(nameof(Name));
+            value.IsBelowMaxLength(50);
+            _name = value;
+        }
+    }
+
+    public string Surname
+    {
+        get => _surname;
+        init
+        {
+            value.IsNotNullOrEmpty(nameof(Surname));
+            value.IsBelowMaxLength(50);
+            _surname = value;
+        }
+    }
+
+    public string Phone
+    {
+        get => _phone;
+        set
+        {
+            value.IsPhoneNumber();
+            _phone = value;
+        }
+    }
+
+    public string Email
+    {
+        get => _email;
+        set
+        {
+            value.IsEmail();
+            if (Extent.Any(p => p.Email.Equals(value)))
+                throw new ValidationException($"Email '{value}' already exists.");
+            _email = value;
+        }
+    }
+
+    public string Password
+    {
+        get => _password;
+        set
+        {
+            value.IsNotNullOrEmpty(nameof(Password));
+            value.IsBelowMaxLength(100);
+            _password = value;
+        }
+    }
+
+    // ----------< Constructor >----------
+    protected Person(
+        int id,
+        string name,
+        string surname,
+        string phone,
+        string email,
+        string password)
+    {
+        Id = id;
+        Name = name;
+        Surname = surname;
+        Phone = phone;
+        Email = email;
+        Password = password;
+
+        Extent.Add(this);
     }
 }
