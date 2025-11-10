@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using BYTPRO.Data.Models.UmlAttributes;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
 
@@ -34,11 +35,12 @@ public class BranchOrder : Order
     public BranchOrder(
         int id,
         DateTime creationDate,
+        List<OrderItem> orderItems,
         DateTime expectedDeliveryDate
-    ) : base(id, creationDate)
+    ) : base(id, creationDate, orderItems)
     {
         ExpectedDeliveryDate = expectedDeliveryDate;
-        
+
         RegisterOrder();
         Extent.Add(this);
     }

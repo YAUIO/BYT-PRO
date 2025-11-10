@@ -1,5 +1,7 @@
 using System.Text.Json.Serialization;
-using BYTPRO.Data.Models.Branches;
+using BYTPRO.Data.Models.Enums;
+using BYTPRO.Data.Models.UmlAttributes;
+using BYTPRO.Data.Validation;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
 
@@ -15,28 +17,32 @@ public class OnlineOrder : Order
     // ----------< Attributes >----------
     private bool _isPaid;
     private DateTime? _cancellationDate;
-    private string _trackingNumber = null!;
-    private PickupPoint _destinationPickupPoint = null!;
-    private readonly Customer _customer = null!;
+    private readonly string _trackingNumber;
 
 
     // ----------< Properties with validation >----------
     public bool IsPaid
     {
         get => _isPaid;
-        set => _isPaid = value;
+        set
+        {
+            // Do not convert into auto-property.
+            // Maybe some business rule will be added here
+            _isPaid = value;
+        }
     }
 
     public DateTime? CancellationDate
     {
         get => _cancellationDate;
-        private set
+        set
         {
-            if (value.HasValue)
-            {
-                value.Value.IsNotDefault(nameof(CancellationDate));
-                CreationDate.IsBefore(value.Value, nameof(CreationDate), nameof(CancellationDate));
-            }
+            if (Status != OrderStatus.AwaitingCollection)
+                throw new ValidationException(
+                    "Cancellation date can only be set in 'Awaiting Collection' status.");
+
+            value?.IsNotDefault(nameof(CancellationDate));
+            value?.IsAfter(CreationDate, nameof(CancellationDate), nameof(CreationDate));
             _cancellationDate = value;
         }
     }
@@ -44,31 +50,11 @@ public class OnlineOrder : Order
     public string TrackingNumber
     {
         get => _trackingNumber;
-        set
+        init
         {
             value.IsNotNullOrEmpty(nameof(TrackingNumber));
             value.IsBelowMaxLength(50);
             _trackingNumber = value;
-        }
-    }
-
-    public PickupPoint DestinationPickupPoint
-    {
-        get => _destinationPickupPoint;
-        set
-        {
-            value.IsNotNull(nameof(DestinationPickupPoint));
-            _destinationPickupPoint = value;
-        }
-    }
-
-    public Customer Customer
-    {
-        get => _customer;
-        init
-        {
-            value.IsNotNull(nameof(Customer));
-            _customer = value;
         }
     }
 
@@ -77,15 +63,14 @@ public class OnlineOrder : Order
     public OnlineOrder(
         int id,
         DateTime creationDate,
-        Customer customer,
-        string trackingNumber,
-        PickupPoint destinationPickupPoint
-    ) : base(id, creationDate)
+        List<OrderItem> orderItems,
+        bool isPaid,
+        string trackingNumber
+    ) : base(id, creationDate, orderItems)
     {
-        Customer = customer;
+        IsPaid = isPaid;
         TrackingNumber = trackingNumber;
-        DestinationPickupPoint = destinationPickupPoint;
-        
+
         RegisterOrder();
         Extent.Add(this);
     }
