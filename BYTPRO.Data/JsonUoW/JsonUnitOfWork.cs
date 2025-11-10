@@ -19,4 +19,14 @@ public class JsonUnitOfWork(JsonContext context) : IUnitOfWork
     {
         context.SaveChanges();
     }
+
+    public async Task RollbackAsync()
+    {
+        await context.RollbackAsync();
+    }
+
+    public void Rollback()
+    {
+        context.Rollback();
+    }
 }
