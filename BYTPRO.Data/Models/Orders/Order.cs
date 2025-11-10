@@ -1,10 +1,10 @@
 ﻿using System.Linq;
 using System.Text.Json.Serialization;
-using BYTPRO.Data.Models.Attributes;
 using BYTPRO.Data.Validation;
 using BYTPRO.Data.Validation.Validators;
 
 using BYTPRO.Data.Models.Enums;
+using BYTPRO.Data.Models.UmlAttributes;
 
 namespace BYTPRO.Data.Models.Orders;
 

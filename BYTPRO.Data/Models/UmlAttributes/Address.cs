@@ -1,9 +1,9 @@
-namespace BYTPRO.Data.Models.Attributes;
+namespace BYTPRO.Data.Models.UmlAttributes;
 
-public record class Address(
+public record Address(
     string Street,
     string StreetNumber,
+    string? ApartmentNumber,
     string ZipCode,
-    string City,
-    string? ApartamentNumber = null
+    string City
 );
