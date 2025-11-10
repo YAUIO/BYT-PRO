@@ -5,6 +5,7 @@ namespace BYTPRO.Data.Models.Orders;
 
 public abstract class Order(int id, DateTime creationDate)
 {
+    
     public int Id { get; set; } = id;
     
     public DateTime CreationDate { get; set; } = creationDate;
