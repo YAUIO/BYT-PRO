@@ -1,8 +1,34 @@
+using BYTPRO.Data.Validation.Validators;
+
 namespace BYTPRO.Data.Models.UmlAttributes;
 
-public record OrderItem(Product Product, int Quantity)
-{
-    public decimal OrderPrice => Product.Price;
+using System.Text.Json.Serialization;
 
-    public decimal TotalPrice => Quantity * OrderPrice;
+public record OrderItem
+{
+    // ----------< Properties >----------
+    public Product Product { get; }
+
+    public int Quantity { get; }
+
+
+    // ----------< Calculated Properties >----------
+    [JsonIgnore] public decimal TotalPrice => Quantity * Product.Price;
+
+    [JsonIgnore] public decimal TotalWeight => Quantity * Product.Weight;
+
+    [JsonIgnore] public decimal TotalDimensions => Quantity * Product.Dimensions.Volume;
+
+
+    // ----------< Constructor with validation >----------
+    public OrderItem(
+        Product product,
+        int quantity)
+    {
+        product.IsNotNull(nameof(Product));
+        quantity.IsPositive(nameof(Quantity));
+
+        Product = product;
+        Quantity = quantity;
+    }
 }
