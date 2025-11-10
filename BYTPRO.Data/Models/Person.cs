@@ -108,7 +108,5 @@ public abstract class Person
         Phone = phone;
         Email = email;
         Password = password;
-        
-        Extent.Add(this);
     }
 }
