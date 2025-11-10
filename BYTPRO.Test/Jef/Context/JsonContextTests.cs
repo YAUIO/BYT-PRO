@@ -224,4 +224,56 @@ public class JsonContextTests
 
         Assert.Equal(table.ToJson(), File.ReadAllText(table.Path));
     }
+    
+    [Fact]
+    public async Task TestRollbackAsync()
+    {
+        var context = GetTestContext();
+
+        var table = context.GetTable<TestModel>();
+
+        var model = new TestModel()
+        {
+            Id = 1,
+            Value = "value",
+        };
+
+        Assert.Equal(table.ToJson(), await File.ReadAllTextAsync(table.Path));
+
+        table.Add(model);
+
+        Assert.Equal("[]", await File.ReadAllTextAsync(table.Path));
+
+        await context.RollbackAsync();
+
+        Assert.Equal("[]", await File.ReadAllTextAsync(table.Path));
+        
+        Assert.Empty(table);
+    }
+    
+    [Fact]
+    public void TestRollback()
+    {
+        var context = GetTestContext();
+
+        var table = context.GetTable<TestModel>();
+
+        var model = new TestModel()
+        {
+            Id = 1,
+            Value = "value",
+        };
+
+        Assert.Equal(table.ToJson(), File.ReadAllText(table.Path));
+
+        table.Add(model);
+
+        Assert.Equal("[]", File.ReadAllText(table.Path));
+
+        context.Rollback();
+
+        Assert.Equal("[]", File.ReadAllText(table.Path));
+        
+        Assert.Empty(table);
+    }
 }

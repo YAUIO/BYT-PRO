@@ -142,6 +142,8 @@ public class JsonContext
             try
             {
                 await using var fileStream = File.Open(path, FileMode.Open);
+                
+                table.Clear();
 
                 var enumerable =
                     (JsonElement)(await JsonSerializer.DeserializeAsync<dynamic>(fileStream,
@@ -183,6 +185,8 @@ public class JsonContext
             try
             {
                 using var fileStream = File.Open(path, FileMode.Open);
+                
+                table.Clear();
 
                 var enumerable =
                     (JsonElement)(JsonSerializer.Deserialize<dynamic>(fileStream, JsonSerializerExtensions.Options)
