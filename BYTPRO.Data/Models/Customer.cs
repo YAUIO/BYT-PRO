@@ -54,8 +54,5 @@ public class Customer : Person
     public override string ToString() => $"{base.ToString()}, {RegistrationDate}, Loyal: {IsLoyal}";
     
     // ----------< Extent methods >----------
-    public static void Remove(Customer c)
-    {
-        Extent.Remove(c);
-    }
+    public static void Remove(Customer c) => Extent.Remove(c);
 }
