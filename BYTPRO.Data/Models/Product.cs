@@ -1,5 +1,5 @@
-using BYTPRO.Data.Models.Attributes;
 using BYTPRO.Data.Models.Branches;
+using BYTPRO.Data.Models.UmlAttributes;
 
 namespace BYTPRO.Data.Models;
 

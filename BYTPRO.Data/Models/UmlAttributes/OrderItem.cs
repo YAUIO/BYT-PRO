@@ -1,4 +1,4 @@
-namespace BYTPRO.Data.Models.Attributes;
+namespace BYTPRO.Data.Models.UmlAttributes;
 
 public record OrderItem(Product Product, int Quantity)
 {
