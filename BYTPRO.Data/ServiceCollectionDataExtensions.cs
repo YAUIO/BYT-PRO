@@ -12,15 +12,17 @@ public static class ServiceCollectionDataExtensions
     public static IServiceCollection AddDataServices(this IServiceCollection services)
     {
         var context = new JsonContextBuilder()
-            .AddJsonEntity<Person>()
+                .AddJsonEntity<Person>()
                 .WithFileName("person")
-                .BuildEntity()
-            .AddJsonEntity<Order>()
+            .BuildEntity()
+                .AddJsonEntity<Order>()
                 .WithFileName("order")
-                .BuildEntity()
+            .BuildEntity()
             .WithRoot(new DirectoryInfo($"{Directory.GetCurrentDirectory()}/Db"))
             .WithUoW<JsonUnitOfWork>()
             .Build();
+        
+        JsonContext.SetContext(context);
         
         services.AddSingleton(context);
         

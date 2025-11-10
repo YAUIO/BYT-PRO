@@ -1,5 +1,7 @@
 ﻿using BYTPRO.Data.JsonUoW;
 using BYTPRO.Data.Models;
+using BYTPRO.Data.Models.Employees;
+using BYTPRO.Data.Models.Enums;
 using BYTPRO.Data.Models.Orders;
 using BYTPRO.JsonEntityFramework.Context;
 using BYTPRO.JsonEntityFramework.Extensions;
@@ -9,9 +11,9 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace BYTPRO.Test.Data.Persistence;
 
-public class PersonPersistenceTests
+public class ConsultantPersistenceTests
 {
-    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/TestPersonDb";
+    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/TestConsultantDb";
 
     private static int _contexts;
 
@@ -36,9 +38,9 @@ public class PersonPersistenceTests
         return context;
     }
 
-    private static Person GetTestPerson(JsonContext context)
+    private static Consultant GetTestConsultant(JsonContext context)
     {
-        return new Person(1, "Artiom", "Bezkorovainyi", "+48000000000", "s300000@pjwstk.edu.pl", "12345678", new JsonUnitOfWork(context));
+        return new Consultant(1, "Artiom", "Bezkorovainyi", "+48000000000", "s300000@pjwstk.edu.pl", "12345678", "111111111", (decimal)10.1, EmploymentType.FullTime, "Consulting", new JsonUnitOfWork(context));
     }
 
     [Fact]
@@ -52,13 +54,13 @@ public class PersonPersistenceTests
     [Fact]
     public void TestFileLoading()
     {
-        var root = $"{DbRoot}/TestPersonLoading/";
+        var root = $"{DbRoot}/TestConsultantLoading/";
 
         var context = GetTestContext(root: root);
         
         try
         {
-            var model = GetTestPerson(context);
+            var model = GetTestConsultant(context);
 
             context.GetTable<Person>()
                 .Add(model);
@@ -92,7 +94,7 @@ public class PersonPersistenceTests
 
         var table = context.GetTable<Person>();
 
-        var model = GetTestPerson(context);
+        var model = GetTestConsultant(context);
 
         table.Add(model);
 
@@ -114,7 +116,7 @@ public class PersonPersistenceTests
 
         var table = context.GetTable<Person>();
 
-        var model = GetTestPerson(context);
+        var model = GetTestConsultant(context);
 
         table.Add(model);
 
@@ -136,7 +138,7 @@ public class PersonPersistenceTests
 
         var table = context.GetTable<Person>();
 
-        var model = GetTestPerson(context);
+        var model = GetTestConsultant(context);
 
         table.Add(model);
 
@@ -158,7 +160,7 @@ public class PersonPersistenceTests
 
         var table = context.GetTable<Person>();
 
-        var model = GetTestPerson(context);
+        var model = GetTestConsultant(context);
 
         table.Add(model);
 

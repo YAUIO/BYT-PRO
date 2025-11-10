@@ -6,6 +6,14 @@ namespace BYTPRO.JsonEntityFramework.Context;
 
 public class JsonContext
 {
+    public static JsonContext? Context { get; private set; }
+
+    public static void SetContext(JsonContext context)
+    {
+        Context = context;
+    }
+    
+    
     private HashSet<dynamic> Tables { get; set; }
 
     private DirectoryInfo Root { get; }
@@ -16,6 +24,8 @@ public class JsonContext
 
     public JsonContext(HashSet<JsonEntityConfiguration> entities, DirectoryInfo root, Type uow)
     {
+        Context ??= this;
+        
         Root = root;
         Tables = [];
 
@@ -57,7 +67,9 @@ public class JsonContext
 
                     foreach (var obj in enumerable.EnumerateArray())
                     {
-                        var result = obj.MapToEntity(ent.Target, _uow);
+                        // var result = obj.MapToEntity(ent.Target, _uow);
+
+                        var result = obj.Deserialize(ent.Target, JsonSerializerOptions.Default);
 
                         if (!result.GetType().GetProperties().Any(p => p.Name.Equals("Extent")))
                         {
@@ -65,9 +77,6 @@ public class JsonContext
                             set.Add(casted);
                         }
                     }
-                }
-                catch (InvalidOperationException)
-                {
                 }
                 finally
                 {

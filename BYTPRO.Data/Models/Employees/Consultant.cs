@@ -15,7 +15,7 @@ public class Consultant(
     EmploymentType employmentType,
     string specialization,
     IUnitOfWork uow)
-    : Employee(id, name, surname, phone, email, password, pesel, salary, employmentType, uow)
+    : Employee(id, name, surname, phone, email, password, pesel, salary, employmentType)
 {
     public string Specialization { get; set; } = specialization;
     

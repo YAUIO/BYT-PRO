@@ -17,7 +17,7 @@ public class LocalEmployee(
     EmploymentType employmentType,
     string breakSchedule,
     IUnitOfWork uow)
-    : Employee(id, name, surname, phone, email, password, pesel, salary, employmentType, uow)
+    : Employee(id, name, surname, phone, email, password, pesel, salary, employmentType)
 {
     public List<string> TrainingsCompleted { get; set; } = [];
     

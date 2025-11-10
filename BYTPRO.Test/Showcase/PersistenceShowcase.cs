@@ -7,24 +7,17 @@ using Xunit.Abstractions;
 
 namespace BYTPRO.Test.Showcase;
 
-public class PersistenceShowcase
+public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
 {
-    private readonly ITestOutputHelper _testOutputHelper;
-
-    public PersistenceShowcase(ITestOutputHelper testOutputHelper)
-    {
-        _testOutputHelper = testOutputHelper;
-    }
-
     private static string DbRoot => $"{Directory.GetCurrentDirectory()}/Db";
     
-    private static JsonContext GetTestContext()
+    static PersistenceShowcase()
     {
         if (!Directory.Exists(DbRoot)) Directory.CreateDirectory(DbRoot);
         
         var context = new JsonContextBuilder()
-            .AddJsonEntity<Person>()
-                .WithFileName("person")
+            .AddJsonEntity<Customer>()
+                .WithFileName("customer")
                 .BuildEntity()
             .AddJsonEntity<Order>()
                 .WithFileName("order")
@@ -33,25 +26,67 @@ public class PersistenceShowcase
             .WithUoW<JsonUnitOfWork>()
             .Build();
 
-        return context;
+        JsonContext.SetContext(context);
     }
-
+    
     [Fact]
     public async Task CreatePerson()
     {
-        var context = GetTestContext();
+        var context = JsonContext.Context;
+        
+        var person = new Customer(
+            1,
+            "Artiom", 
+            "Bezkorovainyi",
+            "+48000000000", 
+            "s30000@pjwstk.edu.pl", 
+            "12345678",
+            DateTime.Now
+        );
+
+        await new JsonUnitOfWork(context).SaveChangesAsync();
+        
+        testOutputHelper.WriteLine($"After create {Person.All.ToJson()}");
+    }
+        
+    
+    [Fact]
+    public async Task TestPersistence()
+    {
+        var context = JsonContext.Context;
         var uow = new JsonUnitOfWork(context);
         
-        var person = new Person(1, "Artiom", "Bezkorovainyi", "+48000000000", "s30000@pjwstk.edu.pl", "12345678", uow);
+        var person = new Customer(
+            1,
+            "Artiom", 
+            "Bezkorovainyi",
+            "+48000000000", 
+            "s30000@pjwstk.edu.pl", 
+            "12345678",
+            DateTime.Now
+        );
 
         await uow.SaveChangesAsync();
+        
+        testOutputHelper.WriteLine($"After add {Person.All.ToJson()}");
+        
+        person.Remove();
+        
+        await uow.SaveChangesAsync();
+        
+        testOutputHelper.WriteLine($"After delete {Person.All.ToJson()}");
     }
     
     [Fact]
     public void ShowPersons()
     {
-        var context = GetTestContext();
-        var uow = new JsonUnitOfWork(context);
-        _testOutputHelper.WriteLine(uow.Persons.ToJson());
+        var context = JsonContext.Context;
+        testOutputHelper.WriteLine(context.GetTable<Customer>().ToJson());
+    }
+    
+    [Fact]
+    public void RemoveDb()
+    {
+        Directory.Delete(DbRoot, true);
     }
 }

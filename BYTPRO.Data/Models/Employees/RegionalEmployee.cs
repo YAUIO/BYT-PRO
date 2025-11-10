@@ -17,7 +17,7 @@ public class RegionalEmployee(
     string badgeNumber,
     SupervisionScope scope,
     IUnitOfWork uow)
-    : Employee(id, name, surname, phone, email, password, pesel, salary, employmentType, uow)
+    : Employee(id, name, surname, phone, email, password, pesel, salary, employmentType)
 {
     public string BadgeNumber { get; set; } = badgeNumber;
     
