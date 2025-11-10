@@ -12,9 +12,13 @@ public abstract class Employee : Person
     
     [JsonIgnore]
     public new static IReadOnlyList<Person> All => Extent.ToList().AsReadOnly();
-
+    
+    
+    // ----------< Attributes >----------
     private string _pesel;
     
+    
+    // ----------< Properties with validation >----------
     public string Pesel
     {
         get => _pesel;
@@ -29,6 +33,7 @@ public abstract class Employee : Person
     
     public EmploymentType EmploymentType { get; set; }
 
+    // ----------< Constructor >----------
     protected Employee(
         int id,
         string name,
@@ -48,6 +53,7 @@ public abstract class Employee : Person
         Extent.Add(this);
     }
     
+    // ----------< Methods >----------
     public void ChangeEmploymentType(EmploymentType newType) // TODO move data storing to persistence, out of models
     {
         this.EmploymentType = newType;

@@ -111,21 +111,4 @@ public abstract class Person
         
         Extent.Add(this);
     }
-
-    public override bool Equals(object? obj)
-    {
-        if (obj.GetType() != GetType()) return false;
-        var person = (Person) obj;
-        return Equals(person);
-    }
-
-    private bool Equals(Person other)
-    {
-        return _id == other._id && _name == other._name && _surname == other._surname && _phone == other._phone && _email == other._email && _password == other._password;
-    }
-
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(_id, _name, _surname);
-    }
 }
