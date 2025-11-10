@@ -1,8 +1,7 @@
-﻿using System.Reflection;
+﻿using System.Collections.Concurrent;
 using System.Text.Json;
-using System.Text.Json.Serialization.Metadata;
-using BYTPRO.JsonEntityFramework.Attributes;
 using BYTPRO.JsonEntityFramework.Extensions;
+using BYTPRO.JsonEntityFramework.Mappers;
 
 namespace BYTPRO.JsonEntityFramework.Context;
 
@@ -11,8 +10,10 @@ public class JsonContext
     private HashSet<dynamic> Tables { get; set; }
 
     private DirectoryInfo Root { get; }
+    
+    public ConcurrentDictionary<string, SemaphoreSlim> FileLocks { get; } = new();
 
-    public JsonContext(HashSet<JsonEntityConfiguration> entities, DirectoryInfo root)
+    public JsonContext(HashSet<JsonEntityConfiguration> entities, DirectoryInfo root, Type uow)
     {
         Root = root;
         Tables = [];
@@ -23,6 +24,8 @@ public class JsonContext
         {
             throw new FileNotFoundException("Root directory not found");
         }
+
+        var uow1 = Activator.CreateInstance(uow, args: [this]);
 
         foreach (var ent in entities)
         {
@@ -45,15 +48,21 @@ public class JsonContext
                 var enumerable = (JsonElement)(JsonSerializer.Deserialize<dynamic>(fileStream, JsonSerializerExtensions.Options)
                                                ?? throw new InvalidCastException("Can't be a null JsonElement"));
 
-                foreach (var obj in enumerable.EnumerateArray().Select(j => j.Deserialize(ent.Target, JsonSerializerOptions.Default)))
+                foreach (var obj in enumerable.EnumerateArray())
                 {
-                    
-                    dynamic casted = obj;
-                    if (!casted.GetType().IsDefined(typeof(HasExtentAttribute), false))
+                    var result = obj.EnumerateObject().Select(o => o.Value)
+                        .ToList()
+                        .MapToEntity(ent.Target, uow1);
+
+                    if (!result.GetType().GetProperties().Any(p => p.Name.Equals("Extent")))
                     {
+                        dynamic casted = result;
                         set.Add(casted);
                     }
                 }
+                
+                fileStream.Close();
+                SaveChanges();
             }
         }
     }
@@ -67,8 +76,20 @@ public class JsonContext
     {
         foreach (var json in Tables.Where(json => !json.IsSaved()))
         {
-            await File.WriteAllTextAsync(json.Path, JsonSerializerExtensions.ToJson(json));
-            json.MarkSaved();
+            if (json.Path is not string path) throw new InvalidCastException("Path can't be null");
+            
+            var fileLock = FileLocks.GetOrAdd(path, _ => new SemaphoreSlim(1, 1));
+            
+            await fileLock.WaitAsync();
+            try
+            {
+                await File.WriteAllTextAsync(path, JsonSerializerExtensions.ToJson(json));
+                json.MarkSaved();
+            }
+            finally
+            {
+                fileLock.Release();
+            }
         }
     }
 
@@ -76,8 +97,20 @@ public class JsonContext
     {
         foreach (var json in Tables.Where(json => !json.IsSaved()))
         {
-            File.WriteAllText(json.Path, JsonSerializerExtensions.ToJson(json));
-            json.MarkSaved();
+            if (json.Path is not string path) throw new InvalidCastException("Path can't be null");
+            
+            var fileLock = FileLocks.GetOrAdd(path, _ => new SemaphoreSlim(1, 1));
+            
+            fileLock.Wait();
+            try
+            {
+                File.WriteAllText(path, JsonSerializerExtensions.ToJson(json));
+                json.MarkSaved();
+            }
+            finally
+            {
+                fileLock.Release();
+            }
         }
     }
 }

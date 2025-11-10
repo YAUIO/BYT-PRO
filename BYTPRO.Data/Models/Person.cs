@@ -1,20 +1,20 @@
-﻿using BYTPRO.Data.JsonUoW;
-using BYTPRO.Data.Models.Attributes;
+﻿using System.Text.Json.Serialization;
+using BYTPRO.Data.JsonUoW;
 using BYTPRO.Data.Validation;
 using BYTPRO.Data.Validation.Validators;
-using BYTPRO.JsonEntityFramework.Attributes;
 using BYTPRO.JsonEntityFramework.Context;
 
 namespace BYTPRO.Data.Models;
 
-[HasExtent]
-public abstract class Person
+public class Person //todo to abstract
 {
-    // ----------< Class Extent >----------
+    // ----------< Class extent >----------
+    [JsonIgnore]
     private readonly JsonEntitySet<Person> _extent;
+    
+    [JsonIgnore]
     public IReadOnlyList<Person> All => _extent.ToList().AsReadOnly();
-
-
+    
     // ----------< Attributes >----------
     private readonly int _id;
     private readonly string _name;
@@ -92,7 +92,7 @@ public abstract class Person
     }
 
     // ----------< Constructor >----------
-    protected Person(
+    public Person( //todo to protected
         int id,
         string name,
         string surname,
@@ -101,17 +101,32 @@ public abstract class Person
         string password,
         IUnitOfWork uow)
     {
+        _extent = uow.Persons;
+        
         Id = id;
         Name = name;
         Surname = surname;
         Phone = phone;
         Email = email;
         Password = password;
-
-        _extent = uow.Persons;
         
         _extent.Add(this);
+    }
 
-        uow.SaveChanges();
+    public override bool Equals(object? obj)
+    {
+        if (obj.GetType() != GetType()) return false;
+        var person = (Person) obj;
+        return Equals(person);
+    }
+
+    private bool Equals(Person other)
+    {
+        return _id == other._id && _name == other._name && _surname == other._surname && _phone == other._phone && _email == other._email && _password == other._password;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(_id, _name, _surname);
     }
 }
