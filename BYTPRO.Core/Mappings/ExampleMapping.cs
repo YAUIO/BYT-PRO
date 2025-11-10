@@ -5,7 +5,7 @@ namespace BYTPRO.Core.Mappings;
 
 public static class ExampleMapping
 {
-    public static ExampleModel ToModel(this ExampleModelGetDto dto) =>
+    /*public static ExampleModel ToModel(this ExampleModelGetDto dto) =>
         new ()
         {
             Id = dto.Id
@@ -15,5 +15,5 @@ public static class ExampleMapping
         new ()
         {
             Id = model.Id
-        };
+        };*/
 }

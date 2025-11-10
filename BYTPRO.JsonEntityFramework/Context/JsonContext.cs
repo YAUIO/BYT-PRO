@@ -66,6 +66,9 @@ public class JsonContext
                         }
                     }
                 }
+                catch (InvalidOperationException)
+                {
+                }
                 finally
                 {
                     fileLock.Release();
@@ -142,7 +145,7 @@ public class JsonContext
             try
             {
                 await using var fileStream = File.Open(path, FileMode.Open);
-                
+
                 table.Clear();
 
                 var enumerable =
@@ -185,7 +188,7 @@ public class JsonContext
             try
             {
                 using var fileStream = File.Open(path, FileMode.Open);
-                
+
                 table.Clear();
 
                 var enumerable =
