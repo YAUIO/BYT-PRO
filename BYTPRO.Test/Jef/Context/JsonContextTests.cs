@@ -23,7 +23,6 @@ public class JsonContextTests
                 .WithFileName("test")
                 .BuildEntity()
             .WithRoot(new DirectoryInfo(root ?? $"{DbRoot}/{_contexts}_{sets}"))
-            .WithUoW<JsonUnitOfWork>()
             .Build();
 
         return context;
@@ -61,7 +60,6 @@ public class JsonContextTests
                 .WithFileName("test")
                 .BuildEntity()
             .WithRoot(new DirectoryInfo(root))
-            .WithUoW<JsonUnitOfWork>()
             .Build();
 
         Assert.Contains(model, newContext.GetTable<TestModel>());

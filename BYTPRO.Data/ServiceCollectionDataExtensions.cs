@@ -19,7 +19,6 @@ public static class ServiceCollectionDataExtensions
                 .WithFileName("order")
             .BuildEntity()
             .WithRoot(new DirectoryInfo($"{Directory.GetCurrentDirectory()}/Db"))
-            .WithUoW<JsonUnitOfWork>()
             .Build();
         
         JsonContext.SetContext(context);
