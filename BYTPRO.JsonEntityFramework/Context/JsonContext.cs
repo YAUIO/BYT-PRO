@@ -1,7 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Text.Json;
 using BYTPRO.JsonEntityFramework.Extensions;
-using BYTPRO.JsonEntityFramework.Mappers;
 
 namespace BYTPRO.JsonEntityFramework.Context;
 
@@ -10,6 +9,8 @@ public class JsonContext
     private HashSet<dynamic> Tables { get; set; }
 
     private DirectoryInfo Root { get; }
+
+    private readonly object? _uow;
     
     public ConcurrentDictionary<string, SemaphoreSlim> FileLocks { get; } = new();
 
@@ -25,7 +26,7 @@ public class JsonContext
             throw new FileNotFoundException("Root directory not found");
         }
 
-        var uow1 = Activator.CreateInstance(uow, args: [this]);
+        _uow = Activator.CreateInstance(uow, args: [this]);
 
         foreach (var ent in entities)
         {
@@ -42,7 +43,10 @@ public class JsonContext
             }
             else
             {
-                // Write loading logic
+                var fileLock = FileLocks.GetOrAdd(path, _ => new SemaphoreSlim(1, 1));
+            
+                fileLock.Wait();
+                
                 using var fileStream = File.Open(path, FileMode.Open);
 
                 var enumerable = (JsonElement)(JsonSerializer.Deserialize<dynamic>(fileStream, JsonSerializerExtensions.Options)
@@ -50,9 +54,7 @@ public class JsonContext
 
                 foreach (var obj in enumerable.EnumerateArray())
                 {
-                    var result = obj.EnumerateObject().Select(o => o.Value)
-                        .ToList()
-                        .MapToEntity(ent.Target, uow1);
+                    var result = obj.MapToEntity(ent.Target, _uow);
 
                     if (!result.GetType().GetProperties().Any(p => p.Name.Equals("Extent")))
                     {
@@ -111,6 +113,71 @@ public class JsonContext
             {
                 fileLock.Release();
             }
+        }
+    }
+    
+    public async Task RollbackAsync()
+    {
+        foreach (var table in Tables)
+        {
+            var path = (string) table.Path;
+            
+            var fileLock = FileLocks.GetOrAdd(path, _ => new SemaphoreSlim(1, 1));
+            
+            await fileLock.WaitAsync();
+
+            await using var fileStream = File.Open(path, FileMode.Open);
+
+            var enumerable = (JsonElement)(await JsonSerializer.DeserializeAsync<dynamic>(fileStream, JsonSerializerExtensions.Options)
+                                           ?? throw new InvalidCastException("Can't be a null JsonElement"));
+
+            foreach (var obj in enumerable.EnumerateArray())
+            {
+                var type = (Type) table.GetType().GetGenericArguments().Single();
+                
+                var result = obj.MapToEntity(type, _uow);
+
+                if (!result.GetType().GetProperties().Any(p => p.Name.Equals("Extent")))
+                {
+                    dynamic casted = result;
+                    table.Add(casted);
+                }
+            }
+                
+            fileStream.Close();
+        }
+    }
+    
+    public void Rollback()
+    {
+        foreach (var table in Tables)
+        {
+            var path = (string) table.Path;
+            
+            var fileLock = FileLocks.GetOrAdd(path, _ => new SemaphoreSlim(1, 1));
+            
+            fileLock.Wait();
+
+            using var fileStream = File.Open(path, FileMode.Open);
+
+            var enumerable = (JsonElement)(JsonSerializer.Deserialize<dynamic>(fileStream, JsonSerializerExtensions.Options)
+                                           ?? throw new InvalidCastException("Can't be a null JsonElement"));
+
+            foreach (var obj in enumerable.EnumerateArray())
+            {
+                var type = (Type) table.GetType().GetGenericArguments().Single();
+                
+                var result = obj.MapToEntity(type, _uow);
+                    
+
+                if (!result.GetType().GetProperties().Any(p => p.Name.Equals("Extent")))
+                {
+                    dynamic casted = result;
+                    table.Add(casted);
+                }
+            }
+                
+            fileStream.Close();
         }
     }
 }
