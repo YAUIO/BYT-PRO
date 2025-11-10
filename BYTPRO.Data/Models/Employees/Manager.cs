@@ -15,7 +15,7 @@ public class Manager(
     EmploymentType employmentType,
     ManagerialLevel level,
     IUnitOfWork uow)
-    : Employee(id, name, surname, phone, email, password, pesel, salary, employmentType, uow)
+    : Employee(id, name, surname, phone, email, password, pesel, salary, employmentType)
 {
     public ManagerialLevel ManagerialLevel { get; set; } = level;
 }

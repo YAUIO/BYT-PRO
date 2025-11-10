@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
 
@@ -6,8 +7,16 @@ namespace BYTPRO.Data.Models;
 public class Customer : Person
 {
     // ----------< Class Extent >----------
-    private readonly JsonEntitySet<Customer> _extent;
-    public new IReadOnlyList<Customer> All => _extent.ToList().AsReadOnly();
+    [JsonIgnore]
+    private static JsonEntitySet<Customer> Extent => JsonContext.Context.GetTable<Customer>();
+    
+    [JsonIgnore]
+    public new static IReadOnlyList<Customer> All => Extent.ToList().AsReadOnly();
+
+    public void Remove()
+    {
+        Extent.Remove(this);
+    }
 
 
     // ----------< Constants / Business Rules >----------
@@ -37,15 +46,13 @@ public class Customer : Person
         string phone,
         string email,
         string password,
-        DateTime registrationDate,
-        JsonContext context)
+        DateTime registrationDate)
         : base(id, name, surname, phone, email, password)
     {
         RegistrationDate = registrationDate;
-        _extent = context.GetTable<Customer>();
 
         RegisterPerson();
-        _extent.Add(this);
+        Extent.Add(this);
     }
 
     // ----------< Methods >----------

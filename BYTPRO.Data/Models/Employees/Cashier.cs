@@ -17,7 +17,7 @@ public abstract class Cashier(
     int pinCode,
     bool canMakeReturn,
     IUnitOfWork uow)
-    : Employee(id, name, surname, phone, email, password, pesel, salary, employmentType, uow)
+    : Employee(id, name, surname, phone, email, password, pesel, salary, employmentType)
 {
     public int RegisterCode { get; set; } = registerCode;
     
