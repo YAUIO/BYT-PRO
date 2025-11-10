@@ -1,26 +1,45 @@
-using BYTPRO.Data.Models.Enums;
+using System.Text.Json.Serialization;
+using BYTPRO.Data.Validation.Validators;
+using BYTPRO.JsonEntityFramework.Context;
 
 namespace BYTPRO.Data.Models.Orders;
 
-public class BranchOrder(
-    int id,
-    DateTime creationDate,
-    DateTime expectedDeliveryDate)
-    : Order(id, creationDate)
+public class BranchOrder : Order
 {
-    public DateTime ExpectedDeliveryDate { get; set; } = expectedDeliveryDate;
+    // ----------< Class Extent >----------
+    [JsonIgnore] private static JsonEntitySet<BranchOrder> Extent => JsonContext.Context.GetTable<BranchOrder>();
+    [JsonIgnore] public new static IReadOnlyList<BranchOrder> All => Extent.ToList().AsReadOnly();
 
-    public void MarkAsDelivered() // TODO move data storing to persistence, out of models, and business logic to services
+
+    // ----------< Attributes >----------
+    private DateTime _expectedDeliveryDate;
+
+
+    // ----------< Properties with validation >----------
+    public DateTime ExpectedDeliveryDate
     {
-        Status = OrderStatus.Completed;
-        Console.WriteLine($"Branch order {Id} marked as delivered.");
-    }
-    
-    public override decimal TotalPrice
-    {
-        get
+        get => _expectedDeliveryDate;
+        set
         {
-            return 0m;
+            value.IsNotDefault(nameof(ExpectedDeliveryDate));
+            CreationDate.IsBefore(value, nameof(CreationDate), nameof(ExpectedDeliveryDate));
+            _expectedDeliveryDate = value;
         }
+    }
+
+    public override decimal TotalPrice => 0m;
+
+
+    // ----------< Constructor >----------
+    public BranchOrder(
+        int id,
+        DateTime creationDate,
+        DateTime expectedDeliveryDate
+    ) : base(id, creationDate)
+    {
+        ExpectedDeliveryDate = expectedDeliveryDate;
+        
+        RegisterOrder();
+        Extent.Add(this);
     }
 }
