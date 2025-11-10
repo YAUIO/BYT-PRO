@@ -29,7 +29,7 @@ public abstract class Employee : Person
     
     public EmploymentType EmploymentType { get; set; }
 
-    public Employee(
+    protected Employee(
         int id,
         string name,
         string surname,

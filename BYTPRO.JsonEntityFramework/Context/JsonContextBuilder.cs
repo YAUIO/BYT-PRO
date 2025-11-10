@@ -24,16 +24,10 @@ public class JsonContextBuilder
         RootDir = rootDir;
         return this;
     }
-    
-    public JsonContextBuilder WithUoW<U>()
-    {
-        uow = typeof(U);
-        return this;
-    }
 
     public JsonContext Build()
     {
         if (RootDir == null) throw new ArgumentNullException(nameof(RootDir), "Provide WithRoot when creating JsonContext");
-        return new JsonContext(RegisteredEntities, RootDir, uow);
+        return new JsonContext(RegisteredEntities, RootDir);
     }
 }

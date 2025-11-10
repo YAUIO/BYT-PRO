@@ -94,7 +94,7 @@ public abstract class Person
     }
 
     // ----------< Constructor >----------
-    public Person(
+    protected Person(
         int id,
         string name,
         string surname,

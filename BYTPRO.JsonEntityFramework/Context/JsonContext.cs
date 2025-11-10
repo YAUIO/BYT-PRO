@@ -18,11 +18,9 @@ public class JsonContext
 
     private DirectoryInfo Root { get; }
 
-    private readonly object? _uow;
-
     public ConcurrentDictionary<string, SemaphoreSlim> FileLocks { get; } = new();
 
-    public JsonContext(HashSet<JsonEntityConfiguration> entities, DirectoryInfo root, Type uow)
+    public JsonContext(HashSet<JsonEntityConfiguration> entities, DirectoryInfo root)
     {
         Context ??= this;
         
@@ -35,8 +33,6 @@ public class JsonContext
         {
             throw new FileNotFoundException("Root directory not found");
         }
-
-        _uow = Activator.CreateInstance(uow, [this]);
 
         foreach (var ent in entities)
         {
@@ -67,8 +63,6 @@ public class JsonContext
 
                     foreach (var obj in enumerable.EnumerateArray())
                     {
-                        // var result = obj.MapToEntity(ent.Target, _uow);
-
                         var result = obj.Deserialize(ent.Target, JsonSerializerOptions.Default);
 
                         if (!result.GetType().GetProperties().Any(p => p.Name.Equals("Extent")))
@@ -165,8 +159,8 @@ public class JsonContext
                 foreach (var obj in enumerable.EnumerateArray())
                 {
                     var type = (Type)table.GetType().GetGenericArguments().Single();
-
-                    var result = obj.MapToEntity(type, _uow);
+                    
+                    var result = obj.Deserialize(type, JsonSerializerOptions.Default);
 
                     if (!result.GetType().GetProperties().Any(p => p.Name.Equals("Extent")))
                     {
@@ -208,8 +202,7 @@ public class JsonContext
                 {
                     var type = (Type)table.GetType().GetGenericArguments().Single();
 
-                    var result = obj.MapToEntity(type, _uow);
-
+                    var result = obj.Deserialize(type, JsonSerializerOptions.Default);
 
                     if (!result.GetType().GetProperties().Any(p => p.Name.Equals("Extent")))
                     {

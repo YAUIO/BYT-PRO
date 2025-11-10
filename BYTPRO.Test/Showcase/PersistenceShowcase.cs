@@ -23,7 +23,6 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
                 .WithFileName("order")
                 .BuildEntity()
             .WithRoot(new DirectoryInfo(DbRoot))
-            .WithUoW<JsonUnitOfWork>()
             .Build();
 
         JsonContext.SetContext(context);
