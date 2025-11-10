@@ -11,7 +11,7 @@ public class JsonContext
     private DirectoryInfo Root { get; }
 
     private readonly object? _uow;
-    
+
     public ConcurrentDictionary<string, SemaphoreSlim> FileLocks { get; } = new();
 
     public JsonContext(HashSet<JsonEntityConfiguration> entities, DirectoryInfo root, Type uow)
@@ -26,7 +26,7 @@ public class JsonContext
             throw new FileNotFoundException("Root directory not found");
         }
 
-        _uow = Activator.CreateInstance(uow, args: [this]);
+        _uow = Activator.CreateInstance(uow, [this]);
 
         foreach (var ent in entities)
         {
@@ -44,26 +44,33 @@ public class JsonContext
             else
             {
                 var fileLock = FileLocks.GetOrAdd(path, _ => new SemaphoreSlim(1, 1));
-            
+
                 fileLock.Wait();
-                
-                using var fileStream = File.Open(path, FileMode.Open);
 
-                var enumerable = (JsonElement)(JsonSerializer.Deserialize<dynamic>(fileStream, JsonSerializerExtensions.Options)
-                                               ?? throw new InvalidCastException("Can't be a null JsonElement"));
-
-                foreach (var obj in enumerable.EnumerateArray())
+                try
                 {
-                    var result = obj.MapToEntity(ent.Target, _uow);
+                    using var fileStream = File.Open(path, FileMode.Open);
 
-                    if (!result.GetType().GetProperties().Any(p => p.Name.Equals("Extent")))
+                    var enumerable =
+                        (JsonElement)(JsonSerializer.Deserialize<dynamic>(fileStream, JsonSerializerExtensions.Options)
+                                      ?? throw new InvalidCastException("Can't be a null JsonElement"));
+
+                    foreach (var obj in enumerable.EnumerateArray())
                     {
-                        dynamic casted = result;
-                        set.Add(casted);
+                        var result = obj.MapToEntity(ent.Target, _uow);
+
+                        if (!result.GetType().GetProperties().Any(p => p.Name.Equals("Extent")))
+                        {
+                            dynamic casted = result;
+                            set.Add(casted);
+                        }
                     }
                 }
-                
-                fileStream.Close();
+                finally
+                {
+                    fileLock.Release();
+                }
+
                 SaveChanges();
             }
         }
@@ -78,10 +85,13 @@ public class JsonContext
     {
         foreach (var json in Tables.Where(json => !json.IsSaved()))
         {
-            if (json.Path is not string path) throw new InvalidCastException("Path can't be null");
-            
+            if (json.Path is not string path)
+            {
+                throw new InvalidCastException("Path can't be null");
+            }
+
             var fileLock = FileLocks.GetOrAdd(path, _ => new SemaphoreSlim(1, 1));
-            
+
             await fileLock.WaitAsync();
             try
             {
@@ -99,10 +109,13 @@ public class JsonContext
     {
         foreach (var json in Tables.Where(json => !json.IsSaved()))
         {
-            if (json.Path is not string path) throw new InvalidCastException("Path can't be null");
-            
+            if (json.Path is not string path)
+            {
+                throw new InvalidCastException("Path can't be null");
+            }
+
             var fileLock = FileLocks.GetOrAdd(path, _ => new SemaphoreSlim(1, 1));
-            
+
             fileLock.Wait();
             try
             {
@@ -115,69 +128,86 @@ public class JsonContext
             }
         }
     }
-    
+
     public async Task RollbackAsync()
     {
         foreach (var table in Tables)
         {
-            var path = (string) table.Path;
-            
+            var path = (string)table.Path;
+
             var fileLock = FileLocks.GetOrAdd(path, _ => new SemaphoreSlim(1, 1));
-            
+
             await fileLock.WaitAsync();
 
-            await using var fileStream = File.Open(path, FileMode.Open);
-
-            var enumerable = (JsonElement)(await JsonSerializer.DeserializeAsync<dynamic>(fileStream, JsonSerializerExtensions.Options)
-                                           ?? throw new InvalidCastException("Can't be a null JsonElement"));
-
-            foreach (var obj in enumerable.EnumerateArray())
+            try
             {
-                var type = (Type) table.GetType().GetGenericArguments().Single();
-                
-                var result = obj.MapToEntity(type, _uow);
+                await using var fileStream = File.Open(path, FileMode.Open);
 
-                if (!result.GetType().GetProperties().Any(p => p.Name.Equals("Extent")))
+                var enumerable =
+                    (JsonElement)(await JsonSerializer.DeserializeAsync<dynamic>(fileStream,
+                                      JsonSerializerExtensions.Options)
+                                  ?? throw new InvalidCastException("Can't be a null JsonElement"));
+
+                foreach (var obj in enumerable.EnumerateArray())
                 {
-                    dynamic casted = result;
-                    table.Add(casted);
+                    var type = (Type)table.GetType().GetGenericArguments().Single();
+
+                    var result = obj.MapToEntity(type, _uow);
+
+                    if (!result.GetType().GetProperties().Any(p => p.Name.Equals("Extent")))
+                    {
+                        dynamic casted = result;
+                        table.Add(casted);
+                    }
                 }
+
+                fileStream.Close();
             }
-                
-            fileStream.Close();
+            finally
+            {
+                fileLock.Release();
+            }
         }
     }
-    
+
     public void Rollback()
     {
         foreach (var table in Tables)
         {
-            var path = (string) table.Path;
-            
+            var path = (string)table.Path;
+
             var fileLock = FileLocks.GetOrAdd(path, _ => new SemaphoreSlim(1, 1));
-            
+
             fileLock.Wait();
 
-            using var fileStream = File.Open(path, FileMode.Open);
-
-            var enumerable = (JsonElement)(JsonSerializer.Deserialize<dynamic>(fileStream, JsonSerializerExtensions.Options)
-                                           ?? throw new InvalidCastException("Can't be a null JsonElement"));
-
-            foreach (var obj in enumerable.EnumerateArray())
+            try
             {
-                var type = (Type) table.GetType().GetGenericArguments().Single();
-                
-                var result = obj.MapToEntity(type, _uow);
-                    
+                using var fileStream = File.Open(path, FileMode.Open);
 
-                if (!result.GetType().GetProperties().Any(p => p.Name.Equals("Extent")))
+                var enumerable =
+                    (JsonElement)(JsonSerializer.Deserialize<dynamic>(fileStream, JsonSerializerExtensions.Options)
+                                  ?? throw new InvalidCastException("Can't be a null JsonElement"));
+
+                foreach (var obj in enumerable.EnumerateArray())
                 {
-                    dynamic casted = result;
-                    table.Add(casted);
+                    var type = (Type)table.GetType().GetGenericArguments().Single();
+
+                    var result = obj.MapToEntity(type, _uow);
+
+
+                    if (!result.GetType().GetProperties().Any(p => p.Name.Equals("Extent")))
+                    {
+                        dynamic casted = result;
+                        table.Add(casted);
+                    }
                 }
+
+                fileStream.Close();
             }
-                
-            fileStream.Close();
+            finally
+            {
+                fileLock.Release();
+            }
         }
     }
 }
