@@ -1,5 +1,7 @@
-﻿using BYTPRO.JsonEntityFramework.Context;
+﻿using BYTPRO.Data.JsonUoW;
+using BYTPRO.JsonEntityFramework.Context;
 using BYTPRO.JsonEntityFramework.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BYTPRO.Test.Jef.Context;
 
@@ -16,12 +18,15 @@ public class JsonContextTests
         
         _contexts++;
         
-        return new JsonContextBuilder()
+        var context = new JsonContextBuilder()
             .AddJsonEntity<TestModel>()
                 .WithFileName("test")
                 .BuildEntity()
             .WithRoot(new DirectoryInfo(root ?? $"{DbRoot}/{_contexts}_{sets}"))
+            .WithUoW<JsonUnitOfWork>()
             .Build();
+
+        return context;
     }
 
     [Fact]
@@ -56,6 +61,7 @@ public class JsonContextTests
                 .WithFileName("test")
                 .BuildEntity()
             .WithRoot(new DirectoryInfo(root))
+            .WithUoW<JsonUnitOfWork>()
             .Build();
 
         Assert.Contains(model, newContext.GetTable<TestModel>());

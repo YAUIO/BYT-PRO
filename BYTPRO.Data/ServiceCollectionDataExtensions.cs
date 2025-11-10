@@ -19,11 +19,12 @@ public static class ServiceCollectionDataExtensions
                 .WithFileName("order")
                 .BuildEntity()
             .WithRoot(new DirectoryInfo($"{Directory.GetCurrentDirectory()}/Db"))
+            .WithUoW<JsonUnitOfWork>()
             .Build();
         
         services.AddSingleton(context);
-
-        services.AddScoped<IUnitOfWork, JsonUnitOfWork>();
+        
+        services.AddSingleton<IUnitOfWork, JsonUnitOfWork>();
         
         return services;
     }
