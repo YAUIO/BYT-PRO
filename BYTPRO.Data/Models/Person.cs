@@ -6,14 +6,16 @@ using BYTPRO.JsonEntityFramework.Context;
 
 namespace BYTPRO.Data.Models;
 
-public class Person //todo to abstract
+public abstract class Person
 {
     // ----------< Class extent >----------
     [JsonIgnore]
-    private readonly JsonEntitySet<Person> _extent;
+    private static readonly List<Person> Extent = [];
     
     [JsonIgnore]
-    public IReadOnlyList<Person> All => _extent.ToList().AsReadOnly();
+    public static IReadOnlyList<Person> All => Extent.ToList().AsReadOnly();
+
+    protected void RegisterPerson() => Extent.Add(this);
     
     // ----------< Attributes >----------
     private readonly int _id;
@@ -30,7 +32,7 @@ public class Person //todo to abstract
         init
         {
             value.IsNonNegative(nameof(Id));
-            if (_extent.Any(p => p.Id == value))
+            if (Extent.Any(p => p.Id == value))
                 throw new ValidationException($"Person with Id {value} already exists.");
             _id = value;
         }
@@ -74,7 +76,7 @@ public class Person //todo to abstract
         set
         {
             value.IsEmail();
-            if (_extent.Any(p => p.Email.Equals(value)))
+            if (Extent.Any(p => p.Email.Equals(value)))
                 throw new ValidationException($"Email '{value}' already exists.");
             _email = value;
         }
@@ -92,17 +94,14 @@ public class Person //todo to abstract
     }
 
     // ----------< Constructor >----------
-    public Person( //todo to protected
+    public Person(
         int id,
         string name,
         string surname,
         string phone,
         string email,
-        string password,
-        IUnitOfWork uow)
-    {
-        _extent = uow.Persons;
-        
+        string password)
+    { 
         Id = id;
         Name = name;
         Surname = surname;
@@ -110,7 +109,7 @@ public class Person //todo to abstract
         Email = email;
         Password = password;
         
-        _extent.Add(this);
+        Extent.Add(this);
     }
 
     public override bool Equals(object? obj)

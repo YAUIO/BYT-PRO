@@ -1,26 +1,52 @@
-using BYTPRO.Data.JsonUoW;
+using System.Text.Json.Serialization;
 using BYTPRO.Data.Models.Enums;
+using BYTPRO.Data.Validation.Validators;
 
 namespace BYTPRO.Data.Models.Employees;
 
-public abstract class Employee(
-    int id,
-    string name,
-    string surname,
-    string phone,
-    string email,
-    string password,
-    string pesel,
-    decimal salary,
-    EmploymentType employmentType,
-    IUnitOfWork uow)
-    : Person(id, name, surname, phone, email, password, uow)
+public abstract class Employee : Person
 {
-    public string Pesel { get; set; } = pesel;
+    // ----------< Class extent >----------
+    [JsonIgnore]
+    private static readonly List<Person> Extent = [];
     
-    public decimal Salary { get; set; } = salary;
+    [JsonIgnore]
+    public new static IReadOnlyList<Person> All => Extent.ToList().AsReadOnly();
+
+    private string _pesel;
     
-    public EmploymentType EmploymentType { get; set; } = employmentType;
+    public string Pesel
+    {
+        get => _pesel;
+        set
+        {
+            value.IsPesel();
+            _pesel = value;
+        }
+    }
+    
+    public decimal Salary { get; set; }
+    
+    public EmploymentType EmploymentType { get; set; }
+
+    public Employee(
+        int id,
+        string name,
+        string surname,
+        string phone,
+        string email,
+        string password,
+        string pesel,
+        decimal salary,
+        EmploymentType employmentType)
+        : base(id, name, surname, phone, email, password)
+    {
+        Pesel = pesel;
+        Salary = salary;
+        EmploymentType = employmentType;
+        
+        Extent.Add(this);
+    }
     
     public void ChangeEmploymentType(EmploymentType newType) // TODO move data storing to persistence, out of models
     {

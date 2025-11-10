@@ -1,45 +1,53 @@
-using BYTPRO.Data.JsonUoW;
-using BYTPRO.Data.Models.Enums;
-using BYTPRO.Data.Models.Orders;
+using BYTPRO.Data.Validation.Validators;
+using BYTPRO.JsonEntityFramework.Context;
 
 namespace BYTPRO.Data.Models;
 
-public class Customer(
-    int id,
-    string name,
-    string surname,
-    string phone,
-    string email,
-    string password,
-    DateTime registrationDate,
-    IUnitOfWork uow)
-    : Person(id, name, surname, phone, email, password, uow)
+public class Customer : Person
 {
-    public DateTime RegistrationDate { get; set; } = registrationDate;
+    // ----------< Class Extent >----------
+    private readonly JsonEntitySet<Customer> _extent;
+    public new IReadOnlyList<Customer> All => _extent.ToList().AsReadOnly();
 
-    public const decimal LoyaltyDiscountPercentage = 0.03m;
 
-    public Dictionary<string, OnlineOrder> OnlineOrders { get; set; } = [];
-    
-    public bool IsLoyal
+    // ----------< Constants / Business Rules >----------
+    public static readonly decimal LoyaltyDiscountPercentage = 0.03m;
+
+    // ----------< Attributes >----------
+    private readonly DateTime _registrationDate;
+
+    // ----------< Properties with validation >----------
+    public DateTime RegistrationDate
     {
-        get
+        get => _registrationDate;
+        init
         {
-            var yearsCondition = (DateTime.Today - RegistrationDate).TotalDays > (365.25 * 2);
-            var ordersCondition = SuccessfulOrders() > 12;
-            return yearsCondition && ordersCondition;
+            value.IsNotDefault(nameof(RegistrationDate));
+            _registrationDate = value;
         }
     }
-    
-    public void GrantLoyaltyStatuses()
+
+    public bool IsLoyal => RegistrationDate.AddYears(2) <= DateTime.Today /*&& SuccessfulOrders() > 12*/;
+
+    // ----------< Constructor >----------
+    public Customer(
+        int id,
+        string name,
+        string surname,
+        string phone,
+        string email,
+        string password,
+        DateTime registrationDate,
+        JsonContext context)
+        : base(id, name, surname, phone, email, password)
     {
-        Console.WriteLine(IsLoyal
-            ? $"Customer {Name} {Surname} has been granted loyalty status."
-            : $"Customer {Name} {Surname} is not yet eligible.");
+        RegistrationDate = registrationDate;
+        _extent = context.GetTable<Customer>();
+
+        RegisterPerson();
+        _extent.Add(this);
     }
-    
-    private int SuccessfulOrders() // TODO move order store logic to repositories and persistence, out of Models
-    {
-        return OnlineOrders.Values.Count(o => o.Status == OrderStatus.Completed);
-    }
+
+    // ----------< Methods >----------
+    public override string ToString() => $"{base.ToString()}, {RegistrationDate}, Loyal: {IsLoyal}";
 }
