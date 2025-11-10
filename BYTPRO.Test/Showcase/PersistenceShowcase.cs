@@ -69,7 +69,7 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
         
         testOutputHelper.WriteLine($"After add {Person.All.ToJson()}");
         
-        person.Remove();
+        Customer.Remove(person);
         
         await uow.SaveChangesAsync();
         

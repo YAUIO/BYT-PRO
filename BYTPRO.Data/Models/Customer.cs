@@ -13,11 +13,6 @@ public class Customer : Person
     [JsonIgnore]
     public new static IReadOnlyList<Customer> All => Extent.ToList().AsReadOnly();
 
-    public void Remove()
-    {
-        Extent.Remove(this);
-    }
-
 
     // ----------< Constants / Business Rules >----------
     public static readonly decimal LoyaltyDiscountPercentage = 0.03m;
@@ -57,4 +52,10 @@ public class Customer : Person
 
     // ----------< Methods >----------
     public override string ToString() => $"{base.ToString()}, {RegistrationDate}, Loyal: {IsLoyal}";
+    
+    // ----------< Extent methods >----------
+    public static void Remove(Customer c)
+    {
+        Extent.Remove(c);
+    }
 }
