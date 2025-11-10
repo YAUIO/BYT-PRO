@@ -1,41 +1,92 @@
+using System.Text.Json.Serialization;
 using BYTPRO.Data.Models.Branches;
-using BYTPRO.Data.Models.Enums;
+using BYTPRO.Data.Validation.Validators;
+using BYTPRO.JsonEntityFramework.Context;
 
 namespace BYTPRO.Data.Models.Orders;
 
-public class OnlineOrder(
-    int id,
-    DateTime creationDate,
-    Customer customer,
-    string trackingNumber,
-    PickupPoint destinationPickupPoint)
-    : Order(id, creationDate)
+public class OnlineOrder : Order
 {
-    public bool IsPaid { get; set; }
-    public DateTime? CancellationDate { get; private set; }
-    
-    public string TrackingNumber { get; set; } = trackingNumber;
-    
-    public PickupPoint DestinationPickupPoint { get; set; } = destinationPickupPoint;
-    
-    public void PayExternally() // TODO move data storing to persistence, out of models, and business logic to services
+    // ----------< Class Extent >----------
+    [JsonIgnore] private static JsonEntitySet<OnlineOrder> Extent => JsonContext.Context.GetTable<OnlineOrder>();
+    [JsonIgnore] public new static IReadOnlyList<OnlineOrder> All => Extent.ToList().AsReadOnly();
+
+
+    // ----------< Attributes >----------
+    private bool _isPaid;
+    private DateTime? _cancellationDate;
+    private string _trackingNumber = null!;
+    private PickupPoint _destinationPickupPoint = null!;
+    private readonly Customer _customer = null!;
+
+
+    // ----------< Properties with validation >----------
+    public bool IsPaid
     {
-        IsPaid = true;
-        Console.WriteLine($"Order {Id} marked as paid externally.");
+        get => _isPaid;
+        set => _isPaid = value;
     }
 
-    public void MarkAsDelivered() // TODO move data storing to persistence, out of models, and business logic to services
+    public DateTime? CancellationDate
     {
-        Status = OrderStatus.Completed;
-        Console.WriteLine($"Order {Id} marked as delivered.");
+        get => _cancellationDate;
+        private set
+        {
+            if (value.HasValue)
+            {
+                value.Value.IsNotDefault(nameof(CancellationDate));
+                CreationDate.IsBefore(value.Value, nameof(CreationDate), nameof(CancellationDate));
+            }
+            _cancellationDate = value;
+        }
     }
 
-    public void AutoCancelAwaiting() // TODO move data storing to persistence, out of models, and business logic to services
+    public string TrackingNumber
     {
-        if (Status != OrderStatus.AwaitingCollection) return;
+        get => _trackingNumber;
+        set
+        {
+            value.IsNotNullOrEmpty(nameof(TrackingNumber));
+            value.IsBelowMaxLength(50);
+            _trackingNumber = value;
+        }
+    }
 
-        Status = OrderStatus.Cancelled;
-        CancellationDate = DateTime.Now;
-        Console.WriteLine($"Order {Id} auto-cancelled.");
+    public PickupPoint DestinationPickupPoint
+    {
+        get => _destinationPickupPoint;
+        set
+        {
+            value.IsNotNull(nameof(DestinationPickupPoint));
+            _destinationPickupPoint = value;
+        }
+    }
+
+    public Customer Customer
+    {
+        get => _customer;
+        init
+        {
+            value.IsNotNull(nameof(Customer));
+            _customer = value;
+        }
+    }
+
+
+    // ----------< Constructor >----------
+    public OnlineOrder(
+        int id,
+        DateTime creationDate,
+        Customer customer,
+        string trackingNumber,
+        PickupPoint destinationPickupPoint
+    ) : base(id, creationDate)
+    {
+        Customer = customer;
+        TrackingNumber = trackingNumber;
+        DestinationPickupPoint = destinationPickupPoint;
+        
+        RegisterOrder();
+        Extent.Add(this);
     }
 }

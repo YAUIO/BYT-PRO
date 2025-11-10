@@ -1,61 +1,96 @@
-﻿using BYTPRO.Data.Models.Attributes;
+﻿using System.Linq;
+using System.Text.Json.Serialization;
+using BYTPRO.Data.Models.Attributes;
+using BYTPRO.Data.Validation;
+using BYTPRO.Data.Validation.Validators;
+
 using BYTPRO.Data.Models.Enums;
 
 namespace BYTPRO.Data.Models.Orders;
 
-public abstract class Order(int id, DateTime creationDate)
+public abstract class Order
 {
-    
-    public int Id { get; set; } = id;
-    
-    public DateTime CreationDate { get; set; } = creationDate;
-    
-    public OrderStatus Status { get; set; } = OrderStatus.InProgress;
+    // ----------< Class Extent >----------
+    [JsonIgnore] private static readonly List<Order> Extent = [];
 
-    public List<OrderItem> OrderItems { get; set; } = [];
+    [JsonIgnore] public static IReadOnlyList<Order> All => Extent.ToList().AsReadOnly();
     
-    public virtual decimal TotalPrice => OrderItems.Sum(item => item.TotalPrice);
-
-    public decimal TotalWeight => OrderItems.Sum(item => item.Product.Weight * item.Quantity);
-    
-    public decimal TotalDimensions => OrderItems.Sum(item => item.Product.Dimensions.Volume * item.Quantity);
+    protected void RegisterOrder() => Extent.Add(this);
 
 
-    public void Cancel() // TODO move data storing to persistence, out of models, and business logic to services
+    // ----------< Attributes >----------
+    private readonly int _id;
+    private readonly DateTime _creationDate;
+    private OrderStatus _status ;
+    private List<OrderItem> _orderItems = [];
+
+
+    // ----------< Properties with validation >----------
+    public int Id
     {
-        this.Status = OrderStatus.Cancelled;
-        Console.WriteLine($"Order {Id} has been cancelled.");
-    }
-
-    public void Issue() // TODO move data storing to persistence, out of models, and business logic to services
-    {
-        Console.WriteLine($"Issuing order {Id}.");
-    }
-    
-    public void Return() // TODO move data storing to persistence, out of models, and business logic to services
-    {
-        this.Status = OrderStatus.Returned;
-        Console.WriteLine($"Order {Id} is being returned.");
-    }
-
-    public virtual void ViewDetails() // TODO move data storing to persistence, out of models, and business logic to services
-    {
-        Console.WriteLine($"Order ID: {Id}, Status: {Status}, Total Price: {TotalPrice}");
-        foreach (var item in OrderItems)
+        get => _id;
+        init
         {
-            Console.WriteLine($"  - {item.Product.Name} (x{item.Quantity}) @ {item.OrderPrice:C}");
+            value.IsNonNegative(nameof(Id));
+            if (Extent.Any(o => o.Id == value))
+                throw new ValidationException($"Order with Id {value} already exists.");
+            _id = value;
         }
     }
-    
-    public static List<Order> GetHistoryByCustomer(Customer customer) // TODO move data storing to persistence, out of models, and business logic to services
+
+    public DateTime CreationDate
     {
-        Console.WriteLine($"Getting order history for {customer.Name}");
-        return new List<Order>(); 
+        get => _creationDate;
+        init
+        {
+            value.IsNotDefault(nameof(CreationDate));
+            value.IsBefore(DateTime.UtcNow, nameof(CreationDate), "now");
+            _creationDate = value;
+        }
     }
 
-    public static Order? FindById(int id) // TODO move data storing to persistence, out of models, and business logic to services
+    public OrderStatus Status
     {
-        Console.WriteLine($"Finding order by ID: {id}");
-        return null;
+        get => _status;
+        set
+        {
+            value.IsDefined(nameof(Status));
+            _status = value;
+        }
+    }
+
+    public List<OrderItem> OrderItems
+    {
+        get => _orderItems;
+        set
+        {
+            value.IsNotNullOrEmpty(nameof(OrderItems));
+            
+            if (value.Any(i => i is null))
+                throw new ValidationException($"{nameof(OrderItems)} cannot contain null items.");
+
+            _orderItems = value;
+        }
+    }
+
+
+    // ----------< Calculated >----------
+    public virtual decimal TotalPrice => _orderItems.Sum(item => item.TotalPrice);
+
+    public decimal TotalWeight => _orderItems.Sum(item => item.Product.Weight * item.Quantity);
+
+    public decimal TotalDimensions => _orderItems.Sum(item => item.Product.Dimensions.Volume * item.Quantity);
+
+
+    // ----------< Constructor >----------
+    protected Order(
+        int id,
+        DateTime creationDate,
+        List<OrderItem>? orderItems = null)
+    {
+        Id = id;
+        CreationDate = creationDate;
+        Status = OrderStatus.InProgress;
+        if (orderItems is not null) OrderItems = orderItems;
     }
 }
