@@ -7,18 +7,20 @@ namespace BYTPRO.Data.Models;
 public class Customer : Person
 {
     // ----------< Class Extent >----------
-    [JsonIgnore]
-    private static JsonEntitySet<Customer> Extent => JsonContext.Context.GetTable<Customer>();
-    
-    [JsonIgnore]
-    public new static IReadOnlyList<Customer> All => Extent.ToList().AsReadOnly();
+    [JsonIgnore] private static JsonEntitySet<Customer> Extent => JsonContext.Context.GetTable<Customer>();
+
+    [JsonIgnore] public new static IReadOnlyList<Customer> All => Extent.ToList().AsReadOnly();
+
+    public static void Remove(Customer c) => Extent.Remove(c);
 
 
     // ----------< Constants / Business Rules >----------
     public static readonly decimal LoyaltyDiscountPercentage = 0.03m;
 
+
     // ----------< Attributes >----------
     private readonly DateTime _registrationDate;
+
 
     // ----------< Properties with validation >----------
     public DateTime RegistrationDate
@@ -33,6 +35,7 @@ public class Customer : Person
 
     public bool IsLoyal => RegistrationDate.AddYears(2) <= DateTime.Today /*&& SuccessfulOrders() > 12*/;
 
+
     // ----------< Constructor >----------
     public Customer(
         int id,
@@ -46,13 +49,10 @@ public class Customer : Person
     {
         RegistrationDate = registrationDate;
 
+        // IMPORTANT NOTE:
+        // We defer registration to super class (adding to super Class Extent)
+        // until all properties are validated and set for child class.
         RegisterPerson();
         Extent.Add(this);
     }
-
-    // ----------< Methods >----------
-    public override string ToString() => $"{base.ToString()}, {RegistrationDate}, Loyal: {IsLoyal}";
-    
-    // ----------< Extent methods >----------
-    public static void Remove(Customer c) => Extent.Remove(c);
 }

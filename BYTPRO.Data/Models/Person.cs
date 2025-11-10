@@ -1,22 +1,19 @@
 ﻿using System.Text.Json.Serialization;
-using BYTPRO.Data.JsonUoW;
 using BYTPRO.Data.Validation;
 using BYTPRO.Data.Validation.Validators;
-using BYTPRO.JsonEntityFramework.Context;
 
 namespace BYTPRO.Data.Models;
 
 public abstract class Person
 {
-    // ----------< Class extent >----------
-    [JsonIgnore]
-    private static readonly List<Person> Extent = [];
-    
-    [JsonIgnore]
-    public static IReadOnlyList<Person> All => Extent.ToList().AsReadOnly();
+    // ----------< Class Extent >----------
+    [JsonIgnore] private static readonly List<Person> Extent = [];
+
+    [JsonIgnore] public static IReadOnlyList<Person> All => Extent.ToList().AsReadOnly();
 
     protected void RegisterPerson() => Extent.Add(this);
-    
+
+
     // ----------< Attributes >----------
     private readonly int _id;
     private readonly string _name;
@@ -24,6 +21,7 @@ public abstract class Person
     private string _phone;
     private string _email;
     private string _password;
+
 
     // ----------< Properties with validation >----------
     public int Id
@@ -93,6 +91,7 @@ public abstract class Person
         }
     }
 
+
     // ----------< Constructor >----------
     protected Person(
         int id,
@@ -101,7 +100,7 @@ public abstract class Person
         string phone,
         string email,
         string password)
-    { 
+    {
         Id = id;
         Name = name;
         Surname = surname;

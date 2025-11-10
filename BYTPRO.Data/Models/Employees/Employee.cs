@@ -6,32 +6,51 @@ namespace BYTPRO.Data.Models.Employees;
 
 public abstract class Employee : Person
 {
-    // ----------< Class extent >----------
-    [JsonIgnore]
-    private static readonly List<Person> Extent = [];
-    
-    [JsonIgnore]
-    public new static IReadOnlyList<Person> All => Extent.ToList().AsReadOnly();
-    
-    
+    // ----------< Class Extent >----------
+    [JsonIgnore] private static readonly List<Employee> Extent = [];
+
+    [JsonIgnore] public new static IReadOnlyList<Employee> All => Extent.ToList().AsReadOnly();
+
+    protected void RegisterEmployee() => Extent.Add(this);
+
+
     // ----------< Attributes >----------
-    private string _pesel;
-    
-    
+    private readonly string _pesel;
+    private decimal _salary;
+    private EmploymentType _employmentType;
+
+
     // ----------< Properties with validation >----------
     public string Pesel
     {
         get => _pesel;
-        set
+        init
         {
             value.IsPesel();
             _pesel = value;
         }
     }
-    
-    public decimal Salary { get; set; }
-    
-    public EmploymentType EmploymentType { get; set; }
+
+    public decimal Salary
+    {
+        get => _salary;
+        set
+        {
+            value.IsPositive(nameof(Salary));
+            _salary = value;
+        }
+    }
+
+    public EmploymentType EmploymentType
+    {
+        get => _employmentType;
+        set
+        {
+            value.IsDefined(nameof(EmploymentType));
+            _employmentType = value;
+        }
+    }
+
 
     // ----------< Constructor >----------
     protected Employee(
@@ -49,14 +68,5 @@ public abstract class Employee : Person
         Pesel = pesel;
         Salary = salary;
         EmploymentType = employmentType;
-        
-        Extent.Add(this);
-    }
-    
-    // ----------< Methods >----------
-    public void ChangeEmploymentType(EmploymentType newType) // TODO move data storing to persistence, out of models
-    {
-        this.EmploymentType = newType;
-        Console.WriteLine($"Employee {Name} {Surname} new employment type: {newType}");
     }
 }
