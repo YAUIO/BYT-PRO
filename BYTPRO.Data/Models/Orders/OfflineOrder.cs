@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using BYTPRO.Data.Models.Branches;
+using BYTPRO.Data.Models.UmlAttributes;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
 
@@ -13,29 +13,17 @@ public class OfflineOrder : Order
 
 
     // ----------< Attributes >----------
-    private string? _phone;
-    private Store _originStore = null!;
+    private readonly string? _phone;
 
 
     // ----------< Properties with validation >----------
     public string? Phone
     {
         get => _phone;
-        set
+        init
         {
-            if (value is not null)
-                value.IsPhoneNumber(nameof(Phone));
+            value?.IsPhoneNumber();
             _phone = value;
-        }
-    }
-
-    public Store OriginStore
-    {
-        get => _originStore;
-        set
-        {
-            value.IsNotNull(nameof(OriginStore));
-            _originStore = value;
         }
     }
 
@@ -44,13 +32,12 @@ public class OfflineOrder : Order
     public OfflineOrder(
         int id,
         DateTime creationDate,
-        Store originStore,
-        string? phone = null
-    ) : base(id, creationDate)
+        List<OrderItem> orderItems,
+        string? phone
+    ) : base(id, creationDate, orderItems)
     {
-        OriginStore = originStore;
         Phone = phone;
-        
+
         RegisterOrder();
         Extent.Add(this);
     }

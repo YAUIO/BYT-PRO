@@ -17,4 +17,12 @@ public static class DateValidator
         
         return true;
     }
+    
+    public static bool IsAfter(this DateTime end, DateTime start, string endName = "DateTime.End", string startName = "DateTime.Start")
+    {
+        if (end <= start)
+            throw new ValidationException($"{endName} must be after {startName}.");
+        
+        return true;
+    }
 }
