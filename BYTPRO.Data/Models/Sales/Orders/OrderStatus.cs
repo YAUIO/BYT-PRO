@@ -1,4 +1,4 @@
-namespace BYTPRO.Data.Models.Enums;
+namespace BYTPRO.Data.Models.Sales.Orders;
 
 public enum OrderStatus
 {

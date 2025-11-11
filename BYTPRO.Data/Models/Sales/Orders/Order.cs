@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
-using BYTPRO.Data.Models.Enums;
 using BYTPRO.Data.Validation;
 using BYTPRO.Data.Validation.Validators;
 
