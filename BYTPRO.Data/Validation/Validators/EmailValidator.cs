@@ -6,14 +6,12 @@ public static partial class EmailValidator
 {
     private static readonly Regex EmailRegex = CompileEmailRegex();
 
-    public static bool IsEmail(this string email, string fieldName = "Email")
+    public static void IsEmail(this string email, string fieldName = "Email")
     {
         email.IsNotNullOrEmpty(fieldName);
 
         if (!EmailRegex.IsMatch(email))
             throw new ValidationException($"{fieldName} is not a valid email.");
-        
-        return true;
     }
 
     [GeneratedRegex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",

@@ -29,6 +29,7 @@ public class Customer : Person
         init
         {
             value.IsNotDefault(nameof(RegistrationDate));
+            value.IsBefore(DateTime.UtcNow, nameof(RegistrationDate), "Now");
             _registrationDate = value;
         }
     }

@@ -41,7 +41,7 @@ public abstract class Order
         init
         {
             value.IsNotDefault(nameof(CreationDate));
-            value.IsBefore(DateTime.UtcNow, nameof(CreationDate), "now");
+            value.IsBefore(DateTime.UtcNow, nameof(CreationDate), "Now");
             _creationDate = value;
         }
     }
