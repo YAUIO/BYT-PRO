@@ -1,5 +1,3 @@
-using BYTPRO.Data.Models.Sales.Orders;
-
 namespace BYTPRO.Data.Models.Locations.Branches;
 
 public class PickupPoint(
@@ -12,8 +10,6 @@ public class PickupPoint(
     : Branch(address, name, openingHours, totalArea)
 {
     public int ParcelStorageSlots { get; set; } = parcelStorageSlots;
-    public decimal MaxParcelWeight { get; set; } = maxParcelWeight;
 
-    public List<OnlineOrder> OnlineOrders { get; set; } = new List<OnlineOrder>();
-    
+    public decimal MaxParcelWeight { get; set; } = maxParcelWeight;
 }

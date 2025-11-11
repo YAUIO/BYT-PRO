@@ -10,6 +10,7 @@ public class Warehouse(
     : Branch(address, name, openingHours, totalArea)
 {
     public decimal MaxStorageCapacity { get; set; } = maxStorageCapacity;
+
     public int DockCount { get; set; } = dockCount;
 
     public decimal CurrentStorageCapacity { get; private set; } = 0;

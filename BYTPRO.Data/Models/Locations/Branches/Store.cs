@@ -1,5 +1,3 @@
-using BYTPRO.Data.Models.Sales.Orders;
-
 namespace BYTPRO.Data.Models.Locations.Branches;
 
 public class Store(
@@ -12,9 +10,9 @@ public class Store(
     int selfCheckouts)
     : Branch(address, name, openingHours, totalArea)
 {
-    public int POSCount { get; set; } = posCount;
-    public decimal SalesArea { get; set; } = salesArea;
-    public int SelfCheckouts { get; set; } = selfCheckouts;
+    public int PosCount { get; set; } = posCount;
 
-    public List<OfflineOrder> OfflineOrders { get; set; } = new List<OfflineOrder>();
+    public decimal SalesArea { get; set; } = salesArea;
+
+    public int SelfCheckouts { get; set; } = selfCheckouts;
 }
