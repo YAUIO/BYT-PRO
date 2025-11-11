@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
 
-namespace BYTPRO.Data.Models;
+namespace BYTPRO.Data.Models.People;
 
 public class Customer : Person
 {

@@ -1,7 +1,7 @@
 using BYTPRO.Data.Models.Enums;
 using BYTPRO.Data.Validation.Validators;
 
-namespace BYTPRO.Data.Models.Employees.Roles;
+namespace BYTPRO.Data.Models.People.Employees.Roles;
 
 public class Manager
 {

@@ -2,7 +2,7 @@
 using BYTPRO.Data.Validation;
 using BYTPRO.Data.Validation.Validators;
 
-namespace BYTPRO.Data.Models;
+namespace BYTPRO.Data.Models.People;
 
 public abstract class Person
 {

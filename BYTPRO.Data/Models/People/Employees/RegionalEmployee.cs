@@ -3,7 +3,7 @@ using BYTPRO.Data.Models.Enums;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
 
-namespace BYTPRO.Data.Models.Employees;
+namespace BYTPRO.Data.Models.People.Employees;
 
 public class RegionalEmployee : Employee
 {

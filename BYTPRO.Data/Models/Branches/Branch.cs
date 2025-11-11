@@ -1,4 +1,5 @@
 using BYTPRO.Data.Models.Employees;
+using BYTPRO.Data.Models.People.Employees;
 using BYTPRO.Data.Models.UmlAttributes;
 
 namespace BYTPRO.Data.Models.Branches;

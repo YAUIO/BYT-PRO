@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 using BYTPRO.Data.Models.Enums;
 using BYTPRO.Data.Validation.Validators;
 
-namespace BYTPRO.Data.Models.Employees;
+namespace BYTPRO.Data.Models.People.Employees;
 
 public abstract class Employee : Person
 {

@@ -1,5 +1,5 @@
-﻿using BYTPRO.Data.Models;
-using BYTPRO.Data.Models.Orders;
+﻿using BYTPRO.Data.Models.Orders;
+using BYTPRO.Data.Models.People;
 using BYTPRO.JsonEntityFramework.Context;
 
 namespace BYTPRO.Data.JsonUoW;
