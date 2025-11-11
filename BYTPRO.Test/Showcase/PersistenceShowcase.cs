@@ -1,4 +1,7 @@
 ﻿using BYTPRO.Data.Models.People;
+using BYTPRO.Data.Models.People.Employees;
+using BYTPRO.Data.Models.People.Employees.Local;
+using BYTPRO.Data.Models.People.Employees.Regional;
 using BYTPRO.JsonEntityFramework.Context;
 using BYTPRO.JsonEntityFramework.Extensions;
 using Xunit.Abstractions;
@@ -15,9 +18,20 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
         Directory.CreateDirectory(DbRoot);
 
         var context = new JsonContextBuilder()
+            // ----------< People >----------
             .AddJsonEntity<Customer>()
             .WithFileName("customers")
             .BuildEntity()
+            // ------------------------------
+            .AddJsonEntity<LocalEmployee>()
+            .WithFileName("localEmployees")
+            .BuildEntity()
+            //------------------------------
+            .AddJsonEntity<RegionalEmployee>()
+            .WithFileName("regionalEmployees")
+            .BuildEntity()
+
+            //------------------------------
             .WithRoot(new DirectoryInfo(DbRoot))
             .Build();
 
@@ -26,7 +40,7 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
 
 
     [Fact]
-    public async Task TestPersistence()
+    public void TestPeopleClassExtent()
     {
         var customer = new Customer(
             1,
@@ -38,9 +52,42 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
             DateTime.Now
         );
 
-        await JsonContext.Context.SaveChangesAsync();
+        var localEmployee = new LocalEmployee(
+            2,
+            "John",
+            "Smith",
+            "+48123456789",
+            "john.smith@gmail.com",
+            "12345",
+            "12345678901",
+            5000m,
+            EmploymentType.FullTime,
+            ["Basics"],
+            "12:00-13:00"
+        );
 
-        testOutputHelper.WriteLine($"Persons: {Person.All.ToJson()}");
-        testOutputHelper.WriteLine($"\nCustomers: {Customer.All.ToJson()}");
+        var regionalEmployee = new RegionalEmployee(
+            3,
+            "Jane",
+            "Smith",
+            "+48123456780",
+            "jane.smith@gmail.com",
+            "123456789",
+            "12345678902",
+            10000m,
+            EmploymentType.Intern,
+            "INTERN@12345",
+            SupervisionScope.Technical
+        );
+
+        testOutputHelper.WriteLine($"Persons({Person.All.Count}): {Person.All.ToJson()}");
+        testOutputHelper.WriteLine("\n\n----------------------------------------\n\n");
+        testOutputHelper.WriteLine($"Customers({Customer.All.Count}): {Customer.All.ToJson()}");
+        testOutputHelper.WriteLine("\n\n----------------------------------------\n\n");
+        testOutputHelper.WriteLine($"Employees({Employee.All.Count}): {Employee.All.ToJson()}");
+        testOutputHelper.WriteLine("\n\n----------------------------------------\n\n");
+        testOutputHelper.WriteLine($"LocalEmployees({LocalEmployee.All.Count}): {LocalEmployee.All.ToJson()}");
+        testOutputHelper.WriteLine("\n\n----------------------------------------\n\n");
+        testOutputHelper.WriteLine($"RegionalEmployees({RegionalEmployee.All.Count}): {RegionalEmployee.All.ToJson()}");
     }
 }
