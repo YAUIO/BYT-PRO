@@ -1,22 +1,108 @@
+using System.Collections.ObjectModel;
+using System.Text.Json.Serialization;
+using BYTPRO.Data.Validation.Validators;
+using BYTPRO.JsonEntityFramework.Context;
+
 namespace BYTPRO.Data.Models.Sales;
 
-public class Product(
-    string name,
-    string description,
-    decimal price,
-    List<string> images,
-    decimal weight,
-    Dimensions dimensions)
+public class Product
 {
-    public string Name { get; set; } = name;
+    // ----------< Class Extent >----------
+    [JsonIgnore] private static JsonEntitySet<Product> Extent => JsonContext.Context.GetTable<Product>();
 
-    public string Description { get; set; } = description;
+    [JsonIgnore] public static IReadOnlyList<Product> All => Extent.ToList().AsReadOnly();
 
-    public decimal Price { get; set; } = price;
 
-    public List<string> Images { get; set; } = images;
+    // ----------< Attributes >----------
+    private readonly string _name;
+    private string _description;
+    private readonly decimal _price;
+    private readonly List<string> _images = [];
+    private readonly decimal _weight;
+    private readonly Dimensions _dimensions;
 
-    public decimal Weight { get; set; } = weight;
 
-    public Dimensions Dimensions { get; init; } = dimensions;
+    // ----------< Properties with validation >----------
+    public string Name
+    {
+        get => _name;
+        init
+        {
+            value.IsNotNullOrEmpty(nameof(Name));
+            value.IsBelowMaxLength(100);
+            _name = value;
+        }
+    }
+
+    public string Description
+    {
+        get => _description;
+        set
+        {
+            value.IsNotNullOrEmpty(nameof(Description));
+            value.IsBelowMaxLength(1000);
+            _description = value;
+        }
+    }
+
+    public decimal Price
+    {
+        get => _price;
+        init
+        {
+            value.IsPositive(nameof(Price));
+            _price = value;
+        }
+    }
+
+    public ReadOnlyCollection<string> Images
+    {
+        get => _images.AsReadOnly();
+        init
+        {
+            value.AreAllStringsNotNullOrEmpty(nameof(Images));
+            _images.AddRange(value);
+        }
+    }
+
+    public decimal Weight
+    {
+        get => _weight;
+        init
+        {
+            value.IsPositive(nameof(Weight));
+            _weight = value;
+        }
+    }
+
+    public Dimensions Dimensions
+    {
+        get => _dimensions;
+        init
+        {
+            value.IsNotNull(nameof(Dimensions));
+            _dimensions = value;
+        }
+    }
+
+
+    // ----------< Constructor >----------
+    public Product(
+        string name,
+        string description,
+        decimal price,
+        List<string> images,
+        decimal weight,
+        Dimensions dimensions
+    )
+    {
+        Name = name;
+        Description = description;
+        Price = price;
+        Images = new ReadOnlyCollection<string>(images);
+        Weight = weight;
+        Dimensions = dimensions;
+
+        Extent.Add(this);
+    }
 }
