@@ -1,7 +1,7 @@
 using BYTPRO.Data.Models.People.Employees;
 using BYTPRO.Data.Models.UmlAttributes;
 
-namespace BYTPRO.Data.Models.Branches;
+namespace BYTPRO.Data.Models.Locations.Branches;
 
 public abstract class Branch(
     Address address,

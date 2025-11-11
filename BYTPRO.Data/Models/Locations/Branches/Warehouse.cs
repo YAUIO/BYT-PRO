@@ -1,6 +1,4 @@
-using BYTPRO.Data.Models.UmlAttributes;
-
-namespace BYTPRO.Data.Models.Branches;
+namespace BYTPRO.Data.Models.Locations.Branches;
 
 public class Warehouse(
     Address address,
@@ -15,5 +13,4 @@ public class Warehouse(
     public int DockCount { get; set; } = dockCount;
 
     public decimal CurrentStorageCapacity { get; private set; } = 0;
-    
 }

@@ -1,7 +1,6 @@
 using BYTPRO.Data.Models.Sales.Orders;
-using BYTPRO.Data.Models.UmlAttributes;
 
-namespace BYTPRO.Data.Models.Branches;
+namespace BYTPRO.Data.Models.Locations.Branches;
 
 public class PickupPoint(
     Address address,

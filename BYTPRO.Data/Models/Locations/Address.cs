@@ -1,4 +1,4 @@
-namespace BYTPRO.Data.Models.UmlAttributes;
+namespace BYTPRO.Data.Models.Locations;
 
 public record Address(
     string Street,

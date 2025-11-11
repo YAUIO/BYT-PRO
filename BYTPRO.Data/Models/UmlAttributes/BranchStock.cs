@@ -1,4 +1,4 @@
-using BYTPRO.Data.Models.Branches;
+using BYTPRO.Data.Models.Locations.Branches;
 using BYTPRO.Data.Models.Sales;
 
 namespace BYTPRO.Data.Models.UmlAttributes;

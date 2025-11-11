@@ -1,7 +1,6 @@
 using BYTPRO.Data.Models.Sales.Orders;
-using BYTPRO.Data.Models.UmlAttributes;
 
-namespace BYTPRO.Data.Models.Branches;
+namespace BYTPRO.Data.Models.Locations.Branches;
 
 public class Store(
     Address address,
@@ -18,5 +17,4 @@ public class Store(
     public int SelfCheckouts { get; set; } = selfCheckouts;
 
     public List<OfflineOrder> OfflineOrders { get; set; } = new List<OfflineOrder>();
-    
 }
