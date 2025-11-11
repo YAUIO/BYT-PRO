@@ -1,8 +1,7 @@
+using System.Text.Json.Serialization;
 using BYTPRO.Data.Validation.Validators;
 
-namespace BYTPRO.Data.Models.UmlAttributes;
-
-using System.Text.Json.Serialization;
+namespace BYTPRO.Data.Models.Sales;
 
 public record OrderItem
 {

@@ -1,14 +1,14 @@
 using System.Text.Json.Serialization;
-using BYTPRO.Data.Models.UmlAttributes;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
 
-namespace BYTPRO.Data.Models.Orders;
+namespace BYTPRO.Data.Models.Sales.Orders;
 
 public class OfflineOrder : Order
 {
     // ----------< Class Extent >----------
     [JsonIgnore] private static JsonEntitySet<OfflineOrder> Extent => JsonContext.Context.GetTable<OfflineOrder>();
+
     [JsonIgnore] public new static IReadOnlyList<OfflineOrder> All => Extent.ToList().AsReadOnly();
 
 

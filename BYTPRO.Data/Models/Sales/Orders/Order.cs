@@ -1,11 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
+using BYTPRO.Data.Models.Enums;
 using BYTPRO.Data.Validation;
 using BYTPRO.Data.Validation.Validators;
-using BYTPRO.Data.Models.Enums;
-using BYTPRO.Data.Models.UmlAttributes;
 
-namespace BYTPRO.Data.Models.Orders;
+namespace BYTPRO.Data.Models.Sales.Orders;
 
 public abstract class Order
 {

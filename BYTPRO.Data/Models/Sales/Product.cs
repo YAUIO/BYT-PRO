@@ -1,7 +1,7 @@
 using BYTPRO.Data.Models.Branches;
 using BYTPRO.Data.Models.UmlAttributes;
 
-namespace BYTPRO.Data.Models;
+namespace BYTPRO.Data.Models.Sales;
 
 public class Product(
     string name,
@@ -11,21 +11,21 @@ public class Product(
     string description)
 {
     public string Name { get; set; } = name;
-    
+
     public string Description { get; set; } = description;
-    
+
     public decimal Price { get; set; } = price;
-    
+
     public List<string> Image { get; set; } = [];
-    
+
     public decimal Weight { get; set; } = weight;
-    
+
     public Dimensions Dimensions { get; set; } = dimensions;
-    
+
     public List<BranchStock> StockLevels { get; set; } = [];
 
     public Product? ParentProduct { get; set; }
-    
+
     public List<Product> ChildProducts { get; set; } = [];
 
 
