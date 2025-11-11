@@ -12,14 +12,14 @@ public class StringValidatorTests
         str.IsNotNullOrEmpty();
         Assert.True(true);
     }
-    
+
     [Fact]
     public void TestIsNotNullOrEmptyThrowsForNull()
     {
         string? str = null;
         Assert.Throws<ValidationException>(() => str.IsNotNullOrEmpty());
     }
-    
+
     [Fact]
     public void TestIsNotNullOrEmptyThrowsForEmpty()
     {

@@ -21,10 +21,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Core\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\BYTPRO.Api\BYTPRO.Api.csproj" />
       <ProjectReference Include="..\BYTPRO.Core\BYTPRO.Core.csproj" />
       <ProjectReference Include="..\BYTPRO.Data\BYTPRO.Data.csproj" />
