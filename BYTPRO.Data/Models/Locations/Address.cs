@@ -5,11 +5,11 @@ namespace BYTPRO.Data.Models.Locations;
 public record Address
 {
     // ----------< Properties >----------
-    public string Street { get; init; }
-    public string StreetNumber { get; init; }
-    public string? ApartmentNumber { get; init; }
-    public string ZipCode { get; init; }
-    public string City { get; init; }
+    public string Street { get; }
+    public string StreetNumber { get; }
+    public string? ApartmentNumber { get; }
+    public string ZipCode { get; }
+    public string City { get; }
 
 
     // ----------< Constructor with validation >----------

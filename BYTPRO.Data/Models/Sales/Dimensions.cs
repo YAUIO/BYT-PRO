@@ -6,9 +6,9 @@ namespace BYTPRO.Data.Models.Sales;
 public record Dimensions
 {
     // ----------< Properties >----------
-    public decimal Width { get; init; }
-    public decimal Height { get; init; }
-    public decimal Depth { get; init; }
+    public decimal Width { get; }
+    public decimal Height { get; }
+    public decimal Depth { get; }
 
 
     // ----------< Calculated Properties >----------
