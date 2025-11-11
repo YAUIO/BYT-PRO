@@ -11,8 +11,6 @@ public class Customer : Person
 
     [JsonIgnore] public new static IReadOnlyList<Customer> All => Extent.ToList().AsReadOnly();
 
-    public static void Remove(Customer c) => Extent.Remove(c);
-
 
     // ----------< Constants / Business Rules >----------
     public static readonly decimal LoyaltyDiscountPercentage = 0.03m;
@@ -29,12 +27,12 @@ public class Customer : Person
         init
         {
             value.IsNotDefault(nameof(RegistrationDate));
-            value.IsBefore(DateTime.UtcNow, nameof(RegistrationDate), "Now");
+            value.IsBefore(DateTime.Now, nameof(RegistrationDate), "Now");
             _registrationDate = value;
         }
     }
 
-    public bool IsLoyal => RegistrationDate.AddYears(2) <= DateTime.Today /*&& SuccessfulOrders() > 12*/;
+    [JsonIgnore] public bool IsLoyal => RegistrationDate.AddYears(2) <= DateTime.Today /*&& SuccessfulOrders() > 12*/;
 
 
     // ----------< Constructor >----------
