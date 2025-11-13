@@ -40,6 +40,7 @@ public abstract class Employee : Person
         }
     }
 
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public EmploymentType EmploymentType
     {
         get => _employmentType;

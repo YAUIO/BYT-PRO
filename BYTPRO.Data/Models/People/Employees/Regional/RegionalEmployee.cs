@@ -29,6 +29,7 @@ public class RegionalEmployee : Employee
         }
     }
 
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public SupervisionScope SupervisionScope
     {
         get => _supervisionScope;
