@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using BYTPRO.Data.Validation;
 using BYTPRO.Data.Validation.Validators;
 
@@ -56,9 +55,9 @@ public abstract class Order
         }
     }
 
-    public ReadOnlyCollection<OrderItem> OrderItems
+    public List<OrderItem> OrderItems
     {
-        get => _orderItems.AsReadOnly();
+        get => _orderItems;
         init
         {
             value.IsNotNullOrEmpty(nameof(OrderItems));
@@ -84,6 +83,6 @@ public abstract class Order
         Id = id;
         CreationDate = creationDate;
         Status = OrderStatus.InProgress;
-        OrderItems = new ReadOnlyCollection<OrderItem>(orderItems);
+        OrderItems = orderItems;
     }
 }

@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using BYTPRO.Data.Validation.Validators;
 
 namespace BYTPRO.Data.Models.People.Employees.Roles;
@@ -21,9 +20,9 @@ public class Consultant
         }
     }
 
-    public ReadOnlyCollection<string> Languages
+    public List<string> Languages
     {
-        get => _languages.AsReadOnly();
+        get => _languages;
         init
         {
             value.AreAllStringsNotNullOrEmpty(nameof(Languages));
@@ -39,6 +38,6 @@ public class Consultant
     )
     {
         Specialization = specialization;
-        Languages = new ReadOnlyCollection<string>(languages);
+        Languages = languages;
     }
 }

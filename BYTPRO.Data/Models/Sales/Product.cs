@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
@@ -55,9 +54,9 @@ public class Product
         }
     }
 
-    public ReadOnlyCollection<string> Images
+    public List<string> Images
     {
-        get => _images.AsReadOnly();
+        get => _images;
         init
         {
             value.AreAllStringsNotNullOrEmpty(nameof(Images));
@@ -99,7 +98,7 @@ public class Product
         Name = name;
         Description = description;
         Price = price;
-        Images = new ReadOnlyCollection<string>(images);
+        Images = images;
         Weight = weight;
         Dimensions = dimensions;
 
