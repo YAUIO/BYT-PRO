@@ -21,6 +21,10 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
             .AddJsonEntity<Customer>()
             .WithFileName("customers")
             .BuildEntity()
+            // ------------------------------
+            .AddJsonEntity<LocalEmployee>()
+            .WithFileName("localEmployees")
+            .BuildEntity()
             //------------------------------
             .AddJsonEntity<RegionalEmployee>()
             .WithFileName("regionalEmployees")
@@ -45,6 +49,20 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
             "s30000@pjwstk.edu.pl",
             "12345678",
             DateTime.Now
+        );
+
+        var localEmployee = new LocalEmployee(
+            2,
+            "John",
+            "Smith",
+            "+48123456789",
+            "john.smith@gmail.com",
+            "12345",
+            "12345678901",
+            5000m,
+            EmploymentType.FullTime,
+            ["Basics"],
+            "12:00-13:00"
         );
 
         var regionalEmployee = new RegionalEmployee(
@@ -74,6 +92,8 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
         testOutputHelper.WriteLine($"Customers({Customer.All.Count}): {Customer.All.ToJson()}");
         testOutputHelper.WriteLine("\n\n----------------------------------------\n\n");
         testOutputHelper.WriteLine($"Employees({Employee.All.Count}): {Employee.All.ToJson()}");
+        testOutputHelper.WriteLine("\n\n----------------------------------------\n\n");
+        testOutputHelper.WriteLine($"LocalEmployees({LocalEmployee.All.Count}): {LocalEmployee.All.ToJson()}");
         testOutputHelper.WriteLine("\n\n----------------------------------------\n\n");
         testOutputHelper.WriteLine($"RegionalEmployees({RegionalEmployee.All.Count}): {RegionalEmployee.All.ToJson()}");
     }
