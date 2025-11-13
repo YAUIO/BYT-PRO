@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using BYTPRO.Data.Validation.Validators;
 
 namespace BYTPRO.Data.Models.People.Employees.Roles;
@@ -9,6 +10,7 @@ public class Manager
 
 
     // ----------< Properties with validation >----------
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public ManagerialLevel ManagerialLevel
     {
         get => _managerialLevel;

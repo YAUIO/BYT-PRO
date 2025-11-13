@@ -45,6 +45,7 @@ public abstract class Order
         }
     }
 
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public OrderStatus Status
     {
         get => _status;
