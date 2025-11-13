@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Text;
 using System.Text.Json;
 using BYTPRO.JsonEntityFramework.Extensions;
 
@@ -101,7 +102,7 @@ public class JsonContext
             await fileLock.WaitAsync();
             try
             {
-                await File.WriteAllTextAsync(path, JsonSerializerExtensions.ToJson(json));
+                await File.WriteAllTextAsync(path, JsonSerializerExtensions.ToJson(json), Encoding.UTF8);
                 json.MarkSaved();
             }
             finally
@@ -125,7 +126,7 @@ public class JsonContext
             fileLock.Wait();
             try
             {
-                File.WriteAllText(path, JsonSerializerExtensions.ToJson(json));
+                File.WriteAllText(path, JsonSerializerExtensions.ToJson(json), Encoding.UTF8);
                 json.MarkSaved();
             }
             finally
