@@ -14,17 +14,12 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
 
     static PersistenceShowcase()
     {
-        if (Directory.Exists(DbRoot)) Directory.Delete(DbRoot, true);
-        Directory.CreateDirectory(DbRoot);
+        if (!Directory.Exists(DbRoot)) Directory.CreateDirectory(DbRoot);
 
         var context = new JsonContextBuilder()
             // ----------< People >----------
             .AddJsonEntity<Customer>()
             .WithFileName("customers")
-            .BuildEntity()
-            // ------------------------------
-            .AddJsonEntity<LocalEmployee>()
-            .WithFileName("localEmployees")
             .BuildEntity()
             //------------------------------
             .AddJsonEntity<RegionalEmployee>()
@@ -52,20 +47,6 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
             DateTime.Now
         );
 
-        var localEmployee = new LocalEmployee(
-            2,
-            "John",
-            "Smith",
-            "+48123456789",
-            "john.smith@gmail.com",
-            "12345",
-            "12345678901",
-            5000m,
-            EmploymentType.FullTime,
-            ["Basics"],
-            "12:00-13:00"
-        );
-
         var regionalEmployee = new RegionalEmployee(
             3,
             "Jane",
@@ -79,15 +60,27 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
             "INTERN@12345",
             SupervisionScope.Technical
         );
+        
+        JsonContext.Context.SaveChanges();
 
+        ShowAll();
+    }
+
+    [Fact]
+    public void ShowAll()
+    {
         testOutputHelper.WriteLine($"Persons({Person.All.Count}): {Person.All.ToJson()}");
         testOutputHelper.WriteLine("\n\n----------------------------------------\n\n");
         testOutputHelper.WriteLine($"Customers({Customer.All.Count}): {Customer.All.ToJson()}");
         testOutputHelper.WriteLine("\n\n----------------------------------------\n\n");
         testOutputHelper.WriteLine($"Employees({Employee.All.Count}): {Employee.All.ToJson()}");
         testOutputHelper.WriteLine("\n\n----------------------------------------\n\n");
-        testOutputHelper.WriteLine($"LocalEmployees({LocalEmployee.All.Count}): {LocalEmployee.All.ToJson()}");
-        testOutputHelper.WriteLine("\n\n----------------------------------------\n\n");
         testOutputHelper.WriteLine($"RegionalEmployees({RegionalEmployee.All.Count}): {RegionalEmployee.All.ToJson()}");
+    }
+
+    [Fact]
+    public void Delete()
+    {
+        if (Directory.Exists(DbRoot)) Directory.Delete(DbRoot, true);
     }
 }
