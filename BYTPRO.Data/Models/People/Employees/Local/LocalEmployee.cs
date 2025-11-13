@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
@@ -19,9 +18,9 @@ public class LocalEmployee : Employee
 
 
     // ----------< Properties with validation >----------
-    public ReadOnlyCollection<string> TrainingsCompleted
+    public List<string> TrainingsCompleted
     {
-        get => _trainingsCompleted.AsReadOnly();
+        get => _trainingsCompleted;
         init
         {
             value.AreAllStringsNotNullOrEmpty(nameof(TrainingsCompleted));
@@ -55,7 +54,7 @@ public class LocalEmployee : Employee
         string breakSchedule
     ) : base(id, name, surname, phone, email, password, pesel, salary, employmentType)
     {
-        TrainingsCompleted = new ReadOnlyCollection<string>(trainingsCompleted);
+        TrainingsCompleted = trainingsCompleted;
         BreakSchedule = breakSchedule;
 
         // IMPORTANT NOTE:
