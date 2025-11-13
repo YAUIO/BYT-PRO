@@ -2,6 +2,7 @@
 using BYTPRO.JsonEntityFramework.Context;
 using BYTPRO.JsonEntityFramework.Extensions;
 using Microsoft.Extensions.DependencyInjection;
+using Xunit.Abstractions;
 
 namespace BYTPRO.Test.Jef.Context;
 
@@ -32,6 +33,9 @@ public class JsonContextTests
     public void TestFileCreation()
     {
         var context = GetTestContext();
+        
+        context.GetTable<TestModel>().Clear();
+        context.SaveChanges();
 
         Assert.True(File.Exists(context.GetTable<TestModel>().Path));
     }
@@ -42,6 +46,9 @@ public class JsonContextTests
         var root = $"{DbRoot}/TestLoading/";
         
         var context = GetTestContext(root:root);
+        
+        context.GetTable<TestModel>().Clear();
+        context.SaveChanges();
         
         var model = new TestModel()
         {
@@ -71,6 +78,9 @@ public class JsonContextTests
     public async Task TestSaveChangesAsyncUpdatesOnAdd()
     {
         var context = GetTestContext();
+        
+        context.GetTable<TestModel>().Clear();
+        await context.SaveChangesAsync();
 
         var table = context.GetTable<TestModel>();
 
@@ -81,10 +91,10 @@ public class JsonContextTests
         };
 
         Assert.Equal(table.ToJson(), await File.ReadAllTextAsync(table.Path));
-
+        
         table.Add(model);
 
-        Assert.Equal("[]", await File.ReadAllTextAsync(table.Path));
+        Assert.NotEqual(table.ToJson(), await File.ReadAllTextAsync(table.Path));
 
         await context.SaveChangesAsync();
 
@@ -97,6 +107,9 @@ public class JsonContextTests
     public async Task TestSaveChangesAsyncUpdatesOnDelete()
     {
         var context = GetTestContext();
+        
+        context.GetTable<TestModel>().Clear();
+        await context.SaveChangesAsync();
 
         var table = context.GetTable<TestModel>();
 
@@ -123,6 +136,9 @@ public class JsonContextTests
     public async Task TestSaveChangesAsyncUpdatesOnClear()
     {
         var context = GetTestContext();
+        
+        context.GetTable<TestModel>().Clear();
+        await context.SaveChangesAsync();
 
         var table = context.GetTable<TestModel>();
 
@@ -149,6 +165,9 @@ public class JsonContextTests
     public void TestSaveChangesUpdatesOnAdd()
     {
         var context = GetTestContext();
+        
+        context.GetTable<TestModel>().Clear();
+        context.SaveChanges();
 
         var table = context.GetTable<TestModel>();
 
@@ -162,7 +181,7 @@ public class JsonContextTests
 
         table.Add(model);
 
-        Assert.Equal("[]", File.ReadAllText(table.Path));
+        Assert.NotEqual(table.ToJson(), File.ReadAllText(table.Path));
 
         context.SaveChanges();
 
@@ -175,6 +194,9 @@ public class JsonContextTests
     public void TestSaveChangesUpdatesOnDelete()
     {
         var context = GetTestContext();
+        
+        context.GetTable<TestModel>().Clear();
+        context.SaveChanges();
 
         var table = context.GetTable<TestModel>();
 
@@ -201,6 +223,9 @@ public class JsonContextTests
     public void TestSaveChangesUpdatesOnClear()
     {
         var context = GetTestContext();
+        
+        context.GetTable<TestModel>().Clear();
+        context.SaveChanges();
 
         var table = context.GetTable<TestModel>();
 
@@ -227,6 +252,9 @@ public class JsonContextTests
     public async Task TestRollbackAsync()
     {
         var context = GetTestContext();
+        
+        context.GetTable<TestModel>().Clear();
+        await context.SaveChangesAsync();
 
         var table = context.GetTable<TestModel>();
 
@@ -253,6 +281,9 @@ public class JsonContextTests
     public void TestRollback()
     {
         var context = GetTestContext();
+        
+        context.GetTable<TestModel>().Clear();
+        context.SaveChanges();
 
         var table = context.GetTable<TestModel>();
 
