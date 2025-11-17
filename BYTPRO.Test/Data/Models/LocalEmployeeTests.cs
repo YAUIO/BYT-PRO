@@ -3,7 +3,6 @@ using BYTPRO.Data.Models.People.Employees;
 using BYTPRO.Data.Models.People.Employees.Local;
 using BYTPRO.Data.Validation;
 using BYTPRO.JsonEntityFramework.Context;
-using BYTPRO.JsonEntityFramework.Extensions;
 
 namespace BYTPRO.Test.Data.Models;
 
@@ -68,7 +67,7 @@ public class LocalEmployeeTests
                 "12345678901",
                 5000m,
                 EmploymentType.FullTime,
-                ["Basics"],
+                ["Onboarding", ""],
                 "12:00-13:00"
             );
         });
