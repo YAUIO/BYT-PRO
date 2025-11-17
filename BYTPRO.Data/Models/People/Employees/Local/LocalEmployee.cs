@@ -1,7 +1,6 @@
 using System.Text.Json.Serialization;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
-using BYTPRO.JsonEntityFramework.Extensions;
 
 namespace BYTPRO.Data.Models.People.Employees.Local;
 
@@ -26,6 +25,7 @@ public class LocalEmployee : Employee
         {
             value.AreAllStringsNotNullOrEmpty(nameof(TrainingsCompleted));
             _trainingsCompleted = value;
+            _trainingsCompleted.MakeReadOnly();
         }
     }
 
@@ -64,6 +64,5 @@ public class LocalEmployee : Employee
         RegisterPerson();
         RegisterEmployee();
         Extent.Add(this);
-        TrainingsCompleted.MakeReadOnly();
     }
 }
