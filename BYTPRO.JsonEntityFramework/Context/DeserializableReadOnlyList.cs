@@ -25,7 +25,7 @@ public class DeserializableReadOnlyList<T> : IList<T>
 
     public void MakeReadOnly()
     {
-        if (_isConstructed)
+        if (!_isConstructed)
         {
             _isConstructed = true;
             _list = _list.AsReadOnly();
