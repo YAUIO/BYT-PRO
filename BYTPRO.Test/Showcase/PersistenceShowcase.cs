@@ -88,6 +88,8 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
             DateTime.Now
         );
 
+        var trainings = new List<string>(["Basics"]);
+
         var localEmployee = new LocalEmployee(
             2,
             "John",
@@ -98,7 +100,7 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
             "12345678901",
             5000m,
             EmploymentType.FullTime,
-            ["Basics"],
+            trainings.ToDeserializableReadOnlyList(),
             "12:00-13:00"
         );
 
@@ -247,6 +249,14 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
         }
 
         testOutputHelper.WriteLine(sb.ToString());
+    }
+
+    [Fact]
+    public void TestReadOnly()
+    {
+        var emp = JsonContext.Context.GetTable<LocalEmployee>().First();
+        Assert.Throws<NotSupportedException>(() => emp.TrainingsCompleted.Add("something-should-throw"));
+        Assert.True(emp.TrainingsCompleted.IsReadOnly);
     }
 
     [Fact]
