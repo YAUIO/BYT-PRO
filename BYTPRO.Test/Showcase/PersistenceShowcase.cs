@@ -51,8 +51,6 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
             DateTime.Now
         );
 
-        var trainings = new List<string>(["Basics"]);
-
         var localEmployee = new LocalEmployee(
             2,
             "John",
@@ -63,7 +61,7 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
             "12345678901",
             5000m,
             EmploymentType.FullTime,
-            trainings.ToDeserializableReadOnlyList(),
+            ["Basics"],
             "12:00-13:00"
         );
 

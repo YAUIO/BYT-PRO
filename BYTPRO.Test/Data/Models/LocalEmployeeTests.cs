@@ -30,8 +30,6 @@ public class LocalEmployeeTests
     [Fact]
     public void CreateLocalEmployeeWithValidData()
     {
-        var trainings = new List<string>(["Basics"]);
-        
         var local = new LocalEmployee(
             2,
             "John",
@@ -42,7 +40,7 @@ public class LocalEmployeeTests
             "12345678901",
             5000m,
             EmploymentType.FullTime,
-            trainings.ToDeserializableReadOnlyList(),
+            ["Basics"],
             "12:00-13:00"
         );
         
@@ -58,8 +56,6 @@ public class LocalEmployeeTests
     [Fact]
     public void CreateLocalEmployeeWithInvalidData()
     {
-        var trainings = new List<string>(["Onboarding", ""]);
-        
         Assert.Throws<ValidationException>(() =>
         {
             var local = new LocalEmployee(
@@ -72,7 +68,7 @@ public class LocalEmployeeTests
                 "12345678901",
                 5000m,
                 EmploymentType.FullTime,
-                trainings.ToDeserializableReadOnlyList(),
+                ["Basics"],
                 "12:00-13:00"
             );
         });
