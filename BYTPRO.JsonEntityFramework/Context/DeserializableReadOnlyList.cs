@@ -6,14 +6,11 @@ namespace BYTPRO.JsonEntityFramework.Context;
 
 public class DeserializableReadOnlyList<T> : IList<T>
 {
-    private ReadOnlyCollection<T> _collection;
-    
-    private List<T> _list = [];
+    [JsonInclude] 
+    private IList<T> _list = new List<T>();
     
     private bool _isConstructed;
-
-    private IList<T> Active => _isConstructed ? _collection : _list;
-
+    
     [JsonConstructor]
     public DeserializableReadOnlyList()
     {
@@ -22,71 +19,74 @@ public class DeserializableReadOnlyList<T> : IList<T>
 
     public DeserializableReadOnlyList(ReadOnlyCollection<T> collection)
     {
-        _collection = collection;
+        _list = collection;
         _isConstructed = true;
     }
 
     public void MakeReadOnly()
     {
-        _isConstructed = true;
-        _collection = _list.AsReadOnly();
+        if (_isConstructed)
+        {
+            _isConstructed = true;
+            _list = _list.AsReadOnly();
+        }
     }
     
     public IEnumerator<T> GetEnumerator()
     {
-        return Active.GetEnumerator();
+        return _list.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-        return GetEnumerator();
+        return _list.GetEnumerator();
     }
 
     public void Add(T item)
     {
-        Active.Add(item);
+        _list.Add(item);
     }
 
     public void Clear()
     {
-        Active.Clear();
+        _list.Clear();
     }
 
     public bool Contains(T item)
     {
-        return Active.Contains(item);
+        return _list.Contains(item);
     }
 
     public void CopyTo(T[] array, int arrayIndex)
     {
-        Active.CopyTo(array, arrayIndex);
+        _list.CopyTo(array, arrayIndex);
     }
 
     public bool Remove(T item)
     {
-        return Active.Remove(item);
+        return _list.Remove(item);
     }
 
-    public int Count  => Active.Count;
-    public bool IsReadOnly => Active.IsReadOnly;
+    public int Count  => _list.Count;
+    public bool IsReadOnly => _list.IsReadOnly;
     public int IndexOf(T item)
     {
-        return Active.IndexOf(item);
+        return _list.IndexOf(item);
     }
 
     public void Insert(int index, T item)
     {
-        Active.Insert(index, item);
+        _list.Insert(index, item);
     }
 
     public void RemoveAt(int index)
     {
-        Active.RemoveAt(index);
+        _list.RemoveAt(index);
     }
 
     public T this[int index]
     {
-        get => Active[index];
-        set => Active[index] = value;
+        get => _list[index];
+        set => _list[index] = value;
     }
 }

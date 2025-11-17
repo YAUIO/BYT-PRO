@@ -25,7 +25,7 @@ public class LocalEmployee : Employee
         init
         {
             value.AreAllStringsNotNullOrEmpty(nameof(TrainingsCompleted));
-            _trainingsCompleted = value.ToDeserializableReadOnlyList();
+            _trainingsCompleted = value;
         }
     }
 
@@ -64,6 +64,6 @@ public class LocalEmployee : Employee
         RegisterPerson();
         RegisterEmployee();
         Extent.Add(this);
-        trainingsCompleted.MakeReadOnly();
+        TrainingsCompleted.MakeReadOnly();
     }
 }
