@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
+using BYTPRO.JsonEntityFramework.Extensions;
 
 namespace BYTPRO.Data.Models.People.Employees.Local;
 
@@ -13,18 +14,18 @@ public class LocalEmployee : Employee
 
 
     // ----------< Attributes >----------
-    private readonly List<string> _trainingsCompleted = [];
+    private readonly DeserializableReadOnlyList<string> _trainingsCompleted;
     private string _breakSchedule;
 
 
     // ----------< Properties with validation >----------
-    public List<string> TrainingsCompleted
+    public DeserializableReadOnlyList<string> TrainingsCompleted
     {
         get => _trainingsCompleted;
         init
         {
             value.AreAllStringsNotNullOrEmpty(nameof(TrainingsCompleted));
-            _trainingsCompleted.AddRange(value);
+            _trainingsCompleted = value.ToDeserializableReadOnlyList();
         }
     }
 
@@ -50,7 +51,7 @@ public class LocalEmployee : Employee
         string pesel,
         decimal salary,
         EmploymentType employmentType,
-        List<string> trainingsCompleted,
+        DeserializableReadOnlyList<string> trainingsCompleted,
         string breakSchedule
     ) : base(id, name, surname, phone, email, password, pesel, salary, employmentType)
     {
@@ -63,5 +64,6 @@ public class LocalEmployee : Employee
         RegisterPerson();
         RegisterEmployee();
         Extent.Add(this);
+        trainingsCompleted.MakeReadOnly();
     }
 }
