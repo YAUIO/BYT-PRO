@@ -29,6 +29,10 @@ public static class ServiceCollectionDataExtensions
             .BuildEntity()
 
             // ----------< Sales >----------
+            .AddJsonEntity<Product>()
+            .WithFileName("products")
+            .BuildEntity()
+            //------------------------------
             .AddJsonEntity<OnlineOrder>()
             .WithFileName("onlineOrders")
             .BuildEntity()
@@ -39,10 +43,6 @@ public static class ServiceCollectionDataExtensions
             //------------------------------
             .AddJsonEntity<BranchOrder>()
             .WithFileName("branchOrders")
-            .BuildEntity()
-            //------------------------------
-            .AddJsonEntity<Product>()
-            .WithFileName("products")
             .BuildEntity()
 
             // ----------< Locations >----------
