@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using BYTPRO.Data.Validation;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
 
@@ -35,6 +36,8 @@ public class Store : Branch
         set
         {
             value.IsPositive(nameof(SalesArea));
+            if (value > TotalArea)
+                throw new ValidationException($"{nameof(SalesArea)} cannot exceed {nameof(TotalArea)}");
             _salesArea = value;
         }
     }

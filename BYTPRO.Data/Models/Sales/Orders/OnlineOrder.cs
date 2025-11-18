@@ -36,6 +36,8 @@ public class OnlineOrder : Order
         get => _cancellationDate;
         set
         {
+            if (value is null) return; // During deserialization this setter is called even with null value
+
             if (Status != OrderStatus.AwaitingCollection)
                 throw new ValidationException(
                     "Cancellation date can only be set in 'Awaiting Collection' status.");
