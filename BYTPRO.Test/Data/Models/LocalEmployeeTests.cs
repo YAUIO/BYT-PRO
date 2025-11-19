@@ -62,7 +62,7 @@ public class LocalEmployeeTests
                 "John",
                 "Smith",
                 "+48123456789",
-                "john.smith@gmail.com",
+                "john",
                 "12345",
                 "12345678901",
                 5000m,

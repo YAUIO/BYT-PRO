@@ -15,7 +15,7 @@ public class JsonEntitySetTests
     [Fact]
     public void TestGetTypeReturnsTestModel()
     {
-        Assert.Equal(typeof(TestModel), GetTestSet().GetType());
+        Assert.Equal(typeof(TestModel), GetTestSet().GetGenericType());
     }
 
     [Fact]

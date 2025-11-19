@@ -14,12 +14,12 @@ public class JsonContext
         Root = root;
         Tables = [];
 
+        
         Root.Create();
 
         if (!Root.Exists)
-        {
             throw new FileNotFoundException("Root directory not found");
-        }
+        
 
         foreach (var ent in entities)
         {
@@ -51,12 +51,9 @@ public class JsonContext
                     foreach (var obj in enumerable.EnumerateArray())
                     {
                         var result = obj.Deserialize(ent.Target, JsonSerializerOptions.Default);
-
-                        if (!result.GetType().GetProperties().Any(p => p.Name.Equals("Extent")))
-                        {
-                            dynamic casted = result;
-                            set.Add(casted);
-                        }
+                        
+                        dynamic casted = result;
+                        set.Add(casted);
                     }
                 }
                 finally
@@ -85,7 +82,7 @@ public class JsonContext
 
     public JsonEntitySet<T> GetTable<T>()
     {
-        return Tables.Single(j => j.GetType() == typeof(T));
+        return Tables.Single(j => j.GetGenericType() == typeof(T));
     }
 
     public async Task SaveChangesAsync()
@@ -159,7 +156,7 @@ public class JsonContext
 
                 foreach (var obj in enumerable.EnumerateArray())
                 {
-                    var type = (Type)table.GetType().GetGenericArguments().Single();
+                    var type = (Type)table.GetGenericType();
 
                     var result = obj.Deserialize(type, JsonSerializerOptions.Default);
 
@@ -200,7 +197,7 @@ public class JsonContext
 
                 foreach (var obj in enumerable.EnumerateArray())
                 {
-                    var type = (Type)table.GetType().GetGenericArguments().Single();
+                    var type = (Type)table.GetGenericType();
 
                     var result = obj.Deserialize(type, JsonSerializerOptions.Default);
 

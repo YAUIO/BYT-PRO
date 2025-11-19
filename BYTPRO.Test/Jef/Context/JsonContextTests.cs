@@ -1,8 +1,5 @@
-﻿using BYTPRO.Data.JsonUoW;
-using BYTPRO.JsonEntityFramework.Context;
+﻿using BYTPRO.JsonEntityFramework.Context;
 using BYTPRO.JsonEntityFramework.Extensions;
-using Microsoft.Extensions.DependencyInjection;
-using Xunit.Abstractions;
 
 namespace BYTPRO.Test.Jef.Context;
 

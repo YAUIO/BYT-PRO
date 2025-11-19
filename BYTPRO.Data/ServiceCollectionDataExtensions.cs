@@ -1,5 +1,4 @@
-﻿using BYTPRO.Data.JsonUoW;
-using BYTPRO.Data.Models.Locations.Branches;
+﻿using BYTPRO.Data.Models.Locations.Branches;
 using BYTPRO.Data.Models.People;
 using BYTPRO.Data.Models.People.Employees.Local;
 using BYTPRO.Data.Models.People.Employees.Regional;
@@ -65,8 +64,6 @@ public static class ServiceCollectionDataExtensions
         JsonContext.SetContext(context);
 
         services.AddSingleton(context);
-
-        services.AddSingleton<IUnitOfWork, JsonUnitOfWork>();
 
         return services;
     }
