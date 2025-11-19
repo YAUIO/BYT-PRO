@@ -13,7 +13,7 @@ public class EnumValidatorTests
     }
 
     // IsDefined();
-    
+
     [Fact]
     public void TestEnumIsDefinedPassesForValidValue()
     {

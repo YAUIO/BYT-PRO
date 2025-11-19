@@ -6,7 +6,7 @@ namespace BYTPRO.Test.Data.Validation;
 public class DateValidatorTests
 {
     // IsNotDefault();
-    
+
     [Fact]
     public void TestIsNotDefaultPassesForNow()
     {
@@ -21,15 +21,15 @@ public class DateValidatorTests
         var dt = default(DateTime);
         Assert.Throws<ValidationException>(() => dt.IsNotDefault());
     }
-    
+
     // IsAfter();
-    
+
     [Fact]
     public void TestIsAfterPassesWhenAfter()
     {
         var earlier = DateTime.UtcNow.AddMinutes(-2);
-        var later   = DateTime.UtcNow.AddMinutes(-1);
-        
+        var later = DateTime.UtcNow.AddMinutes(-1);
+
         later.IsAfter(earlier);
         Assert.True(true);
     }
@@ -43,13 +43,13 @@ public class DateValidatorTests
     }
 
     // IsBefore();
-    
+
     [Fact]
     public void TestIsBeforePassesWhenBefore()
     {
         var earlier = DateTime.UtcNow.AddMinutes(-2);
-        var later   = DateTime.UtcNow.AddMinutes(-1);
-        
+        var later = DateTime.UtcNow.AddMinutes(-1);
+
         earlier.IsBefore(later);
         Assert.True(true);
     }
@@ -58,9 +58,8 @@ public class DateValidatorTests
     public void TestIsBeforeThrowsWhenNotBefore()
     {
         var earlier = DateTime.UtcNow.AddMinutes(-2);
-        var later   = DateTime.UtcNow.AddMinutes(-1);
-        
-        // здесь end < start → должно бросить
+        var later = DateTime.UtcNow.AddMinutes(-1);
+
         Assert.Throws<ValidationException>(() => later.IsBefore(earlier));
     }
 }

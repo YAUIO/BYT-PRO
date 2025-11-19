@@ -6,7 +6,7 @@ namespace BYTPRO.Test.Data.Validation;
 public class ObjectValidatorTests
 {
     // IsNotNull();
-    
+
     [Fact]
     public void TestIsNotNullPassesForObject()
     {

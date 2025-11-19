@@ -6,7 +6,7 @@ namespace BYTPRO.Test.Data.Validation;
 public class EmailValidatorTests
 {
     // IsEmail();
-    
+
     [Fact]
     public void TestEmailValid()
     {

@@ -6,7 +6,7 @@ namespace BYTPRO.Test.Data.Validation;
 public class PhoneNumberValidatorTests
 {
     // IsPhoneNumber();
-    
+
     [Fact]
     public void TestPhoneValid()
     {

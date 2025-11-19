@@ -6,26 +6,24 @@ using BYTPRO.JsonEntityFramework.Context;
 
 namespace BYTPRO.Test.Data.Models;
 
-
 public class LocalEmployeeTests
 {
     private static string DbRoot => $"{Directory.GetCurrentDirectory()}/TDb";
-    
+
     static LocalEmployeeTests()
     {
         if (!Directory.Exists(DbRoot)) Directory.CreateDirectory(DbRoot);
-        
 
         var ctx = new JsonContextBuilder()
             .AddJsonEntity<LocalEmployee>()
-            .WithFileName("localEmployees")  
+            .WithFileName("localEmployees")
             .BuildEntity()
             .WithRoot(new DirectoryInfo(DbRoot))
             .Build();
-        
+
         JsonContext.SetContext(ctx);
     }
-    
+
     [Fact]
     public void CreateLocalEmployeeWithValidData()
     {
@@ -42,14 +40,13 @@ public class LocalEmployeeTests
             ["Basics"],
             "12:00-13:00"
         );
-        
+
         Assert.Single(Person.All);
         Assert.Single(Employee.All);
         Assert.Single(LocalEmployee.All);
         Assert.Same(local, Person.All.Single());
         Assert.Same(local, Employee.All.Single());
         Assert.Same(local, LocalEmployee.All.Single());
-        
     }
 
     [Fact]
@@ -71,7 +68,7 @@ public class LocalEmployeeTests
                 "12:00-13:00"
             );
         });
-        
+
         Assert.Empty(Person.All);
         Assert.Empty(Employee.All);
         Assert.Empty(LocalEmployee.All);

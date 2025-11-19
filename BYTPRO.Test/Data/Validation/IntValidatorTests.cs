@@ -27,7 +27,7 @@ public class IntValidatorTests
         var value = 0;
         Assert.Throws<ValidationException>(() => value.IsPositive());
     }
-    
+
     // IsNonNegative();
     [Fact]
     public void TestIsNonNegativeForPositive()

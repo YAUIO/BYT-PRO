@@ -51,11 +51,11 @@ public class CollectionValidatorTests
         var list = new List<string?> { "1", "", string.Empty };
         Assert.Throws<ValidationException>(() => list.AreAllStringsNotNullOrEmpty());
     }
-    
+
     [Fact]
     public void TestAllStringsNotNullOrEmptyForWhitespaceElement()
     {
-    var list = new List<string?> { "ok", "   " };
-    Assert.Throws<ValidationException>(() => list.AreAllStringsNotNullOrEmpty());
+        var list = new List<string?> { "ok", "   " };
+        Assert.Throws<ValidationException>(() => list.AreAllStringsNotNullOrEmpty());
     }
 }

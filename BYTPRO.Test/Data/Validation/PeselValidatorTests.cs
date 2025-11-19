@@ -6,7 +6,7 @@ namespace BYTPRO.Test.Data.Validation;
 public class PeselValidatorTests
 {
     // IsPesel();
-    
+
     [Fact]
     public void TestPeselValidSample1()
     {

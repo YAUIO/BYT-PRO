@@ -8,37 +8,37 @@ public class DeserializableReadOnlyListTests
     public void TestStores()
     {
         var list = new DeserializableReadOnlyList<string>();
-        
+
         var str = "hello";
-        
+
         list.Add(str);
 
         Assert.Contains(str, list);
     }
-    
+
     [Fact]
     public void TestStoresAfterReadOnly()
     {
         var list = new DeserializableReadOnlyList<string>();
-        
+
         var str = "hello";
-        
+
         list.Add(str);
-        
+
         list.MakeReadOnly();
 
         Assert.Contains(str, list);
     }
-    
+
     [Fact]
     public void TestReadOnly()
     {
         var list = new DeserializableReadOnlyList<string>();
-        
+
         var str = "hello";
-        
+
         list.Add(str);
-        
+
         list.MakeReadOnly();
 
         Assert.Contains(str, list);

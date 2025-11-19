@@ -6,7 +6,7 @@ namespace BYTPRO.Test.Data.Validation;
 public class DecimalValidatorTests
 {
     // IsPositive();
-    
+
     [Fact]
     public void TestIsPositivePassesForPositive()
     {
@@ -28,9 +28,9 @@ public class DecimalValidatorTests
         const decimal value = -0.01m;
         Assert.Throws<ValidationException>(() => value.IsPositive());
     }
-    
+
     // IsNonNegative();
-    
+
     [Fact]
     public void TestIsNonNegativePassesForZero()
     {
