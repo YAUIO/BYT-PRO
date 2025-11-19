@@ -3,7 +3,7 @@
 public class JsonContextBuilder
 {
     private HashSet<JsonEntityConfiguration> RegisteredEntities { get; } = [];
-    
+
     private DirectoryInfo RootDir { get; set; }
 
     public JsonEntityBuilder<TJEntity> AddJsonEntity<TJEntity>()
@@ -25,7 +25,8 @@ public class JsonContextBuilder
 
     public JsonContext Build()
     {
-        if (RootDir == null) throw new ArgumentNullException(nameof(RootDir), "Provide WithRoot when creating JsonContext");
-        return new JsonContext(RegisteredEntities, RootDir);
+        return RootDir == null
+            ? throw new ArgumentNullException(nameof(RootDir), "Provide WithRoot when creating JsonContext")
+            : new JsonContext(RegisteredEntities, RootDir);
     }
 }

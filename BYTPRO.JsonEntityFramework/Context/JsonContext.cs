@@ -14,12 +14,12 @@ public class JsonContext
         Root = root;
         Tables = [];
 
-        
+
         Root.Create();
 
         if (!Root.Exists)
             throw new FileNotFoundException("Root directory not found");
-        
+
 
         foreach (var ent in entities)
         {
@@ -51,7 +51,7 @@ public class JsonContext
                     foreach (var obj in enumerable.EnumerateArray())
                     {
                         var result = obj.Deserialize(ent.Target, JsonSerializerOptions.Default);
-                        
+
                         dynamic casted = result;
                         set.Add(casted);
                     }

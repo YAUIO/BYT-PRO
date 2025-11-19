@@ -1,12 +1,12 @@
 ﻿using System.Collections;
-using System.Reflection;
 
 namespace BYTPRO.JsonEntityFramework.Context;
 
 public class JsonEntitySet<TJEntity>(JsonEntityConfiguration config, string path) : ISet<TJEntity>
 {
     private dynamic Table { get; } = Activator.CreateInstance(typeof(HashSet<>).MakeGenericType(typeof(TJEntity)))
-                                          ?? throw new InvalidOperationException($"Error while creating {config.Target.Name} table");
+                                     ?? throw new InvalidOperationException(
+                                         $"Error while creating {config.Target.Name} table");
 
     public string Path { get; } = path;
 
@@ -22,7 +22,7 @@ public class JsonEntitySet<TJEntity>(JsonEntityConfiguration config, string path
         return _isSaved;
     }
 
-    public new Type GetGenericType()
+    public Type GetGenericType()
     {
         return typeof(TJEntity);
     }
@@ -128,5 +128,6 @@ public class JsonEntitySet<TJEntity>(JsonEntityConfiguration config, string path
     }
 
     public int Count => Table.Count;
+
     public bool IsReadOnly => false;
 }

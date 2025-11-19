@@ -6,15 +6,13 @@ namespace BYTPRO.JsonEntityFramework.Context;
 
 public class DeserializableReadOnlyList<T> : IList<T>
 {
-    [JsonInclude] 
-    private IList<T> _list = new List<T>();
-    
+    [JsonInclude] private IList<T> _list = new List<T>();
+
     private bool _isConstructed;
-    
+
     [JsonConstructor]
     public DeserializableReadOnlyList()
     {
-        
     }
 
     public DeserializableReadOnlyList(ReadOnlyCollection<T> collection)
@@ -25,13 +23,11 @@ public class DeserializableReadOnlyList<T> : IList<T>
 
     public void MakeReadOnly()
     {
-        if (!_isConstructed)
-        {
-            _isConstructed = true;
-            _list = _list.AsReadOnly();
-        }
+        if (_isConstructed) return;
+        _isConstructed = true;
+        _list = _list.AsReadOnly();
     }
-    
+
     public IEnumerator<T> GetEnumerator()
     {
         return _list.GetEnumerator();
@@ -67,8 +63,10 @@ public class DeserializableReadOnlyList<T> : IList<T>
         return _list.Remove(item);
     }
 
-    public int Count  => _list.Count;
+    public int Count => _list.Count;
+
     public bool IsReadOnly => _list.IsReadOnly;
+
     public int IndexOf(T item)
     {
         return _list.IndexOf(item);

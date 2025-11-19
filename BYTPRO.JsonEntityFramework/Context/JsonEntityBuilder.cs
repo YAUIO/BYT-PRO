@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Reflection;
-using IEnumerable = System.Collections.IEnumerable;
-
-namespace BYTPRO.JsonEntityFramework.Context;
+﻿namespace BYTPRO.JsonEntityFramework.Context;
 
 public class JsonEntityBuilder<TJEntity>(JsonContextBuilder contextBuilder)
 {
