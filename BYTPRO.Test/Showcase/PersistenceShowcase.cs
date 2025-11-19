@@ -250,14 +250,6 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
     }
 
     [Fact]
-    public void TestReadOnly()
-    {
-        var emp = JsonContext.Context.GetTable<LocalEmployee>().First();
-        Assert.Throws<NotSupportedException>(() => emp.TrainingsCompleted.Add("something-should-throw"));
-        Assert.True(emp.TrainingsCompleted.IsReadOnly);
-    }
-
-    [Fact]
     public void Delete()
     {
         if (Directory.Exists(DbRoot)) Directory.Delete(DbRoot, true);

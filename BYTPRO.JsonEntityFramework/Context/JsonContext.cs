@@ -37,7 +37,7 @@ public class JsonContext
 
         foreach (var ent in entities)
         {
-            var path = Root.FullName + $"/{ent.FileName ?? ent.Target.Name}.json";
+            var path = Path.Combine(Root.FullName, $"{ent.FileName ?? ent.Target.Name}.json");
 
             dynamic set = Activator.CreateInstance(typeof(JsonEntitySet<>).MakeGenericType(ent.Target), [ent, path]);
             Tables.Add(set ?? throw new InvalidOperationException("Null table created"));
