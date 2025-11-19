@@ -6,8 +6,6 @@ public class JsonContextBuilder
     
     private DirectoryInfo RootDir { get; set; }
 
-    private Type uow;
-
     public JsonEntityBuilder<TJEntity> AddJsonEntity<TJEntity>()
     {
         return new JsonEntityBuilder<TJEntity>(this);

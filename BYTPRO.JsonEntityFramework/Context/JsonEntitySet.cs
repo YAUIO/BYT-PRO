@@ -12,10 +12,6 @@ public class JsonEntitySet<TJEntity>(JsonEntityConfiguration config, string path
 
     private bool _isSaved;
 
-    internal List<PropertyInfo> One = config.One;
-
-    internal List<PropertyInfo> Many = config.Many;
-
     public void MarkSaved()
     {
         _isSaved = true;
@@ -26,7 +22,7 @@ public class JsonEntitySet<TJEntity>(JsonEntityConfiguration config, string path
         return _isSaved;
     }
 
-    public new Type GetType()
+    public new Type GetGenericType()
     {
         return typeof(TJEntity);
     }
