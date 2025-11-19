@@ -7,24 +7,10 @@ namespace BYTPRO.JsonEntityFramework.Context;
 
 public class JsonContext
 {
-    public static JsonContext? Context { get; private set; }
-
-    public static void SetContext(JsonContext context)
-    {
-        Context = context;
-    }
-    
-    
-    private HashSet<dynamic> Tables { get; set; }
-
-    private DirectoryInfo Root { get; }
-
-    public ConcurrentDictionary<string, SemaphoreSlim> FileLocks { get; } = new();
-
     public JsonContext(HashSet<JsonEntityConfiguration> entities, DirectoryInfo root)
     {
         Context ??= this;
-        
+
         Root = root;
         Tables = [];
 
@@ -39,7 +25,7 @@ public class JsonContext
         {
             var path = Path.Combine(Root.FullName, $"{ent.FileName ?? ent.Target.Name}.json");
 
-            dynamic set = Activator.CreateInstance(typeof(JsonEntitySet<>).MakeGenericType(ent.Target), [ent, path]);
+            dynamic set = Activator.CreateInstance(typeof(JsonEntitySet<>).MakeGenericType(ent.Target), ent, path);
             Tables.Add(set ?? throw new InvalidOperationException("Null table created"));
 
             if (!File.Exists(path))
@@ -81,6 +67,20 @@ public class JsonContext
                 SaveChanges();
             }
         }
+    }
+
+    public static JsonContext? Context { get; private set; }
+
+
+    private HashSet<dynamic> Tables { get; }
+
+    private DirectoryInfo Root { get; }
+
+    private ConcurrentDictionary<string, SemaphoreSlim> FileLocks { get; } = new();
+
+    public static void SetContext(JsonContext context)
+    {
+        Context = context;
     }
 
     public JsonEntitySet<T> GetTable<T>()
@@ -138,7 +138,7 @@ public class JsonContext
 
     public async Task RollbackAsync()
     {
-        foreach (var table in Tables)
+        foreach (var table in Tables.Where(t => !t.IsSaved()))
         {
             var path = (string)table.Path;
 
@@ -160,15 +160,14 @@ public class JsonContext
                 foreach (var obj in enumerable.EnumerateArray())
                 {
                     var type = (Type)table.GetType().GetGenericArguments().Single();
-                    
+
                     var result = obj.Deserialize(type, JsonSerializerOptions.Default);
 
-                    if (!result.GetType().GetProperties().Any(p => p.Name.Equals("Extent")))
-                    {
-                        dynamic casted = result;
-                        table.Add(casted);
-                    }
+                    dynamic casted = result;
+                    table.Add(casted);
                 }
+
+                table.MarkSaved();
 
                 fileStream.Close();
             }
@@ -181,7 +180,7 @@ public class JsonContext
 
     public void Rollback()
     {
-        foreach (var table in Tables)
+        foreach (var table in Tables.Where(t => !t.IsSaved()))
         {
             var path = (string)table.Path;
 
@@ -205,12 +204,11 @@ public class JsonContext
 
                     var result = obj.Deserialize(type, JsonSerializerOptions.Default);
 
-                    if (!result.GetType().GetProperties().Any(p => p.Name.Equals("Extent")))
-                    {
-                        dynamic casted = result;
-                        table.Add(casted);
-                    }
+                    dynamic casted = result;
+                    table.Add(casted);
                 }
+
+                table.MarkSaved();
 
                 fileStream.Close();
             }
