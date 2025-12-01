@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using BYTPRO.Data.Models.People;
 using BYTPRO.Data.Validation;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
@@ -66,15 +67,32 @@ public class OnlineOrder : Order
         DateTime creationDate,
         Dictionary<Product, int> orderItems,
         bool isPaid,
-        string trackingNumber
+        string trackingNumber,
+        Customer customer
     ) : base(id, creationDate, orderItems)
     {
         IsPaid = isPaid;
         TrackingNumber = trackingNumber;
 
+        Customer = customer;
+        customer.AddOrder(this);
         AddItemsToProduct();
 
         RegisterOrder();
         Extent.Add(this);
+    }
+
+
+    // ----------< Associations >----------
+    private readonly Customer _customer;
+
+    public Customer Customer
+    {
+        get => _customer;
+        init
+        {
+            value.IsNotNull(nameof(Customer));
+            _customer = value;
+        }
     }
 }

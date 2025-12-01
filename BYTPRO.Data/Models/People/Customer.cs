@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using BYTPRO.Data.Models.Sales.Orders;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
 
@@ -53,5 +54,17 @@ public class Customer : Person
         // until all properties are validated and set for child class.
         RegisterPerson();
         Extent.Add(this);
+    }
+
+
+    // ----------< Associations >----------
+
+    // -----< Qualified >-----
+    Dictionary<string, OnlineOrder> _ordersByTrackingNumber = [];
+
+    internal void AddOrder(OnlineOrder order)
+    {
+        order.IsNotNull(nameof(order));
+        _ordersByTrackingNumber.Add(order.TrackingNumber, order);
     }
 }
