@@ -1,3 +1,5 @@
+using BYTPRO.Data.Models.Locations;
+using BYTPRO.Data.Models.Locations.Branches;
 using BYTPRO.Data.Models.People;
 using BYTPRO.Data.Models.People.Employees;
 using BYTPRO.Data.Models.People.Employees.Local;
@@ -18,15 +20,35 @@ public class LocalEmployeeTests
             .AddJsonEntity<LocalEmployee>()
             .WithFileName("localEmployees")
             .BuildEntity()
+            .AddJsonEntity<Store>() 
+            .WithFileName("stores")
+            .BuildEntity()
             .WithRoot(new DirectoryInfo(DbRoot))
             .Build();
 
         JsonContext.SetContext(ctx);
     }
+    
+    private static Store CreateTestStore()
+    {
+        var address = new Address("Main St", "Warsaw", null, "00-001", "Poland"); 
+        
+        return new Store(
+            address, 
+            "Test Store", 
+            "08:00-22:00", 
+            100m, 
+            5, 
+            80m, 
+            2
+        );
+    }
 
     [Fact]
     public void CreateLocalEmployeeWithValidData()
     {
+        var store = CreateTestStore();
+        
         var local = new LocalEmployee(
             2,
             "John",
@@ -38,7 +60,8 @@ public class LocalEmployeeTests
             5000m,
             EmploymentType.FullTime,
             ["Basics"],
-            "12:00-13:00"
+            "12:00-13:00",
+            store
         );
 
         Assert.Single(Person.All);
@@ -54,6 +77,8 @@ public class LocalEmployeeTests
     {
         Assert.Throws<ValidationException>(() =>
         {
+            var store = CreateTestStore();
+            
             var local = new LocalEmployee(
                 2,
                 "John",
@@ -65,7 +90,8 @@ public class LocalEmployeeTests
                 5000m,
                 EmploymentType.FullTime,
                 ["Onboarding", ""],
-                "12:00-13:00"
+                "12:00-13:00",
+                store
             );
         });
 
