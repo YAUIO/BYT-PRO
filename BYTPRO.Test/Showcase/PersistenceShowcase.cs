@@ -23,19 +23,6 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
         if (!Directory.Exists(DbRoot)) Directory.CreateDirectory(DbRoot);
 
         var context = new JsonContextBuilder()
-            // ----------< People >----------
-            .AddJsonEntity<Customer>()
-            .WithFileName("customers")
-            .BuildEntity()
-            // ------------------------------
-            .AddJsonEntity<LocalEmployee>()
-            .WithFileName("localEmployees")
-            .BuildEntity()
-            //------------------------------
-            .AddJsonEntity<RegionalEmployee>()
-            .WithFileName("regionalEmployees")
-            .BuildEntity()
-
             // ----------< Locations >----------
             .AddJsonEntity<PickupPoint>()
             .WithFileName("pickupPoints")
@@ -47,6 +34,19 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
             //------------------------------
             .AddJsonEntity<Warehouse>()
             .WithFileName("warehouses")
+            .BuildEntity()
+            
+            // ----------< People >----------
+            .AddJsonEntity<Customer>()
+            .WithFileName("customers")
+            .BuildEntity()
+            // ------------------------------
+            .AddJsonEntity<LocalEmployee>()
+            .WithFileName("localEmployees")
+            .BuildEntity()
+            //------------------------------
+            .AddJsonEntity<RegionalEmployee>()
+            .WithFileName("regionalEmployees")
             .BuildEntity()
 
             // ----------< Sales >----------
@@ -77,46 +77,6 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
     [Fact]
     public void TestClassExtent()
     {
-        // ----------< People >----------
-        var customer = new Customer(
-            1,
-            "Artiom",
-            "Bezkorovainyi",
-            "+48000000000",
-            "s30000@pjwstk.edu.pl",
-            "12345678",
-            DateTime.Now
-        );
-
-        // var localEmployee = new LocalEmployee(
-        //     2,
-        //     "John",
-        //     "Smith",
-        //     "+48123456789",
-        //     "john.smith@gmail.com",
-        //     "12345",
-        //     "12345678901",
-        //     5000m,
-        //     EmploymentType.FullTime,
-        //     ["Basics"],
-        //     "12:00-13:00"
-        // );
-
-        var regionalEmployee = new RegionalEmployee(
-            3,
-            "Jane",
-            "Smith",
-            "+48123456780",
-            "jane.smith@gmail.com",
-            "123456789",
-            "12345678902",
-            10000m,
-            EmploymentType.Intern,
-            "INTERN@12345",
-            SupervisionScope.Technical
-        );
-
-
         // ----------< Locations >----------
         var pickupPoint = new PickupPoint(
             new Address("Street1", "10/2", "app1", "01-234", "City1"),
@@ -145,7 +105,46 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
             50000m,
             3
         );
+        
+        // ----------< People >----------
+        var customer = new Customer(
+            1,
+            "Artiom",
+            "Bezkorovainyi",
+            "+48000000000",
+            "s30000@pjwstk.edu.pl",
+            "12345678",
+            DateTime.Now
+        );
 
+        var localEmployee = new LocalEmployee(
+            2,
+            "John",
+            "Smith",
+            "+48123456789",
+            "john.smith@gmail.com",
+            "12345",
+            "12345678901",
+            5000m,
+            EmploymentType.FullTime,
+            ["Basics"],
+            "12:00-13:00",
+            store
+        );
+
+        var regionalEmployee = new RegionalEmployee(
+            3,
+            "Jane",
+            "Smith",
+            "+48123456780",
+            "jane.smith@gmail.com",
+            "123456789",
+            "12345678902",
+            10000m,
+            EmploymentType.Intern,
+            "INTERN@12345",
+            SupervisionScope.Technical
+        );
 
         // ----------< Sales >----------
         var product1 = new Product(
@@ -204,6 +203,13 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
     {
         var sections = new (string Title, IEnumerable Data)[]
         {
+            ("Locations", new (string, IEnumerable)[]
+            {
+                ("Branches", Branch.All),
+                ("PickupPoints", PickupPoint.All),
+                ("Stores", Store.All),
+                ("Warehouses", Warehouse.All)
+            }),
             ("People", new (string, IEnumerable)[]
             {
                 ("Persons", Person.All),
@@ -211,13 +217,6 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
                 ("Employees", Employee.All),
                 ("LocalEmployees", LocalEmployee.All),
                 ("RegionalEmployees", RegionalEmployee.All)
-            }),
-            ("Locations", new (string, IEnumerable)[]
-            {
-                ("Branches", Branch.All),
-                ("PickupPoints", PickupPoint.All),
-                ("Stores", Store.All),
-                ("Warehouses", Warehouse.All)
             }),
             ("Sales", new (string, IEnumerable)[]
             {
