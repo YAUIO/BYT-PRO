@@ -87,7 +87,7 @@ public class LocalEmployee : Employee
 
     public void Delete()
     {
-        _branch.RemoveEmployee(this);
+        Branch.RemoveEmployee(this);
 
         Extent.Remove(this);
         DeleteEmployee();
