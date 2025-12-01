@@ -88,19 +88,19 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
             DateTime.Now
         );
 
-        var localEmployee = new LocalEmployee(
-            2,
-            "John",
-            "Smith",
-            "+48123456789",
-            "john.smith@gmail.com",
-            "12345",
-            "12345678901",
-            5000m,
-            EmploymentType.FullTime,
-            ["Basics"],
-            "12:00-13:00"
-        );
+        // var localEmployee = new LocalEmployee(
+        //     2,
+        //     "John",
+        //     "Smith",
+        //     "+48123456789",
+        //     "john.smith@gmail.com",
+        //     "12345",
+        //     "12345678901",
+        //     5000m,
+        //     EmploymentType.FullTime,
+        //     ["Basics"],
+        //     "12:00-13:00"
+        // );
 
         var regionalEmployee = new RegionalEmployee(
             3,

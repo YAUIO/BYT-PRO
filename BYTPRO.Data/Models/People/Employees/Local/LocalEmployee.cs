@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using BYTPRO.Data.Models.Locations.Branches;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
 
@@ -52,11 +53,15 @@ public class LocalEmployee : Employee
         decimal salary,
         EmploymentType employmentType,
         DeserializableReadOnlyList<string> trainingsCompleted,
-        string breakSchedule
+        string breakSchedule,
+        Branch branch
     ) : base(id, name, surname, phone, email, password, pesel, salary, employmentType)
     {
         TrainingsCompleted = trainingsCompleted;
         BreakSchedule = breakSchedule;
+
+        Branch = branch;
+        Branch.AddEmployee(this);
 
         // IMPORTANT NOTE:
         // We defer registration to super class (adding to super Class Extent)
@@ -64,5 +69,28 @@ public class LocalEmployee : Employee
         RegisterPerson();
         RegisterEmployee();
         Extent.Add(this);
+    }
+
+    // ----------< Associations >----------
+    private readonly Branch _branch;
+
+
+    public Branch Branch
+    {
+        get => _branch;
+        init
+        {
+            value.IsNotNull(nameof(Branch));
+            _branch = value;
+        }
+    }
+
+    public void Delete()
+    {
+        _branch.RemoveEmployee(this);
+
+        Extent.Remove(this);
+        DeleteEmployee();
+        DeletePerson();
     }
 }

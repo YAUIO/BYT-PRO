@@ -1,4 +1,6 @@
 using System.Text.Json.Serialization;
+using BYTPRO.Data.Models.People.Employees;
+using BYTPRO.Data.Models.People.Employees.Local;
 using BYTPRO.Data.Validation.Validators;
 
 namespace BYTPRO.Data.Models.Locations.Branches;
@@ -75,5 +77,34 @@ public abstract class Branch
         Name = name;
         OpeningHours = openingHours;
         TotalArea = totalArea;
+    }
+
+    // ----------< Associations >----------
+    private readonly HashSet<LocalEmployee> _employees = [];
+
+    [JsonIgnore] public HashSet<LocalEmployee> Employees => [.._employees];
+
+    public void Delete()
+    {
+        foreach (var employee in _employees)
+        {
+            employee.Delete();
+        }
+
+        _employees.Clear();
+
+        Extent.Remove(this);
+    }
+
+    public void AddEmployee(LocalEmployee employee)
+    {
+        employee.IsNotNull(nameof(employee));
+        _employees.Add(employee);
+    }
+
+    public void RemoveEmployee(LocalEmployee employee)
+    {
+        employee.IsNotNull(nameof(employee));
+        _employees.Remove(employee);
     }
 }
