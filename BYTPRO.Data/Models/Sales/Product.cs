@@ -16,7 +16,7 @@ public class Product
     private readonly string _name;
     private string _description;
     private readonly decimal _price;
-    private readonly List<string> _images = [];
+    private readonly DeserializableReadOnlyList<string> _images;
     private readonly decimal _weight;
     private readonly Dimensions _dimensions;
 
@@ -54,13 +54,14 @@ public class Product
         }
     }
 
-    public List<string> Images
+    public DeserializableReadOnlyList<string> Images
     {
         get => _images;
         init
         {
             value.AreAllStringsNotNullOrEmpty(nameof(Images));
-            _images.AddRange(value);
+            _images = value;
+            _images.MakeReadOnly();
         }
     }
 
@@ -90,7 +91,7 @@ public class Product
         string name,
         string description,
         decimal price,
-        List<string> images,
+        DeserializableReadOnlyList<string> images,
         decimal weight,
         Dimensions dimensions,
         HashSet<Product>? consistsOf = null
