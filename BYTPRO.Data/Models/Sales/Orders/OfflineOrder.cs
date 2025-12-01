@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using BYTPRO.Data.Models.Locations.Branches;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
 
@@ -33,14 +34,30 @@ public class OfflineOrder : Order
         int id,
         DateTime creationDate,
         Dictionary<Product, int> orderItems,
-        string? phone
+        string? phone,
+        Store store
     ) : base(id, creationDate, orderItems)
     {
         Phone = phone;
 
+        Store = store;
+        Store.AddOrder(this);
         AddItemsToProduct();
 
         RegisterOrder();
         Extent.Add(this);
+    }
+
+    // ----------< Associations >----------
+    private readonly Store _store;
+
+    public Store Store
+    {
+        get => _store;
+        init
+        {
+            value.IsNotNull(nameof(Store));
+            _store = value;
+        }
     }
 }

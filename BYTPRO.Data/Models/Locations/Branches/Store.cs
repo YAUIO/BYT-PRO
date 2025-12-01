@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using BYTPRO.Data.Models.Sales.Orders;
 using BYTPRO.Data.Validation;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
@@ -70,5 +71,17 @@ public class Store : Branch
 
         RegisterBranch();
         Extent.Add(this);
+    }
+
+
+    // ----------< Associations >----------
+    private readonly HashSet<OfflineOrder> _offlineOrders = [];
+
+    [JsonIgnore] public HashSet<OfflineOrder> OfflineOrders => [.._offlineOrders];
+
+    internal void AddOrder(OfflineOrder order)
+    {
+        order.IsNotNull(nameof(order));
+        _offlineOrders.Add(order);
     }
 }
