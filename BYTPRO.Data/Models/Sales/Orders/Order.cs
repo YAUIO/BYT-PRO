@@ -18,7 +18,6 @@ public abstract class Order
     private readonly int _id;
     private readonly DateTime _creationDate;
     private OrderStatus _status;
-    private readonly List<OrderItem> _orderItems = [];
 
 
     // ----------< Properties with validation >----------
@@ -56,16 +55,6 @@ public abstract class Order
         }
     }
 
-    public List<OrderItem> OrderItems
-    {
-        get => _orderItems;
-        init
-        {
-            value.IsNotNullOrEmpty(nameof(OrderItems));
-            _orderItems.AddRange(value);
-        }
-    }
-
 
     // ----------< Calculated Properties >----------
     [JsonIgnore] public virtual decimal TotalPrice => _orderItems.Sum(item => item.TotalPrice);
@@ -79,11 +68,35 @@ public abstract class Order
     protected Order(
         int id,
         DateTime creationDate,
-        List<OrderItem> orderItems)
+        Dictionary<Product, int> orderItems)
     {
         Id = id;
         CreationDate = creationDate;
         Status = OrderStatus.InProgress;
-        OrderItems = orderItems;
+        _orderItems = InitializeProductQuantities(orderItems);
+    }
+
+
+    // ----------< Associations >----------
+    private readonly HashSet<ProductQuantityInOrder> _orderItems;
+
+    public HashSet<ProductQuantityInOrder> OrderItems => [.._orderItems]; // Returns a new copy
+
+
+    // ----------< Association Methods >----------
+    private HashSet<ProductQuantityInOrder> InitializeProductQuantities(
+        Dictionary<Product, int> orderItems)
+    {
+        orderItems.IsNotNull(nameof(orderItems));
+        orderItems.Count.IsPositive(nameof(orderItems));
+        return orderItems
+            .Select(e => new ProductQuantityInOrder(e.Key, this, e.Value))
+            .ToHashSet();
+    }
+
+    protected void AddItemsToProduct()
+    {
+        foreach (var item in OrderItems)
+            item.Product.AddOrderItem(item);
     }
 }

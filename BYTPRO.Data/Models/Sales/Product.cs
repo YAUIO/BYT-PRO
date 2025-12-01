@@ -92,7 +92,8 @@ public class Product
         decimal price,
         List<string> images,
         decimal weight,
-        Dimensions dimensions
+        Dimensions dimensions,
+        HashSet<Product>? consistsOf = null
     )
     {
         Name = name;
@@ -103,5 +104,19 @@ public class Product
         Dimensions = dimensions;
 
         Extent.Add(this);
+    }
+
+
+    // ----------< Associations >----------
+
+    // -----< with attribute >-----
+    private readonly HashSet<ProductQuantityInOrder> _orderItems = [];
+
+    [JsonIgnore] public HashSet<ProductQuantityInOrder> OrderItems => [.._orderItems]; // Returns a new copy
+
+    public void AddOrderItem(ProductQuantityInOrder orderItem)
+    {
+        orderItem.IsNotNull(nameof(orderItem));
+        _orderItems.Add(orderItem);
     }
 }
