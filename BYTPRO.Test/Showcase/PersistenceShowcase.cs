@@ -36,6 +36,19 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
             .WithFileName("regionalEmployees")
             .BuildEntity()
 
+            // ----------< Locations >----------
+            .AddJsonEntity<PickupPoint>()
+            .WithFileName("pickupPoints")
+            .BuildEntity()
+            //------------------------------
+            .AddJsonEntity<Store>()
+            .WithFileName("stores")
+            .BuildEntity()
+            //------------------------------
+            .AddJsonEntity<Warehouse>()
+            .WithFileName("warehouses")
+            .BuildEntity()
+
             // ----------< Sales >----------
             .AddJsonEntity<Product>()
             .WithFileName("products")
@@ -51,19 +64,6 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
             //------------------------------
             .AddJsonEntity<BranchOrder>()
             .WithFileName("branchOrders")
-            .BuildEntity()
-
-            // ----------< Locations >----------
-            .AddJsonEntity<PickupPoint>()
-            .WithFileName("pickupPoints")
-            .BuildEntity()
-            //------------------------------
-            .AddJsonEntity<Store>()
-            .WithFileName("stores")
-            .BuildEntity()
-            //------------------------------
-            .AddJsonEntity<Warehouse>()
-            .WithFileName("warehouses")
             .BuildEntity()
 
             //------------------------------
@@ -117,58 +117,6 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
         );
 
 
-        // ----------< Sales >----------
-        var product1 = new Product(
-            "Product1",
-            "Description1",
-            100m,
-            ["/Product1_1.png", "/Product1_2.png"],
-            10m,
-            new Dimensions(10m, 10m, 10m)
-        );
-        var orderItem1 = new OrderItem(product1, 1);
-        var orderItem2 = new OrderItem(product1, 5);
-
-        var product2 = new Product(
-            "Product2",
-            "Description2",
-            50m,
-            ["/Product2_1.png"],
-            5m,
-            new Dimensions(5m, 5m, 5m)
-        );
-        var orderItem3 = new OrderItem(product2, 2);
-        var orderItem4 = new OrderItem(product2, 10);
-
-
-        // Orders cannot be properly tested now because of circular references with Product.
-        // When any Order is saved, it is saved with all its Order Items, which includes Product.
-        // And during deserialization, from each Order a new Product instance is created as well.
-        // We might need to replace Product in OrderItem with some identifier (int: id).
-
-        /*var onlineOrder = new OnlineOrder(
-            1,
-            DateTime.Now,
-            [orderItem1],
-            true,
-            "TRN12345"
-        );
-
-        var offlineOrder = new OfflineOrder(
-            2,
-            DateTime.Now,
-            [orderItem3, orderItem4],
-            null
-        );
-
-        var branchOrder = new BranchOrder(
-            3,
-            DateTime.Now,
-            [orderItem1, orderItem2, orderItem3, orderItem4],
-            DateTime.Now.AddDays(2)
-        );*/
-
-
         // ----------< Locations >----------
         var pickupPoint = new PickupPoint(
             new Address("Street1", "10/2", "app1", "01-234", "City1"),
@@ -198,6 +146,54 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
             3
         );
 
+
+        // ----------< Sales >----------
+        var product1 = new Product(
+            "Product1",
+            "Description1",
+            100m,
+            ["/Product1_1.png", "/Product1_2.png"],
+            10m,
+            new Dimensions(10m, 10m, 10m)
+        );
+        var product2 = new Product(
+            "Product2",
+            "Description2",
+            50m,
+            ["/Product2_1.png"],
+            5m,
+            new Dimensions(5m, 5m, 5m)
+        );
+
+
+        // Orders cannot be properly tested now because of circular references.
+
+        /*var onlineOrder = new OnlineOrder(
+            1,
+            DateTime.Now,
+            new Dictionary<Product, int>
+            {
+                { product1, 1 },
+                { product2, 5 }
+            },
+            true,
+            "TRN12345",
+            customer
+        );
+
+        var offlineOrder = new OfflineOrder(
+            2,
+            DateTime.Now,
+            new Dictionary<Product, int>
+            {
+                { product1, 2 },
+                { product2, 2 }
+            },
+            null,
+            store
+        );*/
+
+
         JsonContext.Context.SaveChanges();
 
         ShowAll();
@@ -216,20 +212,20 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
                 ("LocalEmployees", LocalEmployee.All),
                 ("RegionalEmployees", RegionalEmployee.All)
             }),
-            ("Sales", new (string, IEnumerable)[]
-            {
-                ("Products", Product.All),
-                //("Orders", Order.All),
-                //("OnlineOrders", OnlineOrder.All),
-                //("OfflineOrders", OfflineOrder.All),
-                //("BranchOrders", BranchOrder.All)
-            }),
             ("Locations", new (string, IEnumerable)[]
             {
                 ("Branches", Branch.All),
                 ("PickupPoints", PickupPoint.All),
                 ("Stores", Store.All),
                 ("Warehouses", Warehouse.All)
+            }),
+            ("Sales", new (string, IEnumerable)[]
+            {
+                ("Products", Product.All),
+                ("Orders", Order.All),
+                ("OnlineOrders", OnlineOrder.All),
+                ("OfflineOrders", OfflineOrder.All),
+                ("BranchOrders", BranchOrder.All)
             })
         };
 

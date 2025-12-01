@@ -27,6 +27,19 @@ public static class ServiceCollectionDataExtensions
             .WithFileName("regionalEmployees")
             .BuildEntity()
 
+            // ----------< Locations >----------
+            .AddJsonEntity<PickupPoint>()
+            .WithFileName("pickupPoints")
+            .BuildEntity()
+            //------------------------------
+            .AddJsonEntity<Store>()
+            .WithFileName("stores")
+            .BuildEntity()
+            //------------------------------
+            .AddJsonEntity<Warehouse>()
+            .WithFileName("warehouses")
+            .BuildEntity()
+
             // ----------< Sales >----------
             .AddJsonEntity<Product>()
             .WithFileName("products")
@@ -42,19 +55,6 @@ public static class ServiceCollectionDataExtensions
             //------------------------------
             .AddJsonEntity<BranchOrder>()
             .WithFileName("branchOrders")
-            .BuildEntity()
-
-            // ----------< Locations >----------
-            .AddJsonEntity<PickupPoint>()
-            .WithFileName("pickupPoints")
-            .BuildEntity()
-            //------------------------------
-            .AddJsonEntity<Store>()
-            .WithFileName("stores")
-            .BuildEntity()
-            //------------------------------
-            .AddJsonEntity<Warehouse>()
-            .WithFileName("warehouses")
             .BuildEntity()
 
             //------------------------------
