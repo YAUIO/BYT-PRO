@@ -103,6 +103,8 @@ public class Product
         Weight = weight;
         Dimensions = dimensions;
 
+        ConsistsOf = consistsOf;
+
         Extent.Add(this);
     }
 
@@ -118,5 +120,19 @@ public class Product
     {
         orderItem.IsNotNull(nameof(orderItem));
         _orderItems.Add(orderItem);
+    }
+
+    // -----< Reflex >-----
+    private readonly HashSet<Product>? _consistsOf;
+
+    [JsonIgnore]
+    public HashSet<Product>? ConsistsOf
+    {
+        get => _consistsOf == null ? null : [.._consistsOf];
+        init
+        {
+            value?.AreAllElementsNotNull(nameof(ConsistsOf));
+            _consistsOf = value;
+        }
     }
 }
