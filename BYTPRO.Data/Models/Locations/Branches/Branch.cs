@@ -89,10 +89,17 @@ public abstract class Branch
 
     public void Delete()
     {
-        foreach (var employee in _employees)
+        foreach (var employee in _employees.ToList())
             employee.Delete();
 
         _employees.Clear();
+
+        foreach (var stock in _stocks.ToList())
+        {
+            stock.Dissolve();
+        }
+
+        _stocks.Clear();
 
         Extent.Remove(this);
     }
@@ -107,5 +114,22 @@ public abstract class Branch
     {
         employee.IsNotNull(nameof(employee));
         _employees.Remove(employee);
+    }
+
+    // -----< Aggregation (Products) >-----
+    private readonly HashSet<BranchProductStock> _stocks = [];
+
+    [JsonIgnore] public HashSet<BranchProductStock> Stocks => [.._stocks];
+
+    internal void AddStock(BranchProductStock stock)
+    {
+        stock.IsNotNull(nameof(stock));
+        _stocks.Add(stock);
+    }
+
+    internal void RemoveStock(BranchProductStock stock)
+    {
+        stock.IsNotNull(nameof(stock));
+        _stocks.Remove(stock);
     }
 }
