@@ -12,6 +12,8 @@ public abstract class Person
     [JsonIgnore] public static IReadOnlyList<Person> All => Extent.ToList().AsReadOnly();
 
     protected void RegisterPerson() => Extent.Add(this);
+    
+    protected void DeletePerson() => Extent.Remove(this);
 
 
     // ----------< Attributes >----------
