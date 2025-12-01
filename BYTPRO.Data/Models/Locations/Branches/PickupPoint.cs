@@ -55,4 +55,12 @@ public class PickupPoint : Branch
         RegisterBranch();
         Extent.Add(this);
     }
+
+
+    // ----------< Associations >----------
+    public new void Delete()
+    {
+        base.Delete();
+        Extent.Remove(this);
+    }
 }

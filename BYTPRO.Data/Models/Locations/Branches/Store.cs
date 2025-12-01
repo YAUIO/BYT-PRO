@@ -84,4 +84,10 @@ public class Store : Branch
         order.IsNotNull(nameof(order));
         _offlineOrders.Add(order);
     }
+
+    public new void Delete()
+    {
+        base.Delete();
+        Extent.Remove(this);
+    }
 }

@@ -79,7 +79,10 @@ public abstract class Branch
         TotalArea = totalArea;
     }
 
+
     // ----------< Associations >----------
+
+    // -----< Composition >-----
     private readonly HashSet<LocalEmployee> _employees = [];
 
     [JsonIgnore] public HashSet<LocalEmployee> Employees => [.._employees];
@@ -87,9 +90,7 @@ public abstract class Branch
     public void Delete()
     {
         foreach (var employee in _employees)
-        {
             employee.Delete();
-        }
 
         _employees.Clear();
 
