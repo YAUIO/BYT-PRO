@@ -35,11 +35,13 @@ public class BranchOrder : Order
     public BranchOrder(
         int id,
         DateTime creationDate,
-        List<OrderItem> orderItems,
+        Dictionary<Product, int> orderItems,
         DateTime expectedDeliveryDate
     ) : base(id, creationDate, orderItems)
     {
         ExpectedDeliveryDate = expectedDeliveryDate;
+
+        AddItemsToProduct();
 
         RegisterOrder();
         Extent.Add(this);

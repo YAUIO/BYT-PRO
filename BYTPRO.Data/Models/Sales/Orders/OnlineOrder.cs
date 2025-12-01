@@ -64,13 +64,15 @@ public class OnlineOrder : Order
     public OnlineOrder(
         int id,
         DateTime creationDate,
-        List<OrderItem> orderItems,
+        Dictionary<Product, int> orderItems,
         bool isPaid,
         string trackingNumber
     ) : base(id, creationDate, orderItems)
     {
         IsPaid = isPaid;
         TrackingNumber = trackingNumber;
+
+        AddItemsToProduct();
 
         RegisterOrder();
         Extent.Add(this);

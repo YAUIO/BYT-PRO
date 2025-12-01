@@ -32,11 +32,13 @@ public class OfflineOrder : Order
     public OfflineOrder(
         int id,
         DateTime creationDate,
-        List<OrderItem> orderItems,
+        Dictionary<Product, int> orderItems,
         string? phone
     ) : base(id, creationDate, orderItems)
     {
         Phone = phone;
+
+        AddItemsToProduct();
 
         RegisterOrder();
         Extent.Add(this);
