@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using BYTPRO.Data.Validation.Validators;
 
 namespace BYTPRO.Data.Models.Locations.Branches;

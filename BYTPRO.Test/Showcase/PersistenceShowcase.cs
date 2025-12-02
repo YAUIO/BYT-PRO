@@ -153,7 +153,11 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
             100m,
             ["/Product1_1.png", "/Product1_2.png"],
             10m,
-            new Dimensions(10m, 10m, 10m)
+            new Dimensions(10m, 10m, 10m), 
+            new Dictionary<Branch, int>
+            {
+                { store, 1 }
+            }
         );
         var product2 = new Product(
             "Product2",
@@ -161,7 +165,11 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
             50m,
             ["/Product2_1.png"],
             5m,
-            new Dimensions(5m, 5m, 5m)
+            new Dimensions(5m, 5m, 5m), 
+            new Dictionary<Branch, int>
+            {
+                { store, 2 }
+            }
         );
 
 
