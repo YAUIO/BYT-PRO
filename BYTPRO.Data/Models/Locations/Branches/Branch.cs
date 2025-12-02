@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using BYTPRO.Data.Models.People.Employees.Local;
+using BYTPRO.Data.Models.Sales;
 using BYTPRO.Data.Validation.Validators;
 
 namespace BYTPRO.Data.Models.Locations.Branches;
@@ -88,17 +89,13 @@ public abstract class Branch
 
     public void Delete()
     {
+        if (_stocks.Count > 0)
+            throw new InvalidOperationException("Redistribute stocks before deleting a branch.");
+
         foreach (var employee in _employees.ToList())
             employee.Delete();
 
         _employees.Clear();
-
-        foreach (var stock in _stocks.ToList())
-        {
-            stock.Dissolve();
-        }
-
-        _stocks.Clear();
 
         Extent.Remove(this);
     }
@@ -115,20 +112,34 @@ public abstract class Branch
         _employees.Remove(employee);
     }
 
-    // -----< Aggregation (Products) >-----
+    // -----< Aggregation >-----
     private readonly HashSet<BranchProductStock> _stocks = [];
 
     [JsonIgnore] public HashSet<BranchProductStock> Stocks => [.._stocks];
 
-    internal void AddStock(BranchProductStock stock)
+    public void AddProductStock(
+        Product product,
+        int quantity)
     {
-        stock.IsNotNull(nameof(stock));
-        _stocks.Add(stock);
+        var currentStock = GetStock(product);
+        if (currentStock != null)
+        {
+            // Case 1: Product exists in stock
+            quantity.IsPositive(nameof(quantity));
+            currentStock.Quantity += quantity;
+        }
+        else
+        {
+            // Case 2: Product does not exist in stock
+            var stock = new BranchProductStock(this, product, quantity);
+            _stocks.Add(stock);
+            product.AddStock(stock);
+        }
     }
 
-    internal void RemoveStock(BranchProductStock stock)
+    private BranchProductStock? GetStock(Product product)
     {
-        stock.IsNotNull(nameof(stock));
-        _stocks.Remove(stock);
+        product.IsNotNull(nameof(product));
+        return _stocks.FirstOrDefault(stock => stock.Product == product);
     }
 }
