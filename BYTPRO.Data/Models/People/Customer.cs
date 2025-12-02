@@ -60,7 +60,9 @@ public class Customer : Person
     // ----------< Associations >----------
 
     // -----< Qualified >-----
-    Dictionary<string, OnlineOrder> _ordersByTrackingNumber = [];
+    private readonly Dictionary<string, OnlineOrder> _ordersByTrackingNumber = [];
+
+    [JsonIgnore] public Dictionary<string, OnlineOrder> OnlineOrders => new(_ordersByTrackingNumber);
 
     internal void AddOrder(OnlineOrder order)
     {
