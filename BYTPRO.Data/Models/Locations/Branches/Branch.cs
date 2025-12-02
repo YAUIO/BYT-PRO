@@ -1,5 +1,4 @@
 using System.Text.Json.Serialization;
-using BYTPRO.Data.Models.People.Employees;
 using BYTPRO.Data.Models.People.Employees.Local;
 using BYTPRO.Data.Validation.Validators;
 
