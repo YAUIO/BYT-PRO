@@ -9,39 +9,35 @@ public class BranchProductStock
     // ----------< Attributes >----------
     private int _quantity;
 
-    // ----------< Associations >----------
-    public Branch Branch { get; }
-    public Product Product { get; }
 
     // ----------< Properties >----------
+    public Branch Branch { get; }
+
+    public Product Product { get; }
+
     public int Quantity
     {
         get => _quantity;
         set
         {
-            value.IsNonNegative(nameof(Quantity));
+            value.IsNonNegative(nameof(Quantity)); // Allow setting to 0 items
             _quantity = value;
         }
     }
 
+
     // ----------< Constructor >----------
-    public BranchProductStock(Branch branch, Product product, int quantity)
+    public BranchProductStock(
+        Branch branch,
+        Product product,
+        int quantity)
     {
-        branch.IsNotNull(nameof(branch));
-        product.IsNotNull(nameof(product));
-        quantity.IsNonNegative(nameof(quantity));
+        branch.IsNotNull(nameof(Branch));
+        product.IsNotNull(nameof(Product));
+        quantity.IsPositive(nameof(Quantity)); // Require at least 1 item to create
 
         Branch = branch;
         Product = product;
         Quantity = quantity;
-
-        Branch.AddStock(this);
-        Product.AddStock(this);
-    }
-
-    public void Dissolve()
-    {
-        Branch.RemoveStock(this);
-        Product.RemoveStock(this);
     }
 }

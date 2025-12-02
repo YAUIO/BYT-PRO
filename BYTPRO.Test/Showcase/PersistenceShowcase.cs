@@ -35,7 +35,7 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
             .AddJsonEntity<Warehouse>()
             .WithFileName("warehouses")
             .BuildEntity()
-            
+
             // ----------< People >----------
             .AddJsonEntity<Customer>()
             .WithFileName("customers")
@@ -105,7 +105,7 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
             50000m,
             3
         );
-        
+
         // ----------< People >----------
         var customer = new Customer(
             1,
@@ -153,24 +153,20 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
             100m,
             ["/Product1_1.png", "/Product1_2.png"],
             10m,
-            new Dimensions(10m, 10m, 10m), 
-            new Dictionary<Branch, int>
-            {
-                { store, 1 }
-            }
+            new Dimensions(10m, 10m, 10m)
         );
+        store.AddProductStock(product1, 2);
+        store.AddProductStock(product1, 3);
+
         var product2 = new Product(
             "Product2",
             "Description2",
             50m,
             ["/Product2_1.png"],
             5m,
-            new Dimensions(5m, 5m, 5m), 
-            new Dictionary<Branch, int>
-            {
-                { store, 2 }
-            }
+            new Dimensions(5m, 5m, 5m)
         );
+        store.AddProductStock(product2, 10);
 
 
         // Orders cannot be properly tested now because of circular references.

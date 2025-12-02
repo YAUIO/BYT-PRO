@@ -95,7 +95,6 @@ public class Product
         DeserializableReadOnlyList<string> images,
         decimal weight,
         Dimensions dimensions,
-        Dictionary<Branch, int> initialStock,
         HashSet<Product>? consistsOf = null
     )
     {
@@ -105,9 +104,6 @@ public class Product
         Images = images;
         Weight = weight;
         Dimensions = dimensions;
-
-        initialStock.IsNotNullOrEmpty(nameof(initialStock));
-        InitializeStock(initialStock);
 
         ConsistsOf = consistsOf;
 
@@ -142,7 +138,7 @@ public class Product
         }
     }
 
-    // -----< Aggregation (In Branches) >-----
+    // -----< Aggregation >-----
     private readonly HashSet<BranchProductStock> _stockedIn = [];
 
     [JsonIgnore] public HashSet<BranchProductStock> StockedIn => [.._stockedIn];
@@ -151,25 +147,5 @@ public class Product
     {
         stock.IsNotNull(nameof(stock));
         _stockedIn.Add(stock);
-    }
-
-    public void RemoveStock(BranchProductStock stock)
-    {
-        stock.IsNotNull(nameof(stock));
-        _stockedIn.Remove(stock);
-    }
-
-    private void InitializeStock(Dictionary<Branch, int> initialStock)
-    {
-        foreach (var item in initialStock)
-        {
-            var branch = item.Key;
-            var quantity = item.Value;
-
-            branch.IsNotNull(nameof(branch));
-            quantity.IsNonNegative(nameof(quantity));
-
-            _ = new BranchProductStock(branch, this, quantity);
-        }
     }
 }
