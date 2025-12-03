@@ -10,11 +10,13 @@ namespace BYTPRO.Test.Data.Models;
 
 public class LocalEmployeeTests
 {
-    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/TDb";
+    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/TestEmployeeDb";
 
     static LocalEmployeeTests()
     {
-        if (!Directory.Exists(DbRoot)) Directory.CreateDirectory(DbRoot);
+        if (Directory.Exists(DbRoot)) Directory.Delete(DbRoot, true);
+        
+        Directory.CreateDirectory(DbRoot);
 
         var ctx = new JsonContextBuilder()
             .AddJsonEntity<LocalEmployee>()
@@ -50,7 +52,7 @@ public class LocalEmployeeTests
         var store = CreateTestStore();
         
         var local = new LocalEmployee(
-            2,
+            3,
             "John",
             "Smith",
             "+48123456789",
@@ -75,6 +77,10 @@ public class LocalEmployeeTests
     [Fact]
     public void CreateLocalEmployeeWithInvalidData()
     {
+        var persons = Person.All;
+        var emps = Employee.All;
+        var localemps = LocalEmployee.All;
+        
         Assert.Throws<ValidationException>(() =>
         {
             var store = CreateTestStore();
@@ -95,8 +101,8 @@ public class LocalEmployeeTests
             );
         });
 
-        Assert.Empty(Person.All);
-        Assert.Empty(Employee.All);
-        Assert.Empty(LocalEmployee.All);
+        Assert.Equal(persons, Person.All);
+        Assert.Equal(emps, Employee.All);
+        Assert.Equal(localemps, LocalEmployee.All);
     }
 }
