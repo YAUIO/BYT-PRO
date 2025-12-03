@@ -32,4 +32,7 @@ public record ProductQuantityInOrder
         Order = order;
         Quantity = quantity;
     }
+    
+    [JsonConstructor]
+    private ProductQuantityInOrder() {}
 }

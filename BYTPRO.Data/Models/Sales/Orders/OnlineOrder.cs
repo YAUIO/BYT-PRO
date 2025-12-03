@@ -81,6 +81,26 @@ public class OnlineOrder : Order
         RegisterOrder();
         Extent.Add(this);
     }
+    
+    [JsonConstructor]
+    private OnlineOrder(
+        int id,
+        DateTime creationDate,
+        HashSet<ProductQuantityInOrder> orderItems,
+        bool isPaid,
+        string trackingNumber,
+        Customer customer
+    ) : base(id, creationDate, orderItems)
+    {
+        IsPaid = isPaid;
+        TrackingNumber = trackingNumber;
+
+        Customer = customer;
+        customer.AddOrder(this);
+
+        RegisterOrder();
+        Extent.Add(this);
+    }
 
 
     // ----------< Associations >----------

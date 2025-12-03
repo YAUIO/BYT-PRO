@@ -88,12 +88,6 @@ public abstract class Order
         _orderItems = orderItems;
     }
 
-    [JsonConstructor]
-    protected Order()
-    {
-        Status = OrderStatus.InProgress;
-    }
-
 
     // ----------< Associations >----------
     private readonly HashSet<ProductQuantityInOrder> _orderItems;

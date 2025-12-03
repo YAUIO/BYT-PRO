@@ -48,8 +48,17 @@ public class BranchOrder : Order
     }
     
     [JsonConstructor]
-    private BranchOrder()
+    private BranchOrder(
+        int id,
+        DateTime creationDate,
+        HashSet<ProductQuantityInOrder> orderItems,
+        DateTime expectedDeliveryDate
+    ) : base(id, creationDate, orderItems)
     {
+        ExpectedDeliveryDate = expectedDeliveryDate;
+
+        AddItemsToProduct();
+
         RegisterOrder();
         Extent.Add(this);
     }
