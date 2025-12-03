@@ -110,4 +110,10 @@ public abstract class Person
         Email = email;
         Password = password;
     }
+
+    [JsonConstructor]
+    protected Person()
+    {
+        
+    }
 }

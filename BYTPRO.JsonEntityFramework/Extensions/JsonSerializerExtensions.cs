@@ -10,7 +10,8 @@ public static class JsonSerializerExtensions
     internal static readonly JsonSerializerOptions Options = new()
     {
         WriteIndented = true,
-        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        ReferenceHandler = ReferenceHandler.Preserve
     };
 
     static JsonSerializerExtensions()

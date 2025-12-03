@@ -31,6 +31,19 @@ public class Store : Branch
         }
     }
 
+    // We use this to change JSON saving order, so validation passes
+    #pragma warning disable S4275
+    public new decimal TotalArea
+    {
+        get => base.TotalArea;
+        init
+        {
+            value.IsPositive(nameof(TotalArea));
+            base.TotalArea = value;
+        }
+    }
+    #pragma warning restore S4275
+
     public decimal SalesArea
     {
         get => _salesArea;
@@ -38,7 +51,7 @@ public class Store : Branch
         {
             value.IsPositive(nameof(SalesArea));
             if (value > TotalArea)
-                throw new ValidationException($"{nameof(SalesArea)} cannot exceed {nameof(TotalArea)}");
+                throw new ValidationException($"{nameof(SalesArea)} cannot exceed {nameof(TotalArea)} ({value} > {TotalArea})");
             _salesArea = value;
         }
     }
@@ -69,6 +82,13 @@ public class Store : Branch
         SalesArea = salesArea;
         SelfCheckouts = selfCheckouts;
 
+        RegisterBranch();
+        Extent.Add(this);
+    }
+    
+    [JsonConstructor]
+    private Store()
+    {
         RegisterBranch();
         Extent.Add(this);
     }

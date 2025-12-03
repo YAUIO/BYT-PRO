@@ -61,8 +61,18 @@ public class LocalEmployee : Employee
         BreakSchedule = breakSchedule;
 
         Branch = branch;
-        Branch.AddEmployee(this);
 
+        // IMPORTANT NOTE:
+        // We defer registration to super class (adding to super Class Extent)
+        // until all properties are validated and set for child class.
+        RegisterPerson();
+        RegisterEmployee();
+        Extent.Add(this);
+    }
+    
+    [JsonConstructor]
+    private LocalEmployee()
+    {
         // IMPORTANT NOTE:
         // We defer registration to super class (adding to super Class Extent)
         // until all properties are validated and set for child class.
@@ -82,6 +92,7 @@ public class LocalEmployee : Employee
         {
             value.IsNotNull(nameof(Branch));
             _branch = value;
+            Branch.AddEmployee(this);
         }
     }
 

@@ -71,4 +71,10 @@ public abstract class Employee : Person
         Salary = salary;
         EmploymentType = employmentType;
     }
+
+    [JsonConstructor]
+    protected Employee()
+    {
+        
+    }
 }

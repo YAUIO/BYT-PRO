@@ -75,6 +75,12 @@ public abstract class Order
         Status = OrderStatus.InProgress;
         _orderItems = InitializeProductQuantities(orderItems);
     }
+    
+    [JsonConstructor]
+    protected Order()
+    {
+        Status = OrderStatus.InProgress;
+    }
 
 
     // ----------< Associations >----------

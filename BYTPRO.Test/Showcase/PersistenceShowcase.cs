@@ -73,7 +73,7 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
         JsonContext.SetContext(context);
     }
 
-    
+    [Fact]
     private void TestClassExtent()
     {
         // ----------< Locations >----------
@@ -170,7 +170,7 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
 
         // Orders cannot be properly tested now because of circular references.
 
-        /*var onlineOrder = new OnlineOrder(
+        var onlineOrder = new OnlineOrder(
             1,
             DateTime.Now,
             new Dictionary<Product, int>
@@ -193,7 +193,7 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
             },
             null,
             store
-        );*/
+        );
 
 
         JsonContext.Context.SaveChanges();
@@ -201,6 +201,7 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
         ShowAll();
     }
     
+    [Fact]
     private void ShowAll()
     {
         var sections = new (string Title, IEnumerable Data)[]
