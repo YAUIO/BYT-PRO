@@ -1,12 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.ObjectModel;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace BYTPRO.JsonEntityFramework.Context;
 
 public class DeserializableReadOnlyList<T> : IList<T>
 {
-    [JsonInclude] private IList<T> _list = new List<T>();
+    [JsonProperty] private IList<T> _list = new List<T>();
 
     private bool _isConstructed;
 

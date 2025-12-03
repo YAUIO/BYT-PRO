@@ -1,6 +1,7 @@
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
+using Newtonsoft.Json.Converters;
 
 namespace BYTPRO.Data.Models.People.Employees.Regional;
 
@@ -29,7 +30,7 @@ public class RegionalEmployee : Employee
         }
     }
 
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [JsonConverter(typeof(StringEnumConverter))]
     public SupervisionScope SupervisionScope
     {
         get => _supervisionScope;

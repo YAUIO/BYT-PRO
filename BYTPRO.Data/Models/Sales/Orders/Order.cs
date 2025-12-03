@@ -1,6 +1,7 @@
-﻿using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
 using BYTPRO.Data.Validation;
 using BYTPRO.Data.Validation.Validators;
+using Newtonsoft.Json.Converters;
 
 namespace BYTPRO.Data.Models.Sales.Orders;
 
@@ -44,7 +45,7 @@ public abstract class Order
         }
     }
 
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [JsonConverter(typeof(StringEnumConverter))]
     public OrderStatus Status
     {
         get => _status;
@@ -76,6 +77,17 @@ public abstract class Order
         _orderItems = InitializeProductQuantities(orderItems);
     }
     
+    protected Order(
+        int id,
+        DateTime creationDate,
+        HashSet<ProductQuantityInOrder> orderItems)
+    {
+        Id = id;
+        CreationDate = creationDate;
+        Status = OrderStatus.InProgress;
+        _orderItems = orderItems;
+    }
+
     [JsonConstructor]
     protected Order()
     {

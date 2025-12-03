@@ -1,5 +1,6 @@
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 using BYTPRO.Data.Validation.Validators;
+using Newtonsoft.Json.Converters;
 
 namespace BYTPRO.Data.Models.People.Employees;
 
@@ -41,8 +42,8 @@ public abstract class Employee : Person
             _salary = value;
         }
     }
-
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    
+    [JsonConverter(typeof(StringEnumConverter))]
     public EmploymentType EmploymentType
     {
         get => _employmentType;
@@ -70,11 +71,5 @@ public abstract class Employee : Person
         Pesel = pesel;
         Salary = salary;
         EmploymentType = employmentType;
-    }
-
-    [JsonConstructor]
-    protected Employee()
-    {
-        
     }
 }
