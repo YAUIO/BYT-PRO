@@ -55,6 +55,22 @@ public class Customer : Person
         RegisterPerson();
         Extent.Add(this);
     }
+    
+    [JsonConstructor]
+    private Customer(
+        string name,
+        string surname,
+        string phone,
+        string email,
+        string password,
+        DateTime registrationDate,
+        int id)
+        : base(id, name, surname, phone, email, password)
+    {
+        RegistrationDate = registrationDate;
+        
+        Extent.Add(this);
+    }
 
 
     // ----------< Associations >----------

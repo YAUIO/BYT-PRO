@@ -8,8 +8,11 @@ namespace BYTPRO.JsonEntityFramework.Context;
 
 public class JsonContext
 {
+    public static int Contexts { get; private set; }
     public JsonContext(HashSet<JsonEntityConfiguration> entities, DirectoryInfo root)
     {
+        Contexts++;
+        
         Context ??= this;
 
         Root = root;
@@ -52,18 +55,17 @@ public class JsonContext
                         JsonSerializerExtensions.Options
                     );
                     
-                    foreach (var item in (IEnumerable)list!)
-                    {
-                        dynamic casted = item;
-                        set.Add(casted);
-                    }
+                    if (list != null)
+                        foreach (var item in (IEnumerable)list)
+                        {
+                            dynamic casted = item;
+                            set.Add(casted);
+                        }
                 }
                 finally
                 {
                     fileLock.Release();
                 }
-
-                SaveChanges();
             }
         }
     }
@@ -162,11 +164,12 @@ public class JsonContext
                     JsonSerializerExtensions.Options
                 );
                 
-                foreach (var item in (IEnumerable)list!)
-                {
-                    dynamic casted = item;
-                    table.Add(casted);
-                }
+                if (list != null)
+                    foreach (var item in (IEnumerable)list)
+                    {   
+                        dynamic casted = item;
+                        table.Add(casted);
+                    }
 
                 table.MarkSaved();
 
@@ -205,11 +208,13 @@ public class JsonContext
                     typeof(List<>).MakeGenericType(type),
                     JsonSerializerExtensions.Options
                 );
-                foreach (var item in (IEnumerable)list!)
-                {
-                    dynamic casted = item;
-                    table.Add(casted);
-                }
+                
+                if (list != null)
+                    foreach (var item in (IEnumerable)list)
+                    {
+                        dynamic casted = item;
+                        table.Add(casted);
+                    }
 
                 table.MarkSaved();
 
