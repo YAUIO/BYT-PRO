@@ -1,3 +1,4 @@
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using BYTPRO.Data.Models.Locations.Branches;
 using BYTPRO.Data.Validation.Validators;
@@ -111,8 +112,14 @@ public class Product
     }
 
     [JsonConstructor]
-    private Product()
+    private Product() {}
+    
+    [OnDeserialized]
+    internal void Register(StreamingContext context)
     {
+        if (Extent.Any(c => c.Name == Name))
+            return;
+
         Extent.Add(this);
     }
 

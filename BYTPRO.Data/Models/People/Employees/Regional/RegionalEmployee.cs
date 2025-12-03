@@ -1,3 +1,4 @@
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
@@ -63,6 +64,38 @@ public class RegionalEmployee : Employee
         // IMPORTANT NOTE:
         // We defer registration to super class (adding to super Class Extent)
         // until all properties are validated and set for child class.
+        RegisterPerson();
+        RegisterEmployee();
+        Extent.Add(this);
+    }
+    
+    [JsonConstructor]
+    private RegionalEmployee(
+        string name,
+        string surname,
+        string phone,
+        string email,
+        string password,
+        string pesel,
+        decimal salary,
+        EmploymentType employmentType,
+        string badgeNumber,
+        SupervisionScope supervisionScope,
+        int id
+    ) : base(id, name, surname, phone, email, password, pesel, salary, employmentType)
+    {
+        BadgeNumber = badgeNumber;
+        SupervisionScope = supervisionScope;
+
+        
+    }
+    
+    [OnDeserialized]
+    internal void Register(StreamingContext context)
+    {
+        if (Extent.Any(c => c.Id == Id))
+            return;
+        
         RegisterPerson();
         RegisterEmployee();
         Extent.Add(this);

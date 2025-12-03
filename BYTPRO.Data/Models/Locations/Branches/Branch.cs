@@ -12,7 +12,11 @@ public abstract class Branch
 
     [JsonIgnore] public static IReadOnlyList<Branch> All => Extent.ToList().AsReadOnly();
 
-    protected void RegisterBranch() => Extent.Add(this);
+    protected void RegisterBranch()
+    {
+        if (Extent.All(b => b.Name != Name))
+            Extent.Add(this);
+    }
 
 
     // ----------< Attributes >----------

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Concurrent;
+using System.Reflection;
 using System.Text;
 using BYTPRO.JsonEntityFramework.Extensions;
 using Newtonsoft.Json;
@@ -49,18 +50,14 @@ public class JsonContext
                     
                     var json = reader.ReadToEnd();
 
-                    var list = JsonConvert.DeserializeObject(
-                        json,
-                        typeof(List<>).MakeGenericType(ent.Target),
-                        JsonSerializerExtensions.Options
-                    );
+                    var listType = typeof(List<>).MakeGenericType(ent.Target);
+
+                    var deserializedList = JsonConvert.DeserializeObject(json, listType, JsonSerializerExtensions.Options);
                     
-                    if (list != null)
-                        foreach (var item in (IEnumerable)list)
-                        {
-                            dynamic casted = item;
-                            set.Add(casted);
-                        }
+                    if (deserializedList is IEnumerable items)
+                    {
+                        set.AddRange(items);
+                    }
                 }
                 finally
                 {
