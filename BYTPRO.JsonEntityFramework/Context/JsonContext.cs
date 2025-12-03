@@ -31,7 +31,6 @@ public class JsonContext
             if (!File.Exists(path))
             {
                 var stream = File.Create(path);
-                stream.Write("[]"u8);
                 stream.Close();
             }
             else
@@ -159,7 +158,7 @@ public class JsonContext
 
                 var list = JsonConvert.DeserializeObject(
                     json,
-                    type,
+                    typeof(List<>).MakeGenericType(type),
                     JsonSerializerExtensions.Options
                 );
                 
@@ -203,7 +202,7 @@ public class JsonContext
 
                 var list = JsonConvert.DeserializeObject(
                     json,
-                    type,
+                    typeof(List<>).MakeGenericType(type),
                     JsonSerializerExtensions.Options
                 );
                 foreach (var item in (IEnumerable)list!)
