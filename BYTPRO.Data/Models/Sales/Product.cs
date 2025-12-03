@@ -126,8 +126,7 @@ public class Product
 
     // -----< Reflex >-----
     private readonly HashSet<Product>? _consistsOf;
-
-    [JsonIgnore]
+    
     public HashSet<Product>? ConsistsOf
     {
         get => _consistsOf == null ? null : [.._consistsOf];
