@@ -34,7 +34,7 @@ public abstract class Person
         {
             value.IsNonNegative(nameof(Id));
             if (Extent.Any(p => p.Id == value))
-                throw new ValidationException($"Person with Id {value} already exists. {All.ToJson()}");
+                throw new ValidationException($"Person with Id {value} already exists.");
             _id = value;
         }
     }
