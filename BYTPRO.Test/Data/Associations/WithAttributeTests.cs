@@ -7,13 +7,6 @@ namespace BYTPRO.Test.Data.Associations;
 
 public class WithAttributeTests
 {
-    /*4. Association with attribute: Order <-> Product
-    По скольку Order abstract, то тесить выйдет только на child classes, 
-    сейчас это лучше всего делать на BranchOrder (он пока что не имеет зависимостей как другие) 
-    и можно неплохо потестить сам base class Order, а именно:
-    Различное создание (valid, invalid) по атрибуту Dictionary<Product, int> orderItems 
-    и в случае успешного создания, проверить его OrderItems.*/
-    
     private static string DbRoot => $"{Directory.GetCurrentDirectory()}/TestWAttributeDb";
 
     private static void ResetContext(bool clearContext = true)
