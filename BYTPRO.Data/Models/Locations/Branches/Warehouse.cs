@@ -73,6 +73,15 @@ public class Warehouse : Branch
         RegisterBranch();
         Extent.Add(this);
     }
+    
+    [JsonConstructor]
+    private Warehouse()
+    {
+        CurrentStorageCapacity = 0;
+        
+        RegisterBranch();
+        Extent.Add(this);
+    }
 
 
     // ----------< Associations >----------

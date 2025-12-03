@@ -1,7 +1,8 @@
-﻿using System.Collections.Concurrent;
+﻿using System.Collections;
+using System.Collections.Concurrent;
 using System.Text;
-using System.Text.Json;
 using BYTPRO.JsonEntityFramework.Extensions;
+using Newtonsoft.Json;
 
 namespace BYTPRO.JsonEntityFramework.Context;
 
@@ -13,7 +14,6 @@ public class JsonContext
 
         Root = root;
         Tables = [];
-
 
         Root.Create();
 
@@ -43,16 +43,22 @@ public class JsonContext
                 try
                 {
                     using var fileStream = File.Open(path, FileMode.Open);
-
-                    var enumerable =
-                        (JsonElement)(JsonSerializer.Deserialize<dynamic>(fileStream, JsonSerializerExtensions.Options)
-                                      ?? throw new InvalidCastException("Can't be a null JsonElement"));
-
-                    foreach (var obj in enumerable.EnumerateArray())
+                    
+                    var serializer = new JsonSerializer
                     {
-                        var result = obj.Deserialize(ent.Target, JsonSerializerOptions.Default);
+                        TypeNameHandling = TypeNameHandling.Auto,
+                        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                    };
 
-                        dynamic casted = result;
+                    var list = JsonSerializer.Deserialize(
+                        fileStream,
+                        typeof(List<>).MakeGenericType(ent.Target),
+                        JsonSerializerExtensions.Options
+                    );
+                    foreach (var item in (IEnumerable)list!)
+                    {
+                        dynamic casted = item;
                         set.Add(casted);
                     }
                 }
@@ -148,19 +154,17 @@ public class JsonContext
                 await using var fileStream = File.Open(path, FileMode.Open);
 
                 table.Clear();
+                
+                var type = (Type)table.GetGenericType();
 
-                var enumerable =
-                    (JsonElement)(await JsonSerializer.DeserializeAsync<dynamic>(fileStream,
-                                      JsonSerializerExtensions.Options)
-                                  ?? throw new InvalidCastException("Can't be a null JsonElement"));
-
-                foreach (var obj in enumerable.EnumerateArray())
+                var list = await JsonSerializer.DeserializeAsync(
+                    fileStream,
+                    typeof(List<>).MakeGenericType(type),
+                    JsonSerializerExtensions.Options
+                );
+                foreach (var item in (IEnumerable)list!)
                 {
-                    var type = (Type)table.GetGenericType();
-
-                    var result = obj.Deserialize(type, JsonSerializerOptions.Default);
-
-                    dynamic casted = result;
+                    dynamic casted = item;
                     table.Add(casted);
                 }
 
@@ -191,17 +195,16 @@ public class JsonContext
 
                 table.Clear();
 
-                var enumerable =
-                    (JsonElement)(JsonSerializer.Deserialize<dynamic>(fileStream, JsonSerializerExtensions.Options)
-                                  ?? throw new InvalidCastException("Can't be a null JsonElement"));
+                var type = (Type)table.GetGenericType();
 
-                foreach (var obj in enumerable.EnumerateArray())
+                var list = JsonSerializer.Deserialize(
+                    fileStream,
+                    typeof(List<>).MakeGenericType(type),
+                    JsonSerializerExtensions.Options
+                );
+                foreach (var item in (IEnumerable)list!)
                 {
-                    var type = (Type)table.GetGenericType();
-
-                    var result = obj.Deserialize(type, JsonSerializerOptions.Default);
-
-                    dynamic casted = result;
+                    dynamic casted = item;
                     table.Add(casted);
                 }
 

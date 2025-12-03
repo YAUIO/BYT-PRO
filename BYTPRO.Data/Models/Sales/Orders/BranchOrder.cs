@@ -46,4 +46,11 @@ public class BranchOrder : Order
         RegisterOrder();
         Extent.Add(this);
     }
+    
+    [JsonConstructor]
+    private BranchOrder()
+    {
+        RegisterOrder();
+        Extent.Add(this);
+    }
 }

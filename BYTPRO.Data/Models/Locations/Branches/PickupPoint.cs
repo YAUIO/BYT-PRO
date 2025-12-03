@@ -56,6 +56,13 @@ public class PickupPoint : Branch
         Extent.Add(this);
     }
 
+    [JsonConstructor]
+    private PickupPoint()
+    {
+        RegisterBranch();
+        Extent.Add(this);
+    }
+
 
     // ----------< Associations >----------
     public new void Delete()

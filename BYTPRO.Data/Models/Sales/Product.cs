@@ -110,6 +110,12 @@ public class Product
         Extent.Add(this);
     }
 
+    [JsonConstructor]
+    private Product()
+    {
+        Extent.Add(this);
+    }
+
 
     // ----------< Associations >----------
 

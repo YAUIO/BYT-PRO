@@ -5,6 +5,9 @@ using BYTPRO.Data.Validation.Validators;
 
 namespace BYTPRO.Data.Models.Locations.Branches;
 
+[JsonDerivedType(typeof(Store), nameof(Store))]
+[JsonDerivedType(typeof(Warehouse), nameof(Warehouse))]
+[JsonDerivedType(typeof(PickupPoint), nameof(PickupPoint))]
 public abstract class Branch
 {
     // ----------< Class Extent >----------
@@ -78,6 +81,9 @@ public abstract class Branch
         OpeningHours = openingHours;
         TotalArea = totalArea;
     }
+
+    [JsonConstructor]
+    protected Branch() {}
 
 
     // ----------< Associations >----------
