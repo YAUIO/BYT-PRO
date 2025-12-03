@@ -1,26 +1,25 @@
 ﻿using System.Collections;
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace BYTPRO.JsonEntityFramework.Extensions;
 
 public static class JsonSerializerExtensions
 {
-    internal static readonly JsonSerializerOptions Options = new()
+    internal static readonly JsonSerializerSettings Options = new()
     {
-        WriteIndented = true,
-        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-        ReferenceHandler = ReferenceHandler.Preserve
+        Formatting = Formatting.Indented,
+        TypeNameHandling = TypeNameHandling.Auto,
+        PreserveReferencesHandling = PreserveReferencesHandling.Objects
     };
 
     static JsonSerializerExtensions()
     {
-        Options.Converters.Add(new JsonStringEnumConverter());
+        Options.Converters.Add(new StringEnumConverter());
     }
 
     public static string ToJson(this IEnumerable collection)
     {
-        return JsonSerializer.Serialize(collection, Options);
+        return JsonConvert.SerializeObject(collection, Options);
     }
 }

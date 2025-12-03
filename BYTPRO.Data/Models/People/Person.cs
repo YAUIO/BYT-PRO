@@ -1,6 +1,7 @@
-﻿using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
 using BYTPRO.Data.Validation;
 using BYTPRO.Data.Validation.Validators;
+using BYTPRO.JsonEntityFramework.Extensions;
 
 namespace BYTPRO.Data.Models.People;
 
@@ -33,7 +34,7 @@ public abstract class Person
         {
             value.IsNonNegative(nameof(Id));
             if (Extent.Any(p => p.Id == value))
-                throw new ValidationException($"Person with Id {value} already exists.");
+                throw new ValidationException($"Person with Id {value} already exists. {All.ToJson()}");
             _id = value;
         }
     }
@@ -109,11 +110,5 @@ public abstract class Person
         Phone = phone;
         Email = email;
         Password = password;
-    }
-
-    [JsonConstructor]
-    protected Person()
-    {
-        
     }
 }

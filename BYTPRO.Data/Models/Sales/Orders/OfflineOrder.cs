@@ -1,7 +1,7 @@
-using System.Text.Json.Serialization;
 using BYTPRO.Data.Models.Locations.Branches;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
+using Newtonsoft.Json;
 
 namespace BYTPRO.Data.Models.Sales.Orders;
 
@@ -43,6 +43,26 @@ public class OfflineOrder : Order
         Store = store;
         Store.AddOrder(this);
         AddItemsToProduct();
+
+        RegisterOrder();
+        Extent.Add(this);
+    }
+    
+    [JsonConstructor]
+    private OfflineOrder(
+        int id,
+        DateTime creationDate,
+        HashSet<ProductQuantityInOrder> orderItems,
+        string? phone,
+        Store store
+    ) : base(id, creationDate, orderItems)
+    {
+        Id = id;
+        CreationDate = creationDate;
+        Phone = phone;
+
+        Store = store;
+        Store.AddOrder(this);
 
         RegisterOrder();
         Extent.Add(this);

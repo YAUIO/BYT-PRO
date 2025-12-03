@@ -1,4 +1,4 @@
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 using BYTPRO.Data.Models.Locations.Branches;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
@@ -62,17 +62,6 @@ public class LocalEmployee : Employee
 
         Branch = branch;
 
-        // IMPORTANT NOTE:
-        // We defer registration to super class (adding to super Class Extent)
-        // until all properties are validated and set for child class.
-        RegisterPerson();
-        RegisterEmployee();
-        Extent.Add(this);
-    }
-    
-    [JsonConstructor]
-    private LocalEmployee()
-    {
         // IMPORTANT NOTE:
         // We defer registration to super class (adding to super Class Extent)
         // until all properties are validated and set for child class.

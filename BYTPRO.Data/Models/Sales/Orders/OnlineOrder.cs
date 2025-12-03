@@ -1,4 +1,4 @@
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 using BYTPRO.Data.Models.People;
 using BYTPRO.Data.Validation;
 using BYTPRO.Data.Validation.Validators;

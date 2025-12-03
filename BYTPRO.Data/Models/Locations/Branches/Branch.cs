@@ -1,13 +1,10 @@
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 using BYTPRO.Data.Models.People.Employees.Local;
 using BYTPRO.Data.Models.Sales;
 using BYTPRO.Data.Validation.Validators;
 
 namespace BYTPRO.Data.Models.Locations.Branches;
 
-[JsonDerivedType(typeof(Store), nameof(Store))]
-[JsonDerivedType(typeof(Warehouse), nameof(Warehouse))]
-[JsonDerivedType(typeof(PickupPoint), nameof(PickupPoint))]
 public abstract class Branch
 {
     // ----------< Class Extent >----------

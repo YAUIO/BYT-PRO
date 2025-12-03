@@ -43,19 +43,16 @@ public class JsonContext
                 try
                 {
                     using var fileStream = File.Open(path, FileMode.Open);
+                    using var reader = new StreamReader(fileStream);
                     
-                    var serializer = new JsonSerializer
-                    {
-                        TypeNameHandling = TypeNameHandling.Auto,
-                        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                    };
+                    var json = reader.ReadToEnd();
 
-                    var list = JsonSerializer.Deserialize(
-                        fileStream,
+                    var list = JsonConvert.DeserializeObject(
+                        json,
                         typeof(List<>).MakeGenericType(ent.Target),
                         JsonSerializerExtensions.Options
                     );
+                    
                     foreach (var item in (IEnumerable)list!)
                     {
                         dynamic casted = item;
@@ -152,16 +149,20 @@ public class JsonContext
             try
             {
                 await using var fileStream = File.Open(path, FileMode.Open);
+                using var reader = new StreamReader(fileStream);
+                    
+                var json = await reader.ReadToEndAsync();
 
                 table.Clear();
                 
                 var type = (Type)table.GetGenericType();
 
-                var list = await JsonSerializer.DeserializeAsync(
-                    fileStream,
-                    typeof(List<>).MakeGenericType(type),
+                var list = JsonConvert.DeserializeObject(
+                    json,
+                    type,
                     JsonSerializerExtensions.Options
                 );
+                
                 foreach (var item in (IEnumerable)list!)
                 {
                     dynamic casted = item;
@@ -192,14 +193,17 @@ public class JsonContext
             try
             {
                 using var fileStream = File.Open(path, FileMode.Open);
+                using var reader = new StreamReader(fileStream);
+                    
+                var json = reader.ReadToEnd();
 
                 table.Clear();
 
                 var type = (Type)table.GetGenericType();
 
-                var list = JsonSerializer.Deserialize(
-                    fileStream,
-                    typeof(List<>).MakeGenericType(type),
+                var list = JsonConvert.DeserializeObject(
+                    json,
+                    type,
                     JsonSerializerExtensions.Options
                 );
                 foreach (var item in (IEnumerable)list!)

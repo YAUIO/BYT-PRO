@@ -1,4 +1,4 @@
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 using BYTPRO.Data.Validation.Validators;
 
 namespace BYTPRO.Data.Models.Sales;
