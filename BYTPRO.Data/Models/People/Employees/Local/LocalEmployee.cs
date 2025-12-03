@@ -1,3 +1,4 @@
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using BYTPRO.Data.Models.Locations.Branches;
 using BYTPRO.Data.Validation.Validators;
@@ -69,7 +70,40 @@ public class LocalEmployee : Employee
         RegisterEmployee();
         Extent.Add(this);
     }
+    
+    [JsonConstructor]
+    public LocalEmployee(
+        string name,
+        string surname,
+        string phone,
+        string email,
+        string password,
+        string pesel,
+        decimal salary,
+        EmploymentType employmentType,
+        DeserializableReadOnlyList<string> trainingsCompleted,
+        string breakSchedule,
+        Branch branch,
+        int id
+    ) : base(id, name, surname, phone, email, password, pesel, salary, employmentType)
+    {
+        TrainingsCompleted = trainingsCompleted;
+        BreakSchedule = breakSchedule;
 
+        Branch = branch;
+    }
+
+    [OnDeserialized]
+    internal void Register(StreamingContext context)
+    {
+        if (Extent.Any(c => c.Id == Id))
+            return;
+        
+        RegisterPerson();
+        RegisterEmployee();
+        Extent.Add(this);
+    }
+    
     // ----------< Associations >----------
     private readonly Branch _branch;
 

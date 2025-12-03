@@ -1,3 +1,4 @@
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using BYTPRO.Data.Models.People;
 using BYTPRO.Data.Validation;
@@ -21,6 +22,7 @@ public class OnlineOrder : Order
 
 
     // ----------< Properties with validation >----------
+    #pragma warning disable S2292
     public bool IsPaid
     {
         get => _isPaid;
@@ -31,6 +33,7 @@ public class OnlineOrder : Order
             _isPaid = value;
         }
     }
+    #pragma warning restore S2292
 
     public DateTime? CancellationDate
     {
@@ -96,12 +99,19 @@ public class OnlineOrder : Order
         TrackingNumber = trackingNumber;
 
         Customer = customer;
-        customer.AddOrder(this);
-
-        RegisterOrder();
-        Extent.Add(this);
     }
+    
+    [OnDeserialized]
+    internal void Register(StreamingContext context)
+    {
+        if (Extent.Any(c => c.Id == Id))
+            return;
 
+        Extent.Add(this);
+        AddItemsToProduct();
+        RegisterOrder();
+        Customer.AddOrder(this);
+    }
 
     // ----------< Associations >----------
     private readonly Customer _customer;

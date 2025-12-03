@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Runtime.Serialization;
+using Newtonsoft.Json;
 using BYTPRO.Data.Validation;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Extensions;
@@ -109,6 +110,23 @@ public abstract class Person
         Surname = surname;
         Phone = phone;
         Email = email;
+        Password = password;
+    }
+    
+    [JsonConstructor]
+    protected Person(
+        string name,
+        string surname,
+        string phone,
+        string email,
+        string password,
+        int id)
+    {
+        _id = id;
+        Name = name;
+        Surname = surname;
+        _phone = phone;
+        _email = email;
         Password = password;
     }
 }

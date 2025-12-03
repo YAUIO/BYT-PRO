@@ -109,6 +109,9 @@ public abstract class Order
     protected void AddItemsToProduct()
     {
         foreach (var item in OrderItems)
-            item.Product.AddOrderItem(item);
+        {
+            if (item.Product != null)
+                item.Product.AddOrderItem(item);
+        }
     }
 }

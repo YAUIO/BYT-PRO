@@ -1,3 +1,4 @@
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
@@ -56,10 +57,16 @@ public class BranchOrder : Order
     ) : base(id, creationDate, orderItems)
     {
         ExpectedDeliveryDate = expectedDeliveryDate;
-
-        AddItemsToProduct();
-
+    }
+    
+    [OnDeserialized]
+    internal void Register(StreamingContext context)
+    {
+        if (Extent.Any(c => c.Id == Id))
+            return;
+        
         RegisterOrder();
+        AddItemsToProduct();
         Extent.Add(this);
     }
 }

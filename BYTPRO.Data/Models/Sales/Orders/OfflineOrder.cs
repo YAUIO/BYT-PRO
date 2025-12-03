@@ -1,3 +1,4 @@
+using System.Runtime.Serialization;
 using BYTPRO.Data.Models.Locations.Branches;
 using BYTPRO.Data.Validation;
 using BYTPRO.Data.Validation.Validators;
@@ -83,10 +84,18 @@ public class OfflineOrder : Order
         Id = id;
         CreationDate = creationDate;
         Phone = phone;
-
         Store = store;
+    }
+    
+    [OnDeserialized]
+    internal void Register(StreamingContext context)
+    {
+        if (Extent.Any(c => c.Id == Id))
+            return;
+        
         Store.AddOrder(this);
 
+        AddItemsToProduct();
         RegisterOrder();
         Extent.Add(this);
     }

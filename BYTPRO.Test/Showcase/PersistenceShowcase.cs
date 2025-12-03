@@ -73,6 +73,7 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
         JsonContext.SetContext(context);
     }
     
+    [Fact]
     private void TestClassExtent()
     {
         // ----------< Locations >----------
@@ -200,6 +201,7 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
         ShowAll();
     }
     
+    [Fact]
     private void ShowAll()
     {
         var sections = new (string Title, IEnumerable Data)[]

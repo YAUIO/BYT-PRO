@@ -31,6 +31,15 @@ public class JsonEntitySet<TJEntity>(JsonEntityConfiguration config, string path
     {
         if (Table.Add(item)) _isSaved = false;
     }
+    
+    public void AddRange(IEnumerable item)
+    {
+        foreach (var i in item)
+        {
+            dynamic it = i;
+            if (Table.Add(it)) _isSaved = false;
+        }
+    }
 
     public IEnumerator<TJEntity> GetEnumerator()
     {

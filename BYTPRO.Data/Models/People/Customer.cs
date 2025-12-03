@@ -1,3 +1,4 @@
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using BYTPRO.Data.Models.Sales.Orders;
 using BYTPRO.Data.Validation.Validators;
@@ -65,11 +66,19 @@ public class Customer : Person
         string password,
         DateTime registrationDate,
         int id)
-        : base(id, name, surname, phone, email, password)
+        : base(name, surname, phone, email, password, id)
     {
         RegistrationDate = registrationDate;
+    }
+    
+    [OnDeserialized]
+    internal void Register(StreamingContext context)
+    {
+        if (Extent.Any(c => c.Id == Id))
+            return;
         
         Extent.Add(this);
+        RegisterPerson();
     }
 
 
@@ -83,6 +92,6 @@ public class Customer : Person
     internal void AddOrder(OnlineOrder order)
     {
         order.IsNotNull(nameof(order));
-        _ordersByTrackingNumber.Add(order.TrackingNumber, order);
+        _ordersByTrackingNumber.TryAdd(order.TrackingNumber, order);
     }
 }
