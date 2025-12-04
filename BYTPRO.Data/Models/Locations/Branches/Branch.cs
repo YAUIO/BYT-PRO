@@ -145,13 +145,29 @@ public abstract class Branch
         }
     }
 
+    private void ReduceProductStock(
+        Product product,
+        int quantity)
+    {
+        var currentStock = GetStock(product);
+        if (currentStock == null)
+            throw new InvalidOperationException($"Product '{product.Name}' is not in stock.");
+
+        quantity.IsPositive(nameof(quantity));
+
+        if (currentStock.Quantity < quantity)
+            throw new InvalidOperationException($"Product '{product.Name}' has insufficient stock.");
+
+        currentStock.Quantity -= quantity;
+    }
+
     private BranchProductStock? GetStock(Product product)
     {
         product.IsNotNull(nameof(product));
         return _stocks.FirstOrDefault(stock => stock.Product == product);
     }
 
-    public void HasAllItemsInStock(HashSet<ProductQuantityInOrder> items)
+    public void EnsureStockForItems(HashSet<ProductQuantityInOrder> items)
     {
         items.IsNotNull(nameof(items));
         foreach (var item in items)
@@ -163,5 +179,12 @@ public abstract class Branch
                     $"Store '{Name}' has insufficient stock for '{item.Product.Name}'. " +
                     $"Requested: {item.Quantity}, Available: {stock?.Quantity ?? 0}");
         }
+    }
+
+    public void ReduceStockForItems(HashSet<ProductQuantityInOrder> items)
+    {
+        items.IsNotNull(nameof(items));
+        foreach (var item in items)
+            ReduceProductStock(item.Product, item.Quantity);
     }
 }

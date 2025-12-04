@@ -1,6 +1,5 @@
 using System.Runtime.Serialization;
 using BYTPRO.Data.Models.Locations.Branches;
-using BYTPRO.Data.Validation;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
 using Newtonsoft.Json;
@@ -44,7 +43,14 @@ public class OfflineOrder : Order
 
         Store = store;
 
-        store.HasAllItemsInStock(OrderItems);
+        store.EnsureStockForItems(OrderItems);
+
+        // At this point everything is validated, and we enter a post-construction step:
+        // 1. Finalize the order by reducing the stocks in the store.
+        // 2. Establish reverse connections with: Store, Products.
+        // 3. Register the order in all Class Extents. 
+
+        store.ReduceStockForItems(OrderItems);
 
         Store.AddOrder(this);
         AddItemsToProduct();

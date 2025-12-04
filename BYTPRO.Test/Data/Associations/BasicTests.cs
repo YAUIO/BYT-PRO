@@ -94,8 +94,7 @@ public class BasicTests
         );
     } 
     
-    // We do not change stocks yet.
-    /*[Fact]
+    [Fact]
     private void TestCreateChangesStock()
     {
         ResetContext();
@@ -108,16 +107,6 @@ public class BasicTests
             5,
             500m,
             3
-        );
-        
-        var customer = new Customer(
-            103,
-            "Artiom",
-            "Bezkorovainyi",
-            "+48000000002",
-            "s30002@pjwstk.edu.pl",
-            "12345678",
-            DateTime.Now
         );
         
         var product1 = new Product(
@@ -155,7 +144,7 @@ public class BasicTests
         
         Assert.Equal(3, store.Stocks.Single(s => s.Product.Name.Equals(product1.Name)).Quantity);
         Assert.Equal(8, store.Stocks.Single(s => s.Product.Name.Equals(product2.Name)).Quantity);
-    }*/
+    }
     
     [Fact]
     private void TestCreateFailsIfNoProductIsPresent()

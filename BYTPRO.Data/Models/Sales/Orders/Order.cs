@@ -76,7 +76,7 @@ public abstract class Order
         Status = OrderStatus.InProgress;
         _orderItems = InitializeProductQuantities(orderItems);
     }
-    
+
     protected Order(
         int id,
         DateTime creationDate,
@@ -109,9 +109,7 @@ public abstract class Order
     protected void AddItemsToProduct()
     {
         foreach (var item in OrderItems)
-        {
-            if (item.Product != null)
+            if (item.Product != null) // Needs fix: (Product can be null on deserialization)
                 item.Product.AddOrderItem(item);
-        }
     }
 }
