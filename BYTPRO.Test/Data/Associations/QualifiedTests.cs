@@ -11,12 +11,12 @@ public class QualifiedAssociationTest
 
     private static void ResetContext(bool removeContext = true)
     {
-        if (Directory.Exists(DbRoot) && removeContext) 
+        if (Directory.Exists(DbRoot) && removeContext)
             Directory.Delete(DbRoot, true);
-        
+
         if (!Directory.Exists(DbRoot))
             Directory.CreateDirectory(DbRoot);
-        
+
         var ctx = new JsonContextBuilder()
             .AddJsonEntity<Product>()
             .BuildEntity()
@@ -26,7 +26,7 @@ public class QualifiedAssociationTest
             .BuildEntity()
             .WithRoot(new DirectoryInfo(DbRoot))
             .Build();
-        
+
         JsonContext.SetContext(ctx);
     }
 
@@ -36,10 +36,10 @@ public class QualifiedAssociationTest
         ResetContext();
 
         var customer = new Customer(
-            id: 1,
+            id: 101,
             name: "Alice",
             surname: "Wonderland",
-            phone: "123456789",
+            phone: "+123456789",
             email: "alice@example.com",
             password: "password123",
             registrationDate: DateTime.Now.AddDays(-10)
@@ -49,12 +49,12 @@ public class QualifiedAssociationTest
             "TestProduct",
             "Description",
             100m,
-            new DeserializableReadOnlyList<string>(new List<string> { "img.png" }.AsReadOnly()),
+            ["img.png"],
             1.5m,
             new Dimensions(10, 10, 10)
         );
 
-        string trackingNumber = "TRACK-ABC-123";
+        const string trackingNumber = "TRACK-ABC-123";
 
         var order = new OnlineOrder(
             id: 101,
@@ -68,10 +68,10 @@ public class QualifiedAssociationTest
         Assert.True(customer.OnlineOrders.ContainsKey(trackingNumber));
 
         var retrievedOrder = customer.OnlineOrders[trackingNumber];
-        
+
         Assert.Same(order, retrievedOrder);
         Assert.Equal(trackingNumber, retrievedOrder.TrackingNumber);
-        
+
         Assert.Same(customer, retrievedOrder.Customer);
     }
 }

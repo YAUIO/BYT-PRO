@@ -51,7 +51,7 @@ public class BasicTests
         );
         
         var customer = new Customer(
-            1,
+            102,
             "Artiom",
             "Bezkorovainyi",
             "+48000000001",
@@ -110,7 +110,7 @@ public class BasicTests
         );
         
         var customer = new Customer(
-            2,
+            103,
             "Artiom",
             "Bezkorovainyi",
             "+48000000002",

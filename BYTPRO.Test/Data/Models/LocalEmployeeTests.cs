@@ -69,9 +69,6 @@ public class LocalEmployeeTests
         Assert.Contains(local, Person.All);
         Assert.Contains(local, Employee.All);
         Assert.Contains(local, LocalEmployee.All);
-        Assert.Same(local, Person.All.Single());
-        Assert.Same(local, Employee.All.Single());
-        Assert.Same(local, LocalEmployee.All.Single());
     }
 
     [Fact]

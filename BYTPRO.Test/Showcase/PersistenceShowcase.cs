@@ -117,11 +117,11 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
         );
 
         var localEmployee = new LocalEmployee(
-            2,
+            104,
             "John",
             "Smith",
             "+48123456789",
-            "john.smith@gmail.com",
+            "john.smith2@gmail.com",
             "12345",
             "12345678901",
             5000m,
@@ -132,7 +132,7 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
         );
 
         var regionalEmployee = new RegionalEmployee(
-            3,
+            105,
             "Jane",
             "Smith",
             "+48123456780",
@@ -184,7 +184,7 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
         );
 
         var offlineOrder = new OfflineOrder(
-            2,
+            110,
             DateTime.Now,
             new Dictionary<Product, int>
             {
