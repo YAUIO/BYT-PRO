@@ -1,4 +1,3 @@
-using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using BYTPRO.Data.Validation;
 using BYTPRO.Data.Validation.Validators;
@@ -71,22 +70,6 @@ public class Warehouse : Branch
         DockCount = dockCount;
         CurrentStorageCapacity = 0;
 
-        RegisterBranch();
-        Extent.Add(this);
-    }
-    
-    [JsonConstructor]
-    private Warehouse()
-    {
-        CurrentStorageCapacity = 0;
-    }
-    
-    [OnDeserialized]
-    internal void Register(StreamingContext context)
-    {
-        if (Extent.Any(c => c.Name == Name))
-            return;
-        
         RegisterBranch();
         Extent.Add(this);
     }

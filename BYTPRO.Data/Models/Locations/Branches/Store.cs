@@ -1,4 +1,3 @@
-using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using BYTPRO.Data.Models.Sales.Orders;
 using BYTPRO.Data.Validation;
@@ -75,18 +74,6 @@ public class Store : Branch
         Extent.Add(this);
     }
 
-    [JsonConstructor]
-    private Store() {}
-
-    [OnDeserialized]
-    internal void OnDeserializedMethod(StreamingContext context)
-    {
-        if (Extent.Any(c => c.Name == Name))
-            return;
-
-        Extent.Add(this);
-        RegisterBranch();
-    }
 
     // ----------< Associations >----------
     private readonly HashSet<OfflineOrder> _offlineOrders = [];
