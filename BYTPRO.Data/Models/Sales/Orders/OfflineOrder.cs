@@ -46,28 +46,6 @@ public class OfflineOrder : Order
         Store.AddOrder(this);
         AddItemsToProduct();
 
-        foreach (var item in OrderItems)
-        {
-            var stock = store.Stocks
-                .SingleOrDefault(s => s.Product.Name == item.Product.Name);
-
-            if (stock == null)
-            {
-                throw new ValidationException($"Store does not have products of type {item.Product.Name}");
-            }
-
-            if (stock.Quantity < item.Quantity)
-            {
-                throw new ValidationException($"Store has less products of type {item.Product.Name} then needed");
-            }
-
-            store.Stocks.Remove(stock);
-
-            stock.Quantity -= item.Quantity;
-
-            store.Stocks.Add(stock);
-        }
-
         RegisterOrder();
         Extent.Add(this);
     }
@@ -86,13 +64,13 @@ public class OfflineOrder : Order
         Phone = phone;
         Store = store;
     }
-    
+
     [OnDeserialized]
     internal void Register(StreamingContext context)
     {
         if (Extent.Any(c => c.Id == Id))
             return;
-        
+
         Store.AddOrder(this);
 
         AddItemsToProduct();
