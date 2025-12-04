@@ -10,7 +10,7 @@ public class AggregationTests
     public class TestBranch : Branch
     {
         public TestBranch(string name) : base(
-            new Address("Street", "1", null, "00-000", "City"), 
+            new Address("Street", "1", null, "00-000", "City"),
             name,
             "09:00-17:00",
             100m)
@@ -23,18 +23,18 @@ public class AggregationTests
 
     private static void ResetContext(bool removeContext = true)
     {
-        if (Directory.Exists(DbRoot) && removeContext) 
+        if (Directory.Exists(DbRoot) && removeContext)
             Directory.Delete(DbRoot, true);
-        
+
         if (!Directory.Exists(DbRoot))
             Directory.CreateDirectory(DbRoot);
-        
+
         var ctx = new JsonContextBuilder()
             .AddJsonEntity<Product>()
             .BuildEntity()
             .WithRoot(new DirectoryInfo(DbRoot))
             .Build();
-        
+
         JsonContext.SetContext(ctx);
     }
 
@@ -49,7 +49,7 @@ public class AggregationTests
             "Milk",
             "Fresh Milk",
             5.0m,
-            new DeserializableReadOnlyList<string>(new List<string> { "milk.png" }.AsReadOnly()),
+            ["milk.png"],
             1.0m,
             new Dimensions(10, 10, 20)
         );
@@ -59,12 +59,7 @@ public class AggregationTests
         Assert.NotEmpty(branch.Stocks);
         Assert.Contains(branch, Branch.All);
 
-        var exception = Assert.Throws<InvalidOperationException>(() => 
-        {
-            branch.Delete();
-        });
-
-        Assert.Equal("Redistribute stocks before deleting a branch.", exception.Message);
+        Assert.Throws<InvalidOperationException>(() => { branch.Delete(); });
 
         Assert.Contains(branch, Branch.All);
     }

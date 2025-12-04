@@ -13,7 +13,7 @@ public class BranchCompositionTest
     public class TestBranch : Branch
     {
         public TestBranch(string name) : base(
-            new Address("Street", "1", null, "00-000", "City"), 
+            new Address("Street", "1", null, "00-000", "City"),
             name,
             "09:00-17:00",
             100m)
@@ -23,15 +23,15 @@ public class BranchCompositionTest
     }
 
     private static string DbRoot => $"{Directory.GetCurrentDirectory()}/TestCompositionDb";
-    
+
     private static void ResetContext(bool removeContext = true)
     {
-        if (Directory.Exists(DbRoot) && removeContext) 
+        if (Directory.Exists(DbRoot) && removeContext)
             Directory.Delete(DbRoot, true);
-        
+
         if (!Directory.Exists(DbRoot))
             Directory.CreateDirectory(DbRoot);
-        
+
         var ctx = new JsonContextBuilder()
             .AddJsonEntity<LocalEmployee>()
             .BuildEntity()
@@ -39,7 +39,7 @@ public class BranchCompositionTest
             .BuildEntity()
             .WithRoot(new DirectoryInfo(DbRoot))
             .Build();
-        
+
         JsonContext.SetContext(ctx);
     }
 
@@ -51,16 +51,16 @@ public class BranchCompositionTest
         var branch = new TestBranch("Composition Branch");
 
         var employee = new LocalEmployee(
-            1,
+            100,
             "John",
             "Doe",
             "+48111222333",
             "john.doe@example.com",
             "password123",
-            "90010112345", 
+            "90010112345",
             5000m,
             EmploymentType.FullTime,
-            new DeserializableReadOnlyList<string>(new List<string> { "Safety" }.AsReadOnly()),
+            ["Safety"],
             "12:00",
             branch
         );
@@ -72,15 +72,11 @@ public class BranchCompositionTest
         Assert.Single(branch.Employees);
 
         branch.Delete();
-        
+
         Assert.DoesNotContain(branch, Branch.All);
-        
         Assert.DoesNotContain(employee, LocalEmployee.All);
-        
         Assert.DoesNotContain(employee, Employee.All);
-        
         Assert.DoesNotContain(employee, Person.All);
-        
         Assert.Empty(branch.Employees);
     }
 }
