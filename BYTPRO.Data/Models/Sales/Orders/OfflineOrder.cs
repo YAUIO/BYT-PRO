@@ -43,6 +43,9 @@ public class OfflineOrder : Order
         Phone = phone;
 
         Store = store;
+
+        store.HasAllItemsInStock(OrderItems);
+
         Store.AddOrder(this);
         AddItemsToProduct();
 
@@ -77,6 +80,7 @@ public class OfflineOrder : Order
         RegisterOrder();
         Extent.Add(this);
     }
+
 
     // ----------< Associations >----------
     private readonly Store _store;

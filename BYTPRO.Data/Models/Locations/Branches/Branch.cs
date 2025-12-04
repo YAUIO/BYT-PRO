@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using BYTPRO.Data.Models.People.Employees.Local;
 using BYTPRO.Data.Models.Sales;
+using BYTPRO.Data.Validation;
 using BYTPRO.Data.Validation.Validators;
 
 namespace BYTPRO.Data.Models.Locations.Branches;
@@ -148,5 +149,19 @@ public abstract class Branch
     {
         product.IsNotNull(nameof(product));
         return _stocks.FirstOrDefault(stock => stock.Product == product);
+    }
+
+    public void HasAllItemsInStock(HashSet<ProductQuantityInOrder> items)
+    {
+        items.IsNotNull(nameof(items));
+        foreach (var item in items)
+        {
+            var stock = GetStock(item.Product);
+
+            if (stock == null || stock.Quantity < item.Quantity)
+                throw new ValidationException(
+                    $"Store '{Name}' has insufficient stock for '{item.Product.Name}'. " +
+                    $"Requested: {item.Quantity}, Available: {stock?.Quantity ?? 0}");
+        }
     }
 }
