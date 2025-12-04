@@ -1,4 +1,3 @@
-using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
@@ -56,16 +55,7 @@ public class PickupPoint : Branch
         RegisterBranch();
         Extent.Add(this);
     }
-    
-    [OnDeserialized]
-    internal void Register(StreamingContext context)
-    {
-        if (Extent.Any(c => c.Name == Name))
-            return;
 
-        Extent.Add(this);
-        RegisterBranch();
-    }
 
     // ----------< Associations >----------
     public new void Delete()

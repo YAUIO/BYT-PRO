@@ -84,16 +84,13 @@ public abstract class Branch
         TotalArea = totalArea;
     }
 
-    [JsonConstructor]
-    protected Branch() {}
-
 
     // ----------< Associations >----------
 
     // -----< Composition >-----
     private readonly HashSet<LocalEmployee> _employees = [];
 
-    [JsonIgnore] public HashSet<LocalEmployee> Employees => [.._employees];
+    public HashSet<LocalEmployee> Employees => [.._employees];
 
     public void Delete()
     {
@@ -123,7 +120,7 @@ public abstract class Branch
     // -----< Aggregation >-----
     private readonly HashSet<BranchProductStock> _stocks = [];
 
-    [JsonIgnore] public HashSet<BranchProductStock> Stocks => [.._stocks];
+    public HashSet<BranchProductStock> Stocks => [.._stocks];
 
     public void AddProductStock(
         Product product,

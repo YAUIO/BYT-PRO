@@ -10,7 +10,8 @@ public static class JsonSerializerExtensions
     {
         Formatting = Formatting.Indented,
         TypeNameHandling = TypeNameHandling.Auto,
-        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+        PreserveReferencesHandling = PreserveReferencesHandling.All,
+        ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
         ContractResolver = new ParentFirstContractResolver()
     };
 
