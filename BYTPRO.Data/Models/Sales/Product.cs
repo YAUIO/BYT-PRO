@@ -112,8 +112,10 @@ public class Product
     }
 
     [JsonConstructor]
-    private Product() {}
-    
+    private Product()
+    {
+    }
+
     [OnDeserialized]
     internal void Register(StreamingContext context)
     {
@@ -139,7 +141,7 @@ public class Product
 
     // -----< Reflex >-----
     private readonly HashSet<Product>? _consistsOf;
-    
+
     public HashSet<Product>? ConsistsOf
     {
         get => _consistsOf == null ? null : [.._consistsOf];
@@ -147,8 +149,20 @@ public class Product
         {
             value?.AreAllElementsNotNull(nameof(ConsistsOf));
             _consistsOf = value;
+
+            if (value == null)
+                return;
+
+            foreach (var product in value)
+            {
+                product._consistsIn.Add(this);
+            }
         }
     }
+    // Reverse connection
+    private readonly HashSet<Product> _consistsIn = [];
+
+    [JsonIgnore] public HashSet<Product> ConsistsIn => [.._consistsIn];
 
     // -----< Aggregation >-----
     private readonly HashSet<BranchProductStock> _stockedIn = [];
