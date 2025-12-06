@@ -42,14 +42,14 @@ public class OfflineOrder : Order
         Phone = phone;
         Store = store;
 
-        store.EnsureStockForItems(AssociatedProducts);
+        store.EnsureStockForItems(cart);
 
         // At this point everything is validated, and we enter a post-construction step:
         // 1. Finalize the order by reducing the stocks in the store.
         // 2. Establish reverse connections with: Store, Products.
         // 3. Register the order in all Class Extents. 
 
-        store.ReduceStockForItems(AssociatedProducts);
+        store.ReduceStockForItems(cart);
 
         Store.AddOrder(this);
 

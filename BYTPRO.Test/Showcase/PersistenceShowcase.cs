@@ -72,7 +72,7 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
 
         JsonContext.SetContext(context);
     }
-    
+
     [Fact]
     private void TestClassExtent()
     {
@@ -168,16 +168,11 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
         store.AddProductStock(product2, 10);
 
 
-        // Orders cannot be properly tested now because of circular references.
-
         var onlineOrder = new OnlineOrder(
             1,
             DateTime.Now,
-            new Dictionary<Product, int>
-            {
-                { product1, 1 },
-                { product2, 5 }
-            },
+            OrderStatus.InProgress,
+            [new ProductEntry(product1, 1), new ProductEntry(product2, 5)],
             true,
             "TRN12345",
             customer
@@ -186,11 +181,8 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
         var offlineOrder = new OfflineOrder(
             110,
             DateTime.Now,
-            new Dictionary<Product, int>
-            {
-                { product1, 2 },
-                { product2, 2 }
-            },
+            OrderStatus.InProgress,
+            [new ProductEntry(product1, 2), new ProductEntry(product2, 2)],
             null,
             store
         );
@@ -200,7 +192,7 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
 
         ShowAll();
     }
-    
+
     [Fact]
     private void ShowAll()
     {
