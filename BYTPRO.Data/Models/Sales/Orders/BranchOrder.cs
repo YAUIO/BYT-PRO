@@ -36,37 +36,18 @@ public class BranchOrder : Order
     public BranchOrder(
         int id,
         DateTime creationDate,
-        Dictionary<Product, int> orderItems,
+        OrderStatus status,
+        DeserializableReadOnlyList<ProductEntry> cart,
         DateTime expectedDeliveryDate
-    ) : base(id, creationDate, orderItems)
+    ) : base(id, creationDate, status, cart)
     {
         ExpectedDeliveryDate = expectedDeliveryDate;
 
-        AddItemsToProduct();
+        // 1. Associations
+        Associate();
 
+        // 2. Extents (parent, child)
         RegisterOrder();
-        Extent.Add(this);
-    }
-    
-    [JsonConstructor]
-    private BranchOrder(
-        int id,
-        DateTime creationDate,
-        HashSet<ProductQuantityInOrder> orderItems,
-        DateTime expectedDeliveryDate
-    ) : base(id, creationDate, orderItems)
-    {
-        ExpectedDeliveryDate = expectedDeliveryDate;
-    }
-    
-    [OnDeserialized]
-    internal void Register(StreamingContext context)
-    {
-        if (Extent.Any(c => c.Id == Id))
-            return;
-        
-        RegisterOrder();
-        AddItemsToProduct();
         Extent.Add(this);
     }
 }

@@ -1,4 +1,3 @@
-using System.Runtime.Serialization;
 using BYTPRO.Data.Models.Locations.Branches;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
@@ -34,55 +33,30 @@ public class OfflineOrder : Order
     public OfflineOrder(
         int id,
         DateTime creationDate,
-        Dictionary<Product, int> orderItems,
+        OrderStatus status,
+        DeserializableReadOnlyList<ProductEntry> cart,
         string? phone,
         Store store
-    ) : base(id, creationDate, orderItems)
+    ) : base(id, creationDate, status, cart)
     {
         Phone = phone;
-
         Store = store;
 
-        store.EnsureStockForItems(OrderItems);
+        store.EnsureStockForItems(AssociatedProducts);
 
         // At this point everything is validated, and we enter a post-construction step:
         // 1. Finalize the order by reducing the stocks in the store.
         // 2. Establish reverse connections with: Store, Products.
         // 3. Register the order in all Class Extents. 
 
-        store.ReduceStockForItems(OrderItems);
-
-        Store.AddOrder(this);
-        AddItemsToProduct();
-
-        RegisterOrder();
-        Extent.Add(this);
-    }
-
-    [JsonConstructor]
-    private OfflineOrder(
-        int id,
-        DateTime creationDate,
-        HashSet<ProductQuantityInOrder> orderItems,
-        string? phone,
-        Store store
-    ) : base(id, creationDate, orderItems)
-    {
-        Id = id;
-        CreationDate = creationDate;
-        Phone = phone;
-        Store = store;
-    }
-
-    [OnDeserialized]
-    internal void Register(StreamingContext context)
-    {
-        if (Extent.Any(c => c.Id == Id))
-            return;
+        store.ReduceStockForItems(AssociatedProducts);
 
         Store.AddOrder(this);
 
-        AddItemsToProduct();
+        // 1. Associations
+        Associate();
+
+        // 2. Extents (parent, child)
         RegisterOrder();
         Extent.Add(this);
     }
