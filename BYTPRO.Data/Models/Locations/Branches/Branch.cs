@@ -193,7 +193,7 @@ public abstract class Branch
         return _stocks.FirstOrDefault(stock => stock.Product == product);
     }
 
-    public void EnsureStockForItems(HashSet<ProductQuantityInOrder> items)
+    public void EnsureStockForItems(DeserializableReadOnlyList<ProductEntry> items)
     {
         items.IsNotNull(nameof(items));
         foreach (var item in items)
@@ -207,7 +207,7 @@ public abstract class Branch
         }
     }
 
-    public void ReduceStockForItems(HashSet<ProductQuantityInOrder> items)
+    public void ReduceStockForItems(DeserializableReadOnlyList<ProductEntry> items)
     {
         items.IsNotNull(nameof(items));
         foreach (var item in items)

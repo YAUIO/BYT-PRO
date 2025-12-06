@@ -59,7 +59,8 @@ public class QualifiedAssociationTest
         var order = new OnlineOrder(
             id: 101,
             creationDate: DateTime.Now,
-            orderItems: new Dictionary<Product, int> { { product, 2 } },
+            status: OrderStatus.InProgress,
+            cart: [new ProductEntry(product, 2)],
             isPaid: true,
             trackingNumber: trackingNumber,
             customer: customer

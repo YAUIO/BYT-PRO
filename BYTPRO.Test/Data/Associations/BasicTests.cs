@@ -5,22 +5,23 @@ using BYTPRO.Data.Models.Sales;
 using BYTPRO.Data.Models.Sales.Orders;
 using BYTPRO.Data.Validation;
 using BYTPRO.JsonEntityFramework.Context;
+using Xunit.Abstractions;
 
 namespace BYTPRO.Test.Data.Associations;
 
-public class BasicTests
+public class BasicTests()
 {
     private static string DbRoot => $"{Directory.GetCurrentDirectory()}/TestReflexDb";
 
     private static void ResetContext(bool removeContext = true)
     {
-        if (Directory.Exists(DbRoot) && removeContext) 
+        if (Directory.Exists(DbRoot) && removeContext)
             Directory.Delete(DbRoot, true);
-        
+
         if (!Directory.Exists(DbRoot))
             Directory.CreateDirectory(DbRoot);
-        
-        var ctx= new JsonContextBuilder()
+
+        var ctx = new JsonContextBuilder()
             .AddJsonEntity<Product>()
             .BuildEntity()
             .AddJsonEntity<OfflineOrder>()
@@ -31,7 +32,7 @@ public class BasicTests
             .BuildEntity()
             .WithRoot(new DirectoryInfo(DbRoot))
             .Build();
-        
+
         JsonContext.SetContext(ctx);
     }
 
@@ -39,7 +40,7 @@ public class BasicTests
     private void TestCreate()
     {
         ResetContext();
-        
+
         var store = new Store(
             new Address("Street2", "20/2", null, "01-345", "City2"),
             "Store1",
@@ -49,7 +50,7 @@ public class BasicTests
             500m,
             3
         );
-        
+
         var customer = new Customer(
             102,
             "Artiom",
@@ -59,7 +60,7 @@ public class BasicTests
             "12345678",
             DateTime.Now
         );
-        
+
         var product1 = new Product(
             "Product1",
             "Description1",
@@ -80,25 +81,22 @@ public class BasicTests
             new Dimensions(5m, 5m, 5m)
         );
         store.AddProductStock(product2, 10);
-        
+
         var offlineOrder = new OfflineOrder(
             4,
             DateTime.Now,
-            new Dictionary<Product, int>
-            {
-                { product1, 2 },
-                { product2, 2 }
-            },
+            OrderStatus.InProgress,
+            [new ProductEntry(product1, 2), new ProductEntry(product2, 2)],
             null,
             store
         );
-    } 
-    
+    }
+
     [Fact]
     private void TestCreateChangesStock()
     {
         ResetContext();
-        
+
         var store = new Store(
             new Address("Street2", "20/2", null, "01-345", "City2"),
             "Store1",
@@ -108,7 +106,7 @@ public class BasicTests
             500m,
             3
         );
-        
+
         var product1 = new Product(
             "Product1",
             "Description1",
@@ -129,28 +127,25 @@ public class BasicTests
             new Dimensions(5m, 5m, 5m)
         );
         store.AddProductStock(product2, 10);
-        
+
         var offlineOrder = new OfflineOrder(
             8,
             DateTime.Now,
-            new Dictionary<Product, int>
-            {
-                { product1, 2 },
-                { product2, 2 }
-            },
+            OrderStatus.InProgress,
+            [new ProductEntry(product1, 2), new ProductEntry(product2, 2)],
             null,
             store
         );
-        
+
         Assert.Equal(3, store.Stocks.Single(s => s.Product.Name.Equals(product1.Name)).Quantity);
         Assert.Equal(8, store.Stocks.Single(s => s.Product.Name.Equals(product2.Name)).Quantity);
     }
-    
+
     [Fact]
     private void TestCreateFailsIfNoProductIsPresent()
     {
         ResetContext();
-        
+
         var store = new Store(
             new Address("Street2", "20/2", null, "01-345", "City2"),
             "Store1",
@@ -160,7 +155,7 @@ public class BasicTests
             500m,
             3
         );
-        
+
         var customer = new Customer(
             4,
             "Artiom",
@@ -170,7 +165,7 @@ public class BasicTests
             "12345678",
             DateTime.Now
         );
-        
+
         var product1 = new Product(
             "Product1",
             "Description1",
@@ -191,7 +186,7 @@ public class BasicTests
             new Dimensions(5m, 5m, 5m)
         );
         store.AddProductStock(product2, 10);
-        
+
         var product3 = new Product(
             "Product3",
             "Description3",
@@ -206,22 +201,19 @@ public class BasicTests
             var offlineOrder = new OfflineOrder(
                 2,
                 DateTime.Now,
-                new Dictionary<Product, int>
-                {
-                    { product1, 2 },
-                    { product3, 2 }
-                },
+                OrderStatus.InProgress,
+                [new ProductEntry(product1, 2), new ProductEntry(product3, 2)],
                 null,
                 store
             );
         });
-    } 
-    
+    }
+
     [Fact]
     private void TestCreateFailsIfNotEnoughQuantityInStock()
     {
         ResetContext();
-        
+
         var store = new Store(
             new Address("Street2", "20/2", null, "01-345", "City2"),
             "Store1",
@@ -231,7 +223,7 @@ public class BasicTests
             500m,
             3
         );
-        
+
         var customer = new Customer(
             6,
             "Artiom",
@@ -241,7 +233,7 @@ public class BasicTests
             "12345678",
             DateTime.Now
         );
-        
+
         var product1 = new Product(
             "Product1",
             "Description1",
@@ -268,14 +260,11 @@ public class BasicTests
             var offlineOrder = new OfflineOrder(
                 2,
                 DateTime.Now,
-                new Dictionary<Product, int>
-                {
-                    { product1, 10 },
-                    { product2, 2 }
-                },
+                OrderStatus.InProgress,
+                [new ProductEntry(product1, 10), new ProductEntry(product2, 2)],
                 null,
                 store
             );
         });
-    } 
+    }
 }
