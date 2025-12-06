@@ -4,7 +4,6 @@ using BYTPRO.Data.Models.People.Employees.Local;
 using BYTPRO.Data.Models.Sales;
 using BYTPRO.Data.Validation;
 using BYTPRO.Data.Validation.Validators;
-using BYTPRO.JsonEntityFramework.Context;
 
 namespace BYTPRO.Data.Models.Locations.Branches;
 
@@ -152,9 +151,7 @@ public abstract class Branch
 
     [JsonIgnore] public HashSet<BranchProductStock> Stocks => [.._stocks];
 
-    public void AddProductStock(
-        Product product,
-        int quantity)
+    public void AddProductStock(Product product, int quantity)
     {
         var currentStock = GetStock(product);
         if (currentStock != null)
@@ -172,9 +169,7 @@ public abstract class Branch
         }
     }
 
-    private void ReduceProductStock(
-        Product product,
-        int quantity)
+    private void ReduceProductStock(Product product, int quantity)
     {
         var currentStock = GetStock(product);
         if (currentStock == null)
@@ -194,7 +189,7 @@ public abstract class Branch
         return _stocks.FirstOrDefault(stock => stock.Product == product);
     }
 
-    public void EnsureStockForItems(DeserializableReadOnlyList<ProductEntry> items)
+    public void EnsureStockForItems(ICollection<ProductEntry> items)
     {
         items.IsNotNull(nameof(items));
         foreach (var item in items)
@@ -208,7 +203,7 @@ public abstract class Branch
         }
     }
 
-    public void ReduceStockForItems(DeserializableReadOnlyList<ProductEntry> items)
+    public void ReduceStockForItems(ICollection<ProductEntry> items)
     {
         items.IsNotNull(nameof(items));
         foreach (var item in items)
@@ -220,11 +215,28 @@ public abstract class Branch
     [OnSerializing]
     private void OnSerializing(StreamingContext context)
     {
-        var productEntries = Stocks
+        // _stockCart = JSON (de)serializable representation of _stocks
+        // _stocks = runtime representation of association between branch and products
+
+        // thus, before persisting, we update _stockCart to reflect the current state of _stocks
+
+        var productEntries = _stocks
             .Select(stock => new ProductEntry(stock.Product, stock.Quantity))
             .ToList();
 
         _stockCart.Clear();
         _stockCart.AddRange(productEntries);
+    }
+
+    [OnDeserialized]
+    private void OnDeserialized(StreamingContext context)
+    {
+        // _stockCart = JSON (de)serializable representation of _stocks
+        // _stocks = runtime representation of association between branch and products
+
+        // thus, after this object is deserialized, we must restore _stocks to reflect the saved _stockCart
+
+        foreach (var item in _stockCart)
+            AddProductStock(item.Product, item.Quantity);
     }
 }
