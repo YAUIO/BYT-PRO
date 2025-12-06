@@ -3,6 +3,7 @@ using BYTPRO.Data.Models.People.Employees.Local;
 using BYTPRO.Data.Models.Sales;
 using BYTPRO.Data.Validation;
 using BYTPRO.Data.Validation.Validators;
+using BYTPRO.JsonEntityFramework.Context;
 
 namespace BYTPRO.Data.Models.Locations.Branches;
 
@@ -13,18 +14,14 @@ public abstract class Branch
 
     [JsonIgnore] public static IReadOnlyList<Branch> All => Extent.ToList().AsReadOnly();
 
-    protected void RegisterBranch()
-    {
-        if (Extent.All(b => b.Name != Name))
-            Extent.Add(this);
-    }
-
+    protected void RegisterBranch() => Extent.Add(this);
 
     // ----------< Attributes >----------
     private readonly Address _address;
     private readonly string _name;
     private string _openingHours;
     private readonly decimal _totalArea;
+    private readonly List<ProductEntry> _stockCart;
 
 
     // ----------< Properties with validation >----------
@@ -70,18 +67,50 @@ public abstract class Branch
         }
     }
 
+    public List<ProductEntry> StockCart
+    {
+        get => [.._stockCart];
+        init
+        {
+            // 1. Check for nullability
+            value.IsNotNull(nameof(value));
+
+            // 2. Check for cart-items nullability and positive quantity
+            foreach (var cartItem in value)
+            {
+                cartItem.IsNotNull(nameof(cartItem));
+                cartItem.Product.IsNotNull(nameof(cartItem.Product));
+                cartItem.Quantity.IsNotNull(nameof(cartItem.Quantity));
+                cartItem.Quantity.IsNonNegative(nameof(cartItem.Quantity));
+            }
+
+            // 3. Check for uniqueness of products in the cart
+            var duplicates = value
+                .GroupBy(cartItem => cartItem.Product)
+                .Where(group => group.Count() > 1)
+                .ToList();
+
+            if (duplicates.Count > 0)
+                throw new ValidationException("Duplicate products in StockCart.");
+
+            _stockCart = value;
+        }
+    }
+
 
     // ----------< Constructor >----------
     protected Branch(
         Address address,
         string name,
         string openingHours,
-        decimal totalArea)
+        decimal totalArea,
+        List<ProductEntry>? stockCart = null)
     {
         Address = address;
         Name = name;
         OpeningHours = openingHours;
         TotalArea = totalArea;
+        StockCart = stockCart ?? [];
     }
 
 
@@ -90,7 +119,7 @@ public abstract class Branch
     // -----< Composition >-----
     private readonly HashSet<LocalEmployee> _employees = [];
 
-    public HashSet<LocalEmployee> Employees => [.._employees];
+    [JsonIgnore] public HashSet<LocalEmployee> Employees => [.._employees];
 
     public void Delete()
     {
@@ -120,7 +149,7 @@ public abstract class Branch
     // -----< Aggregation >-----
     private readonly HashSet<BranchProductStock> _stocks = [];
 
-    public HashSet<BranchProductStock> Stocks => [.._stocks];
+    [JsonIgnore] public HashSet<BranchProductStock> Stocks => [.._stocks];
 
     public void AddProductStock(
         Product product,
