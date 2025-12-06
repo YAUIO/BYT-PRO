@@ -22,7 +22,6 @@ public class OnlineOrder : Order
 
 
     // ----------< Properties with validation >----------
-    #pragma warning disable S2292
     public bool IsPaid
     {
         get => _isPaid;
@@ -33,7 +32,6 @@ public class OnlineOrder : Order
             _isPaid = value;
         }
     }
-    #pragma warning restore S2292
 
     public DateTime? CancellationDate
     {
@@ -68,50 +66,26 @@ public class OnlineOrder : Order
     public OnlineOrder(
         int id,
         DateTime creationDate,
-        Dictionary<Product, int> orderItems,
+        OrderStatus status,
+        DeserializableReadOnlyList<ProductEntry> cart,
         bool isPaid,
         string trackingNumber,
         Customer customer
-    ) : base(id, creationDate, orderItems)
+    ) : base(id, creationDate, status, cart)
     {
         IsPaid = isPaid;
         TrackingNumber = trackingNumber;
-
         Customer = customer;
-        customer.AddOrder(this);
-        AddItemsToProduct();
 
-        RegisterOrder();
-        Extent.Add(this);
-    }
-    
-    [JsonConstructor]
-    private OnlineOrder(
-        int id,
-        DateTime creationDate,
-        HashSet<ProductQuantityInOrder> orderItems,
-        bool isPaid,
-        string trackingNumber,
-        Customer customer
-    ) : base(id, creationDate, orderItems)
-    {
-        IsPaid = isPaid;
-        TrackingNumber = trackingNumber;
-
-        Customer = customer;
-    }
-    
-    [OnDeserialized]
-    internal void Register(StreamingContext context)
-    {
-        if (Extent.Any(c => c.Id == Id))
-            return;
-
-        Extent.Add(this);
-        AddItemsToProduct();
-        RegisterOrder();
+        // 1. Associations
         Customer.AddOrder(this);
+        Associate();
+
+        // 2. Extents (parent, child)
+        RegisterOrder();
+        Extent.Add(this);
     }
+
 
     // ----------< Associations >----------
     private readonly Customer _customer;
