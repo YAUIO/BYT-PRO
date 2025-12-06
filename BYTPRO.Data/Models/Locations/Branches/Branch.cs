@@ -1,3 +1,4 @@
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using BYTPRO.Data.Models.People.Employees.Local;
 using BYTPRO.Data.Models.Sales;
@@ -212,5 +213,18 @@ public abstract class Branch
         items.IsNotNull(nameof(items));
         foreach (var item in items)
             ReduceProductStock(item.Product, item.Quantity);
+    }
+
+
+    // ----------< JSON >----------
+    [OnSerializing]
+    private void OnSerializing(StreamingContext context)
+    {
+        var productEntries = Stocks
+            .Select(stock => new ProductEntry(stock.Product, stock.Quantity))
+            .ToList();
+
+        _stockCart.Clear();
+        _stockCart.AddRange(productEntries);
     }
 }
