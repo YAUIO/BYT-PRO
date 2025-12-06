@@ -1,6 +1,6 @@
-using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using BYTPRO.Data.Models.Locations.Branches;
+using BYTPRO.Data.Validation;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
 
@@ -96,8 +96,7 @@ public class Product
         DeserializableReadOnlyList<string> images,
         decimal weight,
         Dimensions dimensions,
-        HashSet<Product>? consistsOf = null
-    )
+        HashSet<Product>? consistsOf = null)
     {
         Name = name;
         Description = description;
@@ -111,32 +110,20 @@ public class Product
         Extent.Add(this);
     }
 
-    [JsonConstructor]
-    private Product()
-    {
-    }
-
-    [OnDeserialized]
-    internal void Register(StreamingContext context)
-    {
-        if (Extent.Any(c => c.Name == Name))
-            return;
-
-        Extent.Add(this);
-    }
-
 
     // ----------< Associations >----------
 
     // -----< with attribute >-----
-    private readonly HashSet<ProductQuantityInOrder> _orderItems = [];
+    private readonly HashSet<ProductQuantityInOrder> _usedInOrders = [];
 
-    [JsonIgnore] public HashSet<ProductQuantityInOrder> OrderItems => [.._orderItems]; // Returns a new copy
+    [JsonIgnore] public HashSet<ProductQuantityInOrder> AssociatedOrders => [.._usedInOrders];
 
-    public void AddOrderItem(ProductQuantityInOrder orderItem)
+    public void AssociateWithOrder(ProductQuantityInOrder orderItem)
     {
         orderItem.IsNotNull(nameof(orderItem));
-        _orderItems.Add(orderItem);
+        if (orderItem.Product != this)
+            throw new ValidationException($"{nameof(orderItem.Product)} must reference this Product instance.");
+        _usedInOrders.Add(orderItem);
     }
 
     // -----< Reflex >-----
@@ -159,6 +146,7 @@ public class Product
             }
         }
     }
+
     // Reverse connection
     private readonly HashSet<Product> _consistsIn = [];
 
