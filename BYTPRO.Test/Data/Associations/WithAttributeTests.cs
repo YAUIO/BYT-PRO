@@ -7,7 +7,7 @@ namespace BYTPRO.Test.Data.Associations;
 
 public class WithAttributeTests
 {
-    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/TestWAttributeDb.json";
+    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/BYT_PRO_TESTS/WithAttribute.json";
 
     private static void ResetContext(bool clearContext = true)
     {

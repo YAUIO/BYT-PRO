@@ -4,7 +4,7 @@ namespace BYTPRO.Test.Jef.Context;
 
 public class JsonContextTests
 {
-    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/TestDb";
+    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/BYT_PRO_TESTS/JsonContext/";
 
     private static int _contexts;
 

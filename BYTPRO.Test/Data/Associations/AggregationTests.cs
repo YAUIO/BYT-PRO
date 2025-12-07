@@ -19,7 +19,7 @@ public class AggregationTests
         }
     }
 
-    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/TestAggregationDb";
+    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/BYT_PRO_TESTS/Aggregation.json";
 
     private static void ResetContext(bool removeContext = true)
     {

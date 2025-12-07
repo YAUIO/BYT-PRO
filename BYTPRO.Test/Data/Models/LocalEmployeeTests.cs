@@ -10,7 +10,7 @@ namespace BYTPRO.Test.Data.Models;
 
 public class LocalEmployeeTests
 {
-    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/TestEmployeeDb";
+    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/BYT_PRO_TESTS/LocalEmployee.json";
 
     static LocalEmployeeTests()
     {

@@ -22,7 +22,7 @@ public class BranchCompositionTest
         }
     }
 
-    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/TestCompositionDb";
+    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/BYT_PRO_TESTS/Composition.json";
 
     private static void ResetContext(bool removeContext = true)
     {

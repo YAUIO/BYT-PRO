@@ -7,7 +7,7 @@ namespace BYTPRO.Test.Data.Associations;
 
 public class QualifiedAssociationTest
 {
-    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/TestQualifiedDb";
+    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/BYT_PRO_TESTS/Qualified.json";
 
     private static void ResetContext(bool removeContext = true)
     {

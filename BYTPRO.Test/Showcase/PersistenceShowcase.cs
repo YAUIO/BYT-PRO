@@ -16,7 +16,7 @@ namespace BYTPRO.Test.Showcase;
 
 public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
 {
-    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/Db.json";
+    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/BYT_PRO_TESTS/Showcase.json";
 
     static PersistenceShowcase()
     {
