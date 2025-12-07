@@ -4,15 +4,18 @@ namespace BYTPRO.Data.Models.Locations;
 
 public record Address
 {
-    // ----------< Properties >----------
+    #region ----------< Properties >----------
+
     public string Street { get; }
     public string StreetNumber { get; }
     public string? ApartmentNumber { get; }
     public string ZipCode { get; }
     public string City { get; }
 
+    #endregion
 
-    // ----------< Constructor with validation >----------
+    #region ----------< Constructor with validation >----------
+
     public Address(
         string street,
         string streetNumber,
@@ -40,4 +43,6 @@ public record Address
         ZipCode = zipCode;
         City = city;
     }
+
+    #endregion
 }
