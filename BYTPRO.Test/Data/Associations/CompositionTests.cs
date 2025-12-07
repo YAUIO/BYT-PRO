@@ -18,7 +18,7 @@ public class BranchCompositionTest
             "09:00-17:00",
             100m)
         {
-            RegisterBranch();
+            FinishConstruction();
         }
     }
 

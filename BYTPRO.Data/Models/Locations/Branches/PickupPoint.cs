@@ -52,7 +52,12 @@ public class PickupPoint : Branch
         ParcelStorageSlots = parcelStorageSlots;
         MaxParcelWeight = maxParcelWeight;
 
-        RegisterBranch();
+        FinishConstruction();
+    }
+
+    // -----< Post Construct >-----
+    protected override void OnAfterConstruction()
+    {
         Extent.Add(this);
     }
 
