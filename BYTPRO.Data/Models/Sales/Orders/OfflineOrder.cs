@@ -7,17 +7,22 @@ namespace BYTPRO.Data.Models.Sales.Orders;
 
 public class OfflineOrder : Order
 {
-    // ----------< Class Extent >----------
+    #region ----------< Class Extent >----------
+
     [JsonIgnore] private static HashSet<OfflineOrder> Extent => JsonContext.Context.GetTable<OfflineOrder>();
 
     [JsonIgnore] public new static IReadOnlyList<OfflineOrder> All => Extent.ToList().AsReadOnly();
 
+    #endregion
 
-    // ----------< Attributes >----------
+    #region ----------< Attributes >----------
+
     private readonly string? _phone;
 
+    #endregion
 
-    // ----------< Properties with validation >----------
+    #region ----------< Properties with validation >----------
+
     public string? Phone
     {
         get => _phone;
@@ -28,8 +33,10 @@ public class OfflineOrder : Order
         }
     }
 
+    #endregion
 
-    // ----------< Constructor >----------
+    #region ----------< Construction >----------
+
     public OfflineOrder(
         int id,
         DateTime creationDate,
@@ -41,28 +48,23 @@ public class OfflineOrder : Order
     {
         Phone = phone;
         Store = store;
+        Store.EnsureStockForItems(cart);
 
-        store.EnsureStockForItems(cart);
+        FinishConstruction();
+    }
 
-        // At this point everything is validated, and we enter a post-construction step:
-        // 1. Finalize the order by reducing the stocks in the store.
-        // 2. Establish reverse connections with: Store, Products.
-        // 3. Register the order in all Class Extents. 
-
-        store.ReduceStockForItems(cart);
-
+    protected override void OnAfterConstruction()
+    {
+        Store.ReduceStockForItems(Cart); // TODO: this should not be called by JSON on deserialization
         Store.AddOrder(this);
 
-        // 1. Associations
-        Associate();
-
-        // 2. Extents (parent, child)
-        RegisterOrder();
         Extent.Add(this);
     }
 
+    #endregion
 
-    // ----------< Associations >----------
+    #region ----------< Associations >----------
+
     private readonly Store _store;
 
     public Store Store
@@ -74,4 +76,6 @@ public class OfflineOrder : Order
             _store = value;
         }
     }
+
+    #endregion
 }

@@ -1,4 +1,3 @@
-using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using BYTPRO.Data.Models.People;
 using BYTPRO.Data.Validation;
@@ -9,19 +8,24 @@ namespace BYTPRO.Data.Models.Sales.Orders;
 
 public class OnlineOrder : Order
 {
-    // ----------< Class Extent >----------
+    #region ----------< Class Extent >----------
+
     [JsonIgnore] private static HashSet<OnlineOrder> Extent => JsonContext.Context.GetTable<OnlineOrder>();
 
     [JsonIgnore] public new static IReadOnlyList<OnlineOrder> All => Extent.ToList().AsReadOnly();
 
+    #endregion
 
-    // ----------< Attributes >----------
+    #region ----------< Attributes >----------
+
     private bool _isPaid;
     private DateTime? _cancellationDate;
     private readonly string _trackingNumber;
 
+    #endregion
 
-    // ----------< Properties with validation >----------
+    #region ----------< Properties with validation >----------
+
     public bool IsPaid
     {
         get => _isPaid;
@@ -61,33 +65,40 @@ public class OnlineOrder : Order
         }
     }
 
+    #endregion
 
-    // ----------< Constructor >----------
+    #region ----------< Construction >----------
+
     public OnlineOrder(
         int id,
         DateTime creationDate,
         OrderStatus status,
         DeserializableReadOnlyList<ProductEntry> cart,
         bool isPaid,
+        DateTime? cancellationDate,
         string trackingNumber,
         Customer customer
     ) : base(id, creationDate, status, cart)
     {
         IsPaid = isPaid;
+        CancellationDate = cancellationDate;
         TrackingNumber = trackingNumber;
         Customer = customer;
 
-        // 1. Associations
-        Customer.AddOrder(this);
-        Associate();
+        FinishConstruction();
+    }
 
-        // 2. Extents (parent, child)
-        RegisterOrder();
+    protected override void OnAfterConstruction()
+    {
+        Customer.AddOrder(this);
+
         Extent.Add(this);
     }
 
+    #endregion
 
-    // ----------< Associations >----------
+    #region ----------< Associations >----------
+
     private readonly Customer _customer;
 
     public Customer Customer
@@ -99,4 +110,6 @@ public class OnlineOrder : Order
             _customer = value;
         }
     }
+
+    #endregion
 }

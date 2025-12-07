@@ -1,4 +1,3 @@
-using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
@@ -7,17 +6,22 @@ namespace BYTPRO.Data.Models.Sales.Orders;
 
 public class BranchOrder : Order
 {
-    // ----------< Class Extent >----------
+    #region ----------< Class Extent >----------
+
     [JsonIgnore] private static HashSet<BranchOrder> Extent => JsonContext.Context.GetTable<BranchOrder>();
 
     [JsonIgnore] public new static IReadOnlyList<BranchOrder> All => Extent.ToList().AsReadOnly();
 
+    #endregion
 
-    // ----------< Attributes >----------
+    #region ----------< Attributes >----------
+
     private DateTime _expectedDeliveryDate;
 
+    #endregion
 
-    // ----------< Properties with validation >----------
+    #region ----------< Properties with validation >----------
+
     public DateTime ExpectedDeliveryDate
     {
         get => _expectedDeliveryDate;
@@ -31,8 +35,10 @@ public class BranchOrder : Order
 
     public override decimal TotalPrice => 0m;
 
+    #endregion
 
-    // ----------< Constructor >----------
+    #region ----------< Construction >----------
+
     public BranchOrder(
         int id,
         DateTime creationDate,
@@ -43,11 +49,13 @@ public class BranchOrder : Order
     {
         ExpectedDeliveryDate = expectedDeliveryDate;
 
-        // 1. Associations
-        Associate();
+        FinishConstruction();
+    }
 
-        // 2. Extents (parent, child)
-        RegisterOrder();
+    protected override void OnAfterConstruction()
+    {
         Extent.Add(this);
     }
+
+    #endregion
 }
