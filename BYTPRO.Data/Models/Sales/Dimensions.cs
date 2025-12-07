@@ -5,17 +5,22 @@ namespace BYTPRO.Data.Models.Sales;
 
 public record Dimensions
 {
-    // ----------< Properties >----------
+    #region ----------< Properties >----------
+
     public decimal Width { get; }
     public decimal Height { get; }
     public decimal Depth { get; }
 
+    #endregion
 
-    // ----------< Calculated Properties >----------
+    #region ----------< Calculated Properties >----------
+
     [JsonIgnore] public decimal Volume => Width * Height * Depth;
 
+    #endregion
 
-    // ----------< Constructor with validation >----------
+    #region ----------< Constructor with validation >----------
+
     public Dimensions(
         decimal width,
         decimal height,
@@ -29,4 +34,6 @@ public record Dimensions
         Height = height;
         Depth = depth;
     }
+
+    #endregion
 }
