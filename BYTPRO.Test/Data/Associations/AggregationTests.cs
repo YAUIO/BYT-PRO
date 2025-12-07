@@ -15,7 +15,7 @@ public class AggregationTests
             "09:00-17:00",
             100m)
         {
-            RegisterBranch();
+            FinishConstruction();
         }
     }
 

@@ -70,7 +70,12 @@ public class Warehouse : Branch
         DockCount = dockCount;
         CurrentStorageCapacity = 0;
 
-        RegisterBranch();
+        FinishConstruction();
+    }
+
+    // -----< Post Construct >-----
+    protected override void OnAfterConstruction()
+    {
         Extent.Add(this);
     }
 

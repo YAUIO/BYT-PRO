@@ -70,7 +70,12 @@ public class Store : Branch
         SalesArea = salesArea;
         SelfCheckouts = selfCheckouts;
 
-        RegisterBranch();
+        FinishConstruction();
+    }
+
+    // -----< Post Construct >-----
+    protected override void OnAfterConstruction()
+    {
         Extent.Add(this);
     }
 

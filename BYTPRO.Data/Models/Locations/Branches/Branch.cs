@@ -14,7 +14,6 @@ public abstract class Branch
 
     [JsonIgnore] public static IReadOnlyList<Branch> All => Extent.ToList().AsReadOnly();
 
-    protected void RegisterBranch() => Extent.Add(this);
 
     // ----------< Attributes >----------
     private readonly Address _address;
@@ -111,6 +110,20 @@ public abstract class Branch
         OpeningHours = openingHours;
         TotalArea = totalArea;
         StockCart = stockCart ?? [];
+    }
+
+    // -----< Post Construct >-----
+    protected void FinishConstruction()
+    {
+        // child-specifics hook
+        OnAfterConstruction();
+
+        // only parent-specifics
+        Extent.Add(this);
+    }
+
+    protected virtual void OnAfterConstruction()
+    {
     }
 
 
