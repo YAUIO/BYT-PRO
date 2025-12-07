@@ -32,8 +32,7 @@ public class BranchCompositionTest
         var ctx = new JsonContextBuilder()
             .AddJsonEntity<LocalEmployee>()
             .AddJsonEntity<TestBranch>()
-            .WithDbFile(new FileInfo(DbRoot))
-            .Build();
+            .BuildWithDbFile(new FileInfo(DbRoot));
 
         JsonContext.SetContext(ctx);
     }

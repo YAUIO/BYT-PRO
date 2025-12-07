@@ -25,12 +25,10 @@ public class AggregationTests
     {
         if (File.Exists(DbRoot) && removeContext)
             File.Delete(DbRoot);
-        
 
         var ctx = new JsonContextBuilder()
             .AddJsonEntity<Product>()
-            .WithDbFile(new FileInfo(DbRoot))
-            .Build();
+            .BuildWithDbFile(new FileInfo(DbRoot));
 
         JsonContext.SetContext(ctx);
     }

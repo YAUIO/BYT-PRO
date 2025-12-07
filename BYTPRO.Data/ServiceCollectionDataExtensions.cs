@@ -16,30 +16,22 @@ public static class ServiceCollectionDataExtensions
         var context = new JsonContextBuilder()
             // ----------< People >----------
             .AddJsonEntity<Customer>()
-            // ------------------------------
             .AddJsonEntity<LocalEmployee>()
-            //------------------------------
             .AddJsonEntity<RegionalEmployee>()
 
             // ----------< Locations >----------
             .AddJsonEntity<PickupPoint>()
-            //------------------------------
             .AddJsonEntity<Store>()
-            //------------------------------
             .AddJsonEntity<Warehouse>()
 
             // ----------< Sales >----------
             .AddJsonEntity<Product>()
-            //------------------------------
             .AddJsonEntity<OnlineOrder>()
-            //------------------------------
             .AddJsonEntity<OfflineOrder>()
-            //------------------------------
             .AddJsonEntity<BranchOrder>()
 
             //------------------------------
-            .WithDbFile(new FileInfo($"{Directory.GetCurrentDirectory()}/Db"))
-            .Build();
+            .BuildWithDbFile(new FileInfo($"{Directory.GetCurrentDirectory()}/Db.json"));
 
         JsonContext.SetContext(context);
 

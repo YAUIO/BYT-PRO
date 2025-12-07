@@ -5,28 +5,27 @@ using Xunit.Abstractions;
 
 namespace BYTPRO.Test.Data.Associations;
 
-public class ReflexTests (ITestOutputHelper console)
+public class ReflexTests(ITestOutputHelper console)
 {
     private static string DbRoot => $"{Directory.GetCurrentDirectory()}/TestReflexDb.json";
 
     private static void ResetContext(bool removeContext = true)
     {
-        if (File.Exists(DbRoot) && removeContext) 
+        if (File.Exists(DbRoot) && removeContext)
             File.Delete(DbRoot);
-        
-        var ctx= new JsonContextBuilder()
+
+        var ctx = new JsonContextBuilder()
             .AddJsonEntity<Product>()
-            .WithDbFile(new FileInfo(DbRoot))
-            .Build();
-        
+            .BuildWithDbFile(new FileInfo(DbRoot));
+
         JsonContext.SetContext(ctx);
     }
-    
+
     [Fact]
     public async Task TestCreateAndSaveProductOfOtherProducts()
     {
         ResetContext();
-        
+
         var product1 = new Product(
             "Product1",
             "Description1",
@@ -46,7 +45,7 @@ public class ReflexTests (ITestOutputHelper console)
         );
 
         var p3Name = "Product31";
-        
+
         var product3 = new Product(
             p3Name,
             "Description3",
@@ -56,22 +55,22 @@ public class ReflexTests (ITestOutputHelper console)
             new Dimensions(15m, 15m, 15m),
             [product1, product2]
         );
-        
+
         await JsonContext.Context.SaveChangesAsync();
 
         var testedProduct = Product.All.Single(p => p.Name == p3Name);
-        
+
         Assert.Contains(product3, Product.All);
         Assert.NotNull(testedProduct.ConsistsOf);
         Assert.Contains(product1, testedProduct.ConsistsOf);
         Assert.Contains(product2, testedProduct.ConsistsOf);
     }
-    
+
     [Fact]
     public async Task TestLoadProductOfOtherProducts()
     {
         ResetContext();
-        
+
         var product1 = new Product(
             "Product1",
             "Description1",
@@ -91,7 +90,7 @@ public class ReflexTests (ITestOutputHelper console)
         );
 
         var p3Name = "Product3";
-        
+
         var product3 = new Product(
             p3Name,
             "Description3",
@@ -105,7 +104,7 @@ public class ReflexTests (ITestOutputHelper console)
         await JsonContext.Context.SaveChangesAsync();
 
         ResetContext(false);
-        
+
         console.WriteLine(Product.All.ToJson());
 
         var testedProduct = Product.All.Single(p => p.Name == p3Name);
@@ -113,7 +112,7 @@ public class ReflexTests (ITestOutputHelper console)
         var consistsOf = testedProduct.ConsistsOf?
             .Select(p => p.Name)
             .ToHashSet();
-        
+
         Assert.Contains(testedProduct, Product.All);
         Assert.NotNull(consistsOf);
         Assert.Contains(product1.Name, consistsOf);
