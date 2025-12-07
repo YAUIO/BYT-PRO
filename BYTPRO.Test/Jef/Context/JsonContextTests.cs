@@ -80,7 +80,6 @@ public class JsonContextTests
         context.GetTable<TestModel>().Clear();
         await context.SaveChangesAsync();
 
-        var table = context.GetTable<TestModel>();
 
         var model = new TestModel
         {
@@ -90,7 +89,7 @@ public class JsonContextTests
 
         var text = await File.ReadAllTextAsync(context.DbPath);
 
-        table.Add(model);
+        context.GetTable<TestModel>().Add(model);
 
         await context.SaveChangesAsync();
 
@@ -107,7 +106,6 @@ public class JsonContextTests
         context.GetTable<TestModel>().Clear();
         await context.SaveChangesAsync();
 
-        var table = context.GetTable<TestModel>();
 
         var model = new TestModel
         {
@@ -115,13 +113,13 @@ public class JsonContextTests
             Value = "value"
         };
 
-        table.Add(model);
+        context.GetTable<TestModel>().Add(model);
 
         await context.SaveChangesAsync();
 
         var text = await File.ReadAllTextAsync(context.DbPath);
 
-        table.Remove(model);
+        context.GetTable<TestModel>().Remove(model);
 
         await context.SaveChangesAsync();
 
@@ -136,7 +134,6 @@ public class JsonContextTests
         context.GetTable<TestModel>().Clear();
         await context.SaveChangesAsync();
 
-        var table = context.GetTable<TestModel>();
 
         var model = new TestModel
         {
@@ -144,13 +141,13 @@ public class JsonContextTests
             Value = "value"
         };
 
-        table.Add(model);
+        context.GetTable<TestModel>().Add(model);
 
         await context.SaveChangesAsync();
 
         var text = await File.ReadAllTextAsync(context.DbPath);
 
-        table.Clear();
+        context.GetTable<TestModel>().Clear();
 
         await context.SaveChangesAsync();
 
@@ -165,7 +162,6 @@ public class JsonContextTests
         context.GetTable<TestModel>().Clear();
         context.SaveChanges();
 
-        var table = context.GetTable<TestModel>();
 
         var model = new TestModel
         {
@@ -175,7 +171,7 @@ public class JsonContextTests
 
         var text = File.ReadAllText(context.DbPath);
 
-        table.Add(model);
+        context.GetTable<TestModel>().Add(model);
 
         context.SaveChanges();
 
@@ -192,7 +188,6 @@ public class JsonContextTests
         context.GetTable<TestModel>().Clear();
         context.SaveChanges();
 
-        var table = context.GetTable<TestModel>();
 
         var model = new TestModel
         {
@@ -200,13 +195,13 @@ public class JsonContextTests
             Value = "value"
         };
 
-        table.Add(model);
+        context.GetTable<TestModel>().Add(model);
 
         context.SaveChanges();
 
         var text = File.ReadAllText(context.DbPath);
 
-        table.Remove(model);
+        context.GetTable<TestModel>().Remove(model);
 
         context.SaveChanges();
 
@@ -221,7 +216,6 @@ public class JsonContextTests
         context.GetTable<TestModel>().Clear();
         context.SaveChanges();
 
-        var table = context.GetTable<TestModel>();
 
         var model = new TestModel
         {
@@ -229,13 +223,13 @@ public class JsonContextTests
             Value = "value"
         };
 
-        table.Add(model);
+        context.GetTable<TestModel>().Add(model);
 
         context.SaveChanges();
 
         var text = File.ReadAllText(context.DbPath);
 
-        table.Clear();
+        context.GetTable<TestModel>().Clear();
 
         context.SaveChanges();
 
@@ -250,8 +244,6 @@ public class JsonContextTests
         context.GetTable<TestModel>().Clear();
         await context.SaveChangesAsync();
 
-        var table = context.GetTable<TestModel>();
-
         var model = new TestModel
         {
             Id = 1,
@@ -260,17 +252,17 @@ public class JsonContextTests
 
         var stagedText = await File.ReadAllTextAsync(context.DbPath);
 
-        table.Add(model);
+        context.GetTable<TestModel>().Add(model);
 
         Assert.Equal(stagedText, await File.ReadAllTextAsync(context.DbPath));
 
-        Assert.Contains(model, table);
+        Assert.Contains(model, context.GetTable<TestModel>());
 
         await context.RollbackAsync();
 
         Assert.Equal(stagedText, await File.ReadAllTextAsync(context.DbPath));
 
-        Assert.Empty(table);
+        Assert.Empty(context.GetTable<TestModel>());
     }
 
     [Fact]
@@ -281,8 +273,6 @@ public class JsonContextTests
         context.GetTable<TestModel>().Clear();
         context.SaveChanges();
 
-        var table = context.GetTable<TestModel>();
-
         var model = new TestModel
         {
             Id = 1,
@@ -291,16 +281,16 @@ public class JsonContextTests
 
         var stagedText = File.ReadAllText(context.DbPath);
 
-        table.Add(model);
+        context.GetTable<TestModel>().Add(model);
 
         Assert.Equal(stagedText, File.ReadAllText(context.DbPath));
 
-        Assert.Contains(model, table);
+        Assert.Contains(model, context.GetTable<TestModel>());
 
         context.Rollback();
 
         Assert.Equal(stagedText, File.ReadAllText(context.DbPath));
 
-        Assert.Empty(table);
+        Assert.Empty(context.GetTable<TestModel>());
     }
 }
