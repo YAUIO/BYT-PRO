@@ -1,14 +1,13 @@
-﻿using System.Runtime.Serialization;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using BYTPRO.Data.Validation;
 using BYTPRO.Data.Validation.Validators;
-using BYTPRO.JsonEntityFramework.Extensions;
 
 namespace BYTPRO.Data.Models.People;
 
 public abstract class Person
 {
-    // ----------< Class Extent >----------
+    #region ----------< Class Extent >----------
+
     [JsonIgnore] private static readonly List<Person> Extent = [];
 
     [JsonIgnore] public static IReadOnlyList<Person> All => Extent.ToList().AsReadOnly();
@@ -17,8 +16,10 @@ public abstract class Person
 
     protected void DeletePerson() => Extent.Remove(this);
 
+    #endregion
 
-    // ----------< Attributes >----------
+    #region ----------< Attributes >----------
+
     private readonly int _id;
     private readonly string _name;
     private readonly string _surname;
@@ -26,8 +27,10 @@ public abstract class Person
     private string _email;
     private string _password;
 
+    #endregion
 
-    // ----------< Properties with validation >----------
+    #region ----------< Properties with validation >----------
+
     public int Id
     {
         get => _id;
@@ -95,8 +98,10 @@ public abstract class Person
         }
     }
 
+    #endregion
 
-    // ----------< Constructor >----------
+    #region ----------< Constructor >----------
+
     protected Person(
         int id,
         string name,
@@ -112,21 +117,6 @@ public abstract class Person
         Email = email;
         Password = password;
     }
-    
-    [JsonConstructor]
-    protected Person(
-        string name,
-        string surname,
-        string phone,
-        string email,
-        string password,
-        int id)
-    {
-        _id = id;
-        Name = name;
-        Surname = surname;
-        _phone = phone;
-        _email = email;
-        Password = password;
-    }
+
+    #endregion
 }

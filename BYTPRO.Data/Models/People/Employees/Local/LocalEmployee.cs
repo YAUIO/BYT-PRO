@@ -1,4 +1,3 @@
-using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using BYTPRO.Data.Models.Locations.Branches;
 using BYTPRO.Data.Validation.Validators;
@@ -8,18 +7,23 @@ namespace BYTPRO.Data.Models.People.Employees.Local;
 
 public class LocalEmployee : Employee
 {
-    // ----------< Class Extent >----------
+    #region ----------< Class Extent >----------
+
     [JsonIgnore] private static HashSet<LocalEmployee> Extent => JsonContext.Context.GetTable<LocalEmployee>();
 
     [JsonIgnore] public new static IReadOnlyList<LocalEmployee> All => Extent.ToList().AsReadOnly();
 
+    #endregion
 
-    // ----------< Attributes >----------
+    #region ----------< Attributes >----------
+
     private readonly DeserializableReadOnlyList<string> _trainingsCompleted;
     private string _breakSchedule;
 
+    #endregion
 
-    // ----------< Properties with validation >----------
+    #region ----------< Properties with validation >----------
+
     public DeserializableReadOnlyList<string> TrainingsCompleted
     {
         get => _trainingsCompleted;
@@ -41,8 +45,10 @@ public class LocalEmployee : Employee
         }
     }
 
+    #endregion
 
-    // ----------< Constructor >----------
+    #region ----------< Constructor >----------
+
     public LocalEmployee(
         int id,
         string name,
@@ -60,8 +66,9 @@ public class LocalEmployee : Employee
     {
         TrainingsCompleted = trainingsCompleted;
         BreakSchedule = breakSchedule;
-
         Branch = branch;
+
+        Branch.AddEmployee(this);
 
         // IMPORTANT NOTE:
         // We defer registration to super class (adding to super Class Extent)
@@ -70,43 +77,12 @@ public class LocalEmployee : Employee
         RegisterEmployee();
         Extent.Add(this);
     }
-    
-    [JsonConstructor]
-    public LocalEmployee(
-        string name,
-        string surname,
-        string phone,
-        string email,
-        string password,
-        string pesel,
-        decimal salary,
-        EmploymentType employmentType,
-        DeserializableReadOnlyList<string> trainingsCompleted,
-        string breakSchedule,
-        Branch branch,
-        int id
-    ) : base(id, name, surname, phone, email, password, pesel, salary, employmentType)
-    {
-        TrainingsCompleted = trainingsCompleted;
-        BreakSchedule = breakSchedule;
 
-        Branch = branch;
-    }
+    #endregion
 
-    [OnDeserialized]
-    internal void Register(StreamingContext context)
-    {
-        if (Extent.Any(c => c.Id == Id))
-            return;
-        
-        RegisterPerson();
-        RegisterEmployee();
-        Extent.Add(this);
-    }
-    
-    // ----------< Associations >----------
+    #region ----------< Associations >----------
+
     private readonly Branch _branch;
-
 
     public Branch Branch
     {
@@ -115,7 +91,6 @@ public class LocalEmployee : Employee
         {
             value.IsNotNull(nameof(Branch));
             _branch = value;
-            Branch.AddEmployee(this);
         }
     }
 
@@ -124,7 +99,10 @@ public class LocalEmployee : Employee
         Branch.RemoveEmployee(this);
 
         Extent.Remove(this);
+
         DeleteEmployee();
         DeletePerson();
     }
+
+    #endregion
 }

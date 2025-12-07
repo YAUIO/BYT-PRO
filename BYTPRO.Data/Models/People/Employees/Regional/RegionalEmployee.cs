@@ -1,4 +1,3 @@
-using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
@@ -8,19 +7,23 @@ namespace BYTPRO.Data.Models.People.Employees.Regional;
 
 public class RegionalEmployee : Employee
 {
-    // ----------< Class Extent >----------
-    [JsonIgnore]
-    private static HashSet<RegionalEmployee> Extent => JsonContext.Context.GetTable<RegionalEmployee>();
+    #region ----------< Class Extent >----------
+
+    [JsonIgnore] private static HashSet<RegionalEmployee> Extent => JsonContext.Context.GetTable<RegionalEmployee>();
 
     [JsonIgnore] public new static IReadOnlyList<RegionalEmployee> All => Extent.ToList().AsReadOnly();
 
+    #endregion
 
-    // ----------< Attributes >----------
+    #region ----------< Attributes >----------
+
     private readonly string _badgeNumber;
     private SupervisionScope _supervisionScope;
 
+    #endregion
 
-    // ----------< Properties with validation >----------
+    #region ----------< Properties with validation >----------
+
     public string BadgeNumber
     {
         get => _badgeNumber;
@@ -42,8 +45,10 @@ public class RegionalEmployee : Employee
         }
     }
 
+    #endregion
 
-    // ----------< Constructor >----------
+    #region ----------< Constructor >----------
+
     public RegionalEmployee(
         int id,
         string name,
@@ -68,36 +73,6 @@ public class RegionalEmployee : Employee
         RegisterEmployee();
         Extent.Add(this);
     }
-    
-    [JsonConstructor]
-    private RegionalEmployee(
-        string name,
-        string surname,
-        string phone,
-        string email,
-        string password,
-        string pesel,
-        decimal salary,
-        EmploymentType employmentType,
-        string badgeNumber,
-        SupervisionScope supervisionScope,
-        int id
-    ) : base(id, name, surname, phone, email, password, pesel, salary, employmentType)
-    {
-        BadgeNumber = badgeNumber;
-        SupervisionScope = supervisionScope;
 
-        
-    }
-    
-    [OnDeserialized]
-    internal void Register(StreamingContext context)
-    {
-        if (Extent.Any(c => c.Id == Id))
-            return;
-        
-        RegisterPerson();
-        RegisterEmployee();
-        Extent.Add(this);
-    }
+    #endregion
 }
