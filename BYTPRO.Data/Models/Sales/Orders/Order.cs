@@ -18,7 +18,6 @@ public abstract class Order
 
     #region ----------< Attributes >----------
 
-    private readonly int _id;
     private readonly DateTime _creationDate;
     private OrderStatus _status;
     private readonly DeserializableReadOnlyList<ProductEntry> _cart;
@@ -26,18 +25,6 @@ public abstract class Order
     #endregion
 
     #region ----------< Properties with validation >----------
-
-    public int Id
-    {
-        get => _id;
-        init
-        {
-            value.IsNonNegative(nameof(Id));
-            if (Extent.Any(o => o.Id == value))
-                throw new ValidationException($"Order with Id {value} already exists.");
-            _id = value;
-        }
-    }
 
     public DateTime CreationDate
     {
@@ -108,12 +95,10 @@ public abstract class Order
     #region ----------< Construction >----------
 
     protected Order(
-        int id,
         DateTime creationDate,
         OrderStatus status,
         DeserializableReadOnlyList<ProductEntry> cart)
     {
-        Id = id;
         CreationDate = creationDate;
         Status = status;
         Cart = cart;
