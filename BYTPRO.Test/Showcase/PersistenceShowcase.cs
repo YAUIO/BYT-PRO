@@ -16,7 +16,7 @@ namespace BYTPRO.Test.Showcase;
 
 public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
 {
-    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/Db";
+    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/Db.json";
 
     static PersistenceShowcase()
     {
@@ -206,6 +206,7 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
     [Fact]
     public void Delete()
     {
-        if (Directory.Exists(DbRoot)) Directory.Delete(DbRoot, true);
+        if (File.Exists(DbRoot))
+            File.Delete(DbRoot);
     }
 }

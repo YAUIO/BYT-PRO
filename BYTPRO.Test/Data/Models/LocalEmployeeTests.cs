@@ -14,9 +14,8 @@ public class LocalEmployeeTests
 
     static LocalEmployeeTests()
     {
-        if (Directory.Exists(DbRoot)) Directory.Delete(DbRoot, true);
-        
-        Directory.CreateDirectory(DbRoot);
+        if (File.Exists(DbRoot))
+            File.Delete(DbRoot);
 
         var ctx = new JsonContextBuilder()
             .AddJsonEntity<LocalEmployee>()

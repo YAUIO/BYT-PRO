@@ -11,20 +11,19 @@ public class JsonContextTests
 
     public static JsonContext GetTestContext(int sets = 0, string? root = null)
     {
-        if (Directory.Exists(DbRoot) && _contexts == 0 && sets == 0)
-        {
-            Directory.Delete(DbRoot, true);
-        }
-        else if (!Directory.Exists(DbRoot))
-        {
+        if (!Directory.Exists(DbRoot))
             Directory.CreateDirectory(DbRoot);
+        
+        if (File.Exists(DbRoot) && _contexts == 0 && sets == 0)
+        {
+            File.Delete(DbRoot);
         }
 
         _contexts++;
 
         var context = new JsonContextBuilder()
             .AddJsonEntity<TestModel>()
-            .WithDbFile(new FileInfo(root ?? $"{DbRoot}/{_contexts}_{sets}"))
+            .WithDbFile(new FileInfo(root ?? $"{DbRoot}/{_contexts}_{sets}.json"))
             .Build();
 
         return context;
@@ -44,7 +43,7 @@ public class JsonContextTests
     [Fact]
     public void TestFileLoading()
     {
-        var root = $"{DbRoot}/TestLoading/";
+        var root = $"{DbRoot}/TestLoading";
 
         var context = GetTestContext(root: root);
 

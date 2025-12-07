@@ -11,11 +11,8 @@ public class ReflexTests (ITestOutputHelper console)
 
     private static void ResetContext(bool removeContext = true)
     {
-        if (Directory.Exists(DbRoot) && removeContext) 
-            Directory.Delete(DbRoot, true);
-        
-        if (!Directory.Exists(DbRoot))
-            Directory.CreateDirectory(DbRoot);
+        if (File.Exists(DbRoot) && removeContext) 
+            File.Delete(DbRoot);
         
         var ctx= new JsonContextBuilder()
             .AddJsonEntity<Product>()
@@ -48,7 +45,7 @@ public class ReflexTests (ITestOutputHelper console)
             new Dimensions(5m, 5m, 5m)
         );
 
-        var p3Name = "Product3";
+        var p3Name = "Product31";
         
         var product3 = new Product(
             p3Name,

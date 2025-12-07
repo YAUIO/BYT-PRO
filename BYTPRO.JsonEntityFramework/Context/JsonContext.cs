@@ -8,37 +8,25 @@ using Newtonsoft.Json;
 namespace BYTPRO.JsonEntityFramework.Context;
 
 public class JsonContext
-{
-    private static int Contexts { get; set; }
-
+{ 
     public JsonContext(HashSet<JsonEntityConfiguration> entities, FileInfo dbFile)
     {
-        Contexts++;
-
         Context ??= this;
 
         DbFile = dbFile;
         Tables = [];
 
-        if (!DbFile.Exists)
-        {
-            DbFile.Create();
-        }
-
-        if (!DbFile.Exists)
-        {
-            throw new FileNotFoundException("Db file not found and/or couldn't be created");
-        }
-
         DbPath = $"{DbFile.FullName}{(dbFile.Name.EndsWith(".json", StringComparison.CurrentCulture) ? "" : ".json")}";
 
-        foreach (var ent in entities)
+        foreach (var ent in entities.Select(e => e.Target))
         {
-            Tables.Add(Activator.CreateInstance(typeof(HashSet<>).MakeGenericType(ent.Target))!);
+            Tables.TryAdd(ent, Activator.CreateInstance(typeof(HashSet<>).MakeGenericType(ent))!);
         }
         
         if (!File.Exists(DbPath))
         {
+            var file = DbFile.Create();
+            file.Close();
             return;
         }
 
@@ -53,10 +41,12 @@ public class JsonContext
 
             dynamic db = JsonConvert.DeserializeObject(json, Tables.GetType(),JsonSerializerExtensions.Options);
 
-            Tables = db!;
+            Tables = db ?? new ConcurrentDictionary<Type, dynamic>();
 
-            if (Tables.Count != entities.Count)
-                throw new InvalidDataException("Invalid DB configuration");
+            foreach (var ent in entities.Select(e => e.Target).Where(e => !Tables.ContainsKey(e)))
+            {
+                Tables.TryAdd(ent, Activator.CreateInstance(typeof(HashSet<>).MakeGenericType(ent))!);
+            }
         }
         finally
         {
@@ -66,7 +56,7 @@ public class JsonContext
 
     public static JsonContext? Context { get; private set; }
 
-    private HashSet<dynamic> Tables { get; set; }
+    private ConcurrentDictionary<Type, dynamic> Tables { get; set; }
 
     private FileInfo DbFile { get; }
     
@@ -81,7 +71,7 @@ public class JsonContext
 
     public HashSet<T> GetTable<T>()
     {
-        return Tables.Single(j => j.GetType().GenericTypeArguments[0] == typeof(T));
+        return Tables[typeof(T)];
     }
 
     public async Task SaveChangesAsync()

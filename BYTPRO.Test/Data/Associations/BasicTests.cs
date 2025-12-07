@@ -15,11 +15,8 @@ public class BasicTests()
 
     private static void ResetContext(bool removeContext = true)
     {
-        if (Directory.Exists(DbRoot) && removeContext)
-            Directory.Delete(DbRoot, true);
-
-        if (!Directory.Exists(DbRoot))
-            Directory.CreateDirectory(DbRoot);
+        if (File.Exists(DbRoot) && removeContext)
+            File.Delete(DbRoot);
 
         var ctx = new JsonContextBuilder()
             .AddJsonEntity<Product>()
