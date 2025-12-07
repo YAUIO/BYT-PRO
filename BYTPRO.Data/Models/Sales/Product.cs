@@ -9,10 +9,8 @@ namespace BYTPRO.Data.Models.Sales;
 public class Product
 {
     // ----------< Class Extent >----------
-    [JsonIgnore] private static HashSet<Product> Extent {
-        get => JsonContext.Context.GetTable<Product>();
-    }
-    
+    [JsonIgnore] private static HashSet<Product> Extent => JsonContext.Context.GetTable<Product>();
+
     [JsonIgnore] public static IReadOnlyList<Product> All => Extent.ToList().AsReadOnly();
 
 

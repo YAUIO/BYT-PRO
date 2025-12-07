@@ -9,10 +9,8 @@ namespace BYTPRO.Data.Models.Locations.Branches;
 public class Store : Branch
 {
     // ----------< Class Extent >----------
-    [JsonIgnore] private static HashSet<Store> Extent {
-        get => JsonContext.Context.GetTable<Store>();
-    }
-    
+    [JsonIgnore] private static HashSet<Store> Extent => JsonContext.Context.GetTable<Store>();
+
     [JsonIgnore] public new static IReadOnlyList<Store> All => Extent.ToList().AsReadOnly();
 
 
