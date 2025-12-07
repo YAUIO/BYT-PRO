@@ -120,9 +120,6 @@ public abstract class Order
 
 
     // ----------< Association Methods >----------
-    // TODO: this still is NOT a "proper reverse connection creation"
-    //  AssociateWithProduct, AssociateWithOrder are not atomic - meaning
-    //  calling one does not guarantee the other to be called as well.
     protected void Associate()
     {
         foreach (var cartItem in Cart)
@@ -138,6 +135,12 @@ public abstract class Order
         orderItem.IsNotNull(nameof(orderItem));
         if (orderItem.Order != this)
             throw new ValidationException($"{nameof(orderItem.Order)} must reference this Order instance.");
+
+        if (_associatedProducts.Contains(orderItem))
+            return;
+
         _associatedProducts.Add(orderItem);
+
+        orderItem.Product.AssociateWithOrder(orderItem);
     }
 }

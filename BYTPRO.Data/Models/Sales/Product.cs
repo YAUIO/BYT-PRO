@@ -123,7 +123,13 @@ public class Product
         orderItem.IsNotNull(nameof(orderItem));
         if (orderItem.Product != this)
             throw new ValidationException($"{nameof(orderItem.Product)} must reference this Product instance.");
+
+        if (_usedInOrders.Contains(orderItem))
+            return;
+
         _usedInOrders.Add(orderItem);
+
+        orderItem.Order.AssociateWithProduct(orderItem);
     }
 
     // -----< Reflex >-----
