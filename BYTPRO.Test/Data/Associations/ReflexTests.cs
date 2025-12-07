@@ -7,7 +7,7 @@ namespace BYTPRO.Test.Data.Associations;
 
 public class ReflexTests (ITestOutputHelper console)
 {
-    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/TestReflexDb";
+    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/TestReflexDb.json";
 
     private static void ResetContext(bool removeContext = true)
     {
