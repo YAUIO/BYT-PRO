@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Concurrent;
-using System.Reflection;
+﻿using System.Collections.Concurrent;
 using System.Text;
 using BYTPRO.JsonEntityFramework.Extensions;
 using Newtonsoft.Json;
@@ -8,14 +6,14 @@ using Newtonsoft.Json;
 namespace BYTPRO.JsonEntityFramework.Context;
 
 public class JsonContext
-{ 
+{
     public JsonContext(HashSet<JsonEntityConfiguration> entities, FileInfo dbFile)
     {
         Context ??= this;
 
         DbFile = dbFile;
         Entities = entities;
-        Tables = new ();
+        Tables = new ConcurrentDictionary<Type, dynamic>();
 
         DbPath = $"{DbFile.FullName}{(dbFile.Name.EndsWith(".json", StringComparison.CurrentCulture) ? "" : ".json")}";
 
@@ -25,7 +23,7 @@ public class JsonContext
             if (!Tables.TryAdd(ent, set))
                 Tables[ent] = set;
         }
-        
+
         if (!File.Exists(DbPath))
         {
             var file = DbFile.Create();
@@ -42,7 +40,7 @@ public class JsonContext
 
             var json = reader.ReadToEnd();
 
-            dynamic db = JsonConvert.DeserializeObject(json, Tables.GetType(),JsonSerializerExtensions.Options);
+            dynamic db = JsonConvert.DeserializeObject(json, Tables.GetType(), JsonSerializerExtensions.Options);
 
             Tables = db ?? new ConcurrentDictionary<Type, dynamic>();
 
@@ -60,11 +58,11 @@ public class JsonContext
     public static JsonContext? Context { get; private set; }
 
     private ConcurrentDictionary<Type, dynamic> Tables { get; set; }
-    
+
     private HashSet<JsonEntityConfiguration> Entities { get; }
 
     private FileInfo DbFile { get; }
-    
+
     public string DbPath { get; }
 
     private SemaphoreSlim DbLock { get; } = new(1, 1);
@@ -116,10 +114,10 @@ public class JsonContext
 
             var json = await reader.ReadToEndAsync();
 
-            dynamic db = JsonConvert.DeserializeObject(json, Tables.GetType(),JsonSerializerExtensions.Options);
+            dynamic db = JsonConvert.DeserializeObject(json, Tables.GetType(), JsonSerializerExtensions.Options);
 
             Tables = db!;
-            
+
             foreach (var ent in Entities.Select(e => e.Target).Where(e => !Tables.ContainsKey(e)))
             {
                 Tables.TryAdd(ent, Activator.CreateInstance(typeof(HashSet<>).MakeGenericType(ent))!);
@@ -142,10 +140,10 @@ public class JsonContext
 
             var json = reader.ReadToEnd();
 
-            dynamic db = JsonConvert.DeserializeObject(json, Tables.GetType(),JsonSerializerExtensions.Options);
-            
+            dynamic db = JsonConvert.DeserializeObject(json, Tables.GetType(), JsonSerializerExtensions.Options);
+
             Tables = db!;
-            
+
             foreach (var ent in Entities.Select(e => e.Target).Where(e => !Tables.ContainsKey(e)))
             {
                 Tables.TryAdd(ent, Activator.CreateInstance(typeof(HashSet<>).MakeGenericType(ent))!);

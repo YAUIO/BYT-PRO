@@ -1,5 +1,4 @@
 ﻿using BYTPRO.JsonEntityFramework.Context;
-using BYTPRO.JsonEntityFramework.Extensions;
 
 namespace BYTPRO.Test.Jef.Context;
 
@@ -13,7 +12,7 @@ public class JsonContextTests
     {
         if (!Directory.Exists(DbRoot))
             Directory.CreateDirectory(DbRoot);
-        
+
         if (File.Exists(DbRoot) && _contexts == 0 && sets == 0)
         {
             File.Delete(DbRoot);
@@ -23,8 +22,7 @@ public class JsonContextTests
 
         var context = new JsonContextBuilder()
             .AddJsonEntity<TestModel>()
-            .WithDbFile(new FileInfo(root ?? $"{DbRoot}/{_contexts}_{sets}.json"))
-            .Build();
+            .BuildWithDbFile(new FileInfo(root ?? $"{DbRoot}/{_contexts}_{sets}.json"));
 
         return context;
     }
@@ -64,8 +62,7 @@ public class JsonContextTests
 
         var newContext = new JsonContextBuilder()
             .AddJsonEntity<TestModel>()
-            .WithDbFile(new FileInfo(root))
-            .Build();
+            .BuildWithDbFile(new FileInfo(root));
 
         Assert.Contains(model, newContext.GetTable<TestModel>());
 
@@ -175,7 +172,7 @@ public class JsonContextTests
 
         context.SaveChanges();
 
-        Assert.NotEmpty( File.ReadAllText(context.DbPath));
+        Assert.NotEmpty(File.ReadAllText(context.DbPath));
 
         Assert.NotEqual(text, File.ReadAllText(context.DbPath));
     }

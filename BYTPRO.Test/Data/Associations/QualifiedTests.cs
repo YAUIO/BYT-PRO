@@ -18,8 +18,7 @@ public class QualifiedAssociationTest
             .AddJsonEntity<Product>()
             .AddJsonEntity<Customer>()
             .AddJsonEntity<OnlineOrder>()
-            .WithDbFile(new FileInfo(DbRoot))
-            .Build();
+            .BuildWithDbFile(new FileInfo(DbRoot));
 
         JsonContext.SetContext(ctx);
     }

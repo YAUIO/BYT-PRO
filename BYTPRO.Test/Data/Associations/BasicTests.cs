@@ -5,11 +5,10 @@ using BYTPRO.Data.Models.Sales;
 using BYTPRO.Data.Models.Sales.Orders;
 using BYTPRO.Data.Validation;
 using BYTPRO.JsonEntityFramework.Context;
-using Xunit.Abstractions;
 
 namespace BYTPRO.Test.Data.Associations;
 
-public class BasicTests()
+public class BasicTests
 {
     private static string DbRoot => $"{Directory.GetCurrentDirectory()}/TestReflexDb";
 
@@ -23,8 +22,7 @@ public class BasicTests()
             .AddJsonEntity<OfflineOrder>()
             .AddJsonEntity<Store>()
             .AddJsonEntity<Customer>()
-            .WithDbFile(new FileInfo(DbRoot))
-            .Build();
+            .BuildWithDbFile(new FileInfo(DbRoot));
 
         JsonContext.SetContext(ctx);
     }

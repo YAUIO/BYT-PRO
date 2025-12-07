@@ -19,24 +19,23 @@ public class LocalEmployeeTests
 
         var ctx = new JsonContextBuilder()
             .AddJsonEntity<LocalEmployee>()
-            .AddJsonEntity<Store>() 
-            .WithDbFile(new FileInfo(DbRoot))
-            .Build();
+            .AddJsonEntity<Store>()
+            .BuildWithDbFile(new FileInfo(DbRoot));
 
         JsonContext.SetContext(ctx);
     }
-    
+
     private static Store CreateTestStore()
     {
-        var address = new Address("Main St", "Warsaw", null, "00-001", "Poland"); 
-        
+        var address = new Address("Main St", "Warsaw", null, "00-001", "Poland");
+
         return new Store(
-            address, 
-            "Test Store", 
-            "08:00-22:00", 
-            100m, 
-            5, 
-            80m, 
+            address,
+            "Test Store",
+            "08:00-22:00",
+            100m,
+            5,
+            80m,
             2
         );
     }
@@ -45,7 +44,7 @@ public class LocalEmployeeTests
     public void CreateLocalEmployeeWithValidData()
     {
         var store = CreateTestStore();
-        
+
         var local = new LocalEmployee(
             3,
             "John",
@@ -72,11 +71,11 @@ public class LocalEmployeeTests
         var persons = Person.All;
         var emps = Employee.All;
         var localemps = LocalEmployee.All;
-        
+
         Assert.Throws<ValidationException>(() =>
         {
             var store = CreateTestStore();
-            
+
             var local = new LocalEmployee(
                 2,
                 "John",

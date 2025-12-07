@@ -31,8 +31,7 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
             .AddJsonEntity<OnlineOrder>()
             .AddJsonEntity<OfflineOrder>()
             .AddJsonEntity<BranchOrder>()
-            .WithDbFile(new FileInfo(DbRoot))
-            .Build();
+            .BuildWithDbFile(new FileInfo(DbRoot));
 
         JsonContext.SetContext(context);
     }
