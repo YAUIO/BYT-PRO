@@ -14,6 +14,7 @@ public class JsonContext
         Context ??= this;
 
         DbFile = dbFile;
+        Entities = entities;
         Tables = new ();
 
         DbPath = $"{DbFile.FullName}{(dbFile.Name.EndsWith(".json", StringComparison.CurrentCulture) ? "" : ".json")}";
@@ -59,6 +60,8 @@ public class JsonContext
     public static JsonContext? Context { get; private set; }
 
     private ConcurrentDictionary<Type, dynamic> Tables { get; set; }
+    
+    private HashSet<JsonEntityConfiguration> Entities { get; }
 
     private FileInfo DbFile { get; }
     
@@ -116,6 +119,11 @@ public class JsonContext
             dynamic db = JsonConvert.DeserializeObject(json, Tables.GetType(),JsonSerializerExtensions.Options);
 
             Tables = db!;
+            
+            foreach (var ent in Entities.Select(e => e.Target).Where(e => !Tables.ContainsKey(e)))
+            {
+                Tables.TryAdd(ent, Activator.CreateInstance(typeof(HashSet<>).MakeGenericType(ent))!);
+            }
         }
         finally
         {
@@ -137,6 +145,11 @@ public class JsonContext
             dynamic db = JsonConvert.DeserializeObject(json, Tables.GetType(),JsonSerializerExtensions.Options);
             
             Tables = db!;
+            
+            foreach (var ent in Entities.Select(e => e.Target).Where(e => !Tables.ContainsKey(e)))
+            {
+                Tables.TryAdd(ent, Activator.CreateInstance(typeof(HashSet<>).MakeGenericType(ent))!);
+            }
         }
         finally
         {
