@@ -55,6 +55,7 @@ public class QualifiedAssociationTest
             status: OrderStatus.InProgress,
             cart: [new ProductEntry(product, 2)],
             isPaid: true,
+            cancellationDate: null,
             trackingNumber: trackingNumber,
             customer: customer
         );

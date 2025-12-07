@@ -137,6 +137,7 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
             OrderStatus.InProgress,
             [new ProductEntry(product1, 1), new ProductEntry(product2, 5)],
             true,
+            null,
             "TRN12345",
             customer
         );

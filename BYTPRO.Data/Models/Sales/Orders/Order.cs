@@ -8,22 +8,25 @@ namespace BYTPRO.Data.Models.Sales.Orders;
 
 public abstract class Order
 {
-    // ----------< Class Extent >----------
+    #region ----------< Class Extent >----------
+
     [JsonIgnore] private static readonly List<Order> Extent = [];
 
     [JsonIgnore] public static IReadOnlyList<Order> All => Extent.ToList().AsReadOnly();
 
-    protected void RegisterOrder() => Extent.Add(this);
+    #endregion
 
+    #region ----------< Attributes >----------
 
-    // ----------< Attributes >----------
     private readonly int _id;
     private readonly DateTime _creationDate;
     private OrderStatus _status;
-    private readonly DeserializableReadOnlyList<ProductEntry> _cart = null!;
+    private readonly DeserializableReadOnlyList<ProductEntry> _cart;
 
+    #endregion
 
-    // ----------< Properties with validation >----------
+    #region ----------< Properties with validation >----------
+
     public int Id
     {
         get => _id;
@@ -90,16 +93,20 @@ public abstract class Order
         }
     }
 
+    #endregion
 
-    // ----------< Calculated Properties >----------
+    #region ----------< Calculated Properties >----------
+
     [JsonIgnore] public virtual decimal TotalPrice => _associatedProducts.Sum(item => item.TotalPrice);
 
     [JsonIgnore] public decimal TotalWeight => _associatedProducts.Sum(item => item.TotalWeight);
 
     [JsonIgnore] public decimal TotalDimensions => _associatedProducts.Sum(item => item.TotalDimensions);
 
+    #endregion
 
-    // ----------< Constructor >----------
+    #region ----------< Construction >----------
+
     protected Order(
         int id,
         DateTime creationDate,
@@ -112,15 +119,29 @@ public abstract class Order
         Cart = cart;
     }
 
+    protected void FinishConstruction()
+    {
+        // parent-specifics
+        CreateProductAssociations();
+        Extent.Add(this);
 
-    // ----------< Associations >----------
+        // child-specifics hook
+        OnAfterConstruction();
+    }
+
+    protected virtual void OnAfterConstruction()
+    {
+    }
+
+    #endregion
+
+    #region ----------< Associations >----------
+
     private readonly HashSet<ProductQuantityInOrder> _associatedProducts = [];
 
     [JsonIgnore] public HashSet<ProductQuantityInOrder> AssociatedProducts => [.._associatedProducts];
 
-
-    // ----------< Association Methods >----------
-    protected void Associate()
+    private void CreateProductAssociations()
     {
         foreach (var cartItem in Cart)
         {
@@ -139,4 +160,6 @@ public abstract class Order
         if (_associatedProducts.Add(orderItem))
             orderItem.Product.AssociateWithOrder(orderItem);
     }
+
+    #endregion
 }
