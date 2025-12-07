@@ -23,14 +23,10 @@ public class BasicTests()
 
         var ctx = new JsonContextBuilder()
             .AddJsonEntity<Product>()
-            .BuildEntity()
             .AddJsonEntity<OfflineOrder>()
-            .BuildEntity()
             .AddJsonEntity<Store>()
-            .BuildEntity()
             .AddJsonEntity<Customer>()
-            .BuildEntity()
-            .WithRoot(new DirectoryInfo(DbRoot))
+            .WithDbFile(new FileInfo(DbRoot))
             .Build();
 
         JsonContext.SetContext(ctx);

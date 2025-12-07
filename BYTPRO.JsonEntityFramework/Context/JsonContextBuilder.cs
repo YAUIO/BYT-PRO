@@ -4,11 +4,12 @@ public class JsonContextBuilder
 {
     private HashSet<JsonEntityConfiguration> RegisteredEntities { get; } = [];
 
-    private DirectoryInfo RootDir { get; set; }
+    private FileInfo DbFile { get; set; }
 
-    public JsonEntityBuilder<TJEntity> AddJsonEntity<TJEntity>()
+    public JsonContextBuilder AddJsonEntity<TJEntity>()
     {
-        return new JsonEntityBuilder<TJEntity>(this);
+        RegisteredEntities.Add(new JsonEntityConfiguration(typeof(TJEntity)));
+        return this;
     }
 
     public JsonContextBuilder AddJsonEntity(JsonEntityConfiguration entityConfiguration)
@@ -17,16 +18,16 @@ public class JsonContextBuilder
         return this;
     }
 
-    public JsonContextBuilder WithRoot(DirectoryInfo rootDir)
+    public JsonContextBuilder WithDbFile(FileInfo dbFile)
     {
-        RootDir = rootDir;
+        DbFile = dbFile;
         return this;
     }
 
     public JsonContext Build()
     {
-        return RootDir == null
-            ? throw new ArgumentNullException(nameof(RootDir), "Provide WithRoot when creating JsonContext")
-            : new JsonContext(RegisteredEntities, RootDir);
+        return DbFile == null
+            ? throw new ArgumentNullException(nameof(DbFile), "Provide WithRoot when creating JsonContext")
+            : new JsonContext(RegisteredEntities, DbFile);
     }
 }

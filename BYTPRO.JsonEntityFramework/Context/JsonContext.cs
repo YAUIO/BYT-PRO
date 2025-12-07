@@ -9,218 +9,146 @@ namespace BYTPRO.JsonEntityFramework.Context;
 
 public class JsonContext
 {
-    public static int Contexts { get; private set; }
-    public JsonContext(HashSet<JsonEntityConfiguration> entities, DirectoryInfo root)
+    private static int Contexts { get; set; }
+
+    public JsonContext(HashSet<JsonEntityConfiguration> entities, FileInfo dbFile)
     {
         Contexts++;
-        
+
         Context ??= this;
 
-        Root = root;
+        DbFile = dbFile;
         Tables = [];
 
-        Root.Create();
+        if (!DbFile.Exists)
+        {
+            DbFile.Create();
+        }
 
-        if (!Root.Exists)
-            throw new FileNotFoundException("Root directory not found");
+        if (!DbFile.Exists)
+        {
+            throw new FileNotFoundException("Db file not found and/or couldn't be created");
+        }
 
+        DbPath = $"{DbFile.FullName}{(dbFile.Name.EndsWith(".json", StringComparison.CurrentCulture) ? "" : ".json")}";
 
         foreach (var ent in entities)
         {
-            var path = Path.Combine(Root.FullName, $"{ent.FileName ?? ent.Target.Name}.json");
+            Tables.Add(Activator.CreateInstance(typeof(HashSet<>).MakeGenericType(ent.Target))!);
+        }
+        
+        if (!File.Exists(DbPath))
+        {
+            return;
+        }
 
-            dynamic set = Activator.CreateInstance(typeof(JsonEntitySet<>).MakeGenericType(ent.Target), ent, path);
-            Tables.Add(set ?? throw new InvalidOperationException("Null table created"));
+        DbLock.Wait();
 
-            if (!File.Exists(path))
-            {
-                var stream = File.Create(path);
-                stream.Close();
-            }
-            else
-            {
-                var fileLock = FileLocks.GetOrAdd(path, _ => new SemaphoreSlim(1, 1));
+        try
+        {
+            using var fileStream = File.Open(DbPath, FileMode.Open);
+            using var reader = new StreamReader(fileStream);
 
-                fileLock.Wait();
+            var json = reader.ReadToEnd();
 
-                try
-                {
-                    using var fileStream = File.Open(path, FileMode.Open);
-                    using var reader = new StreamReader(fileStream);
-                    
-                    var json = reader.ReadToEnd();
+            dynamic db = JsonConvert.DeserializeObject(json, Tables.GetType(),JsonSerializerExtensions.Options);
 
-                    var listType = typeof(List<>).MakeGenericType(ent.Target);
+            Tables = db!;
 
-                    var deserializedList = JsonConvert.DeserializeObject(json, listType, JsonSerializerExtensions.Options);
-                    
-                    if (deserializedList is IEnumerable items)
-                    {
-                        set.AddRange(items);
-                    }
-                }
-                finally
-                {
-                    fileLock.Release();
-                }
-            }
+            if (Tables.Count != entities.Count)
+                throw new InvalidDataException("Invalid DB configuration");
+        }
+        finally
+        {
+            DbLock.Release();
         }
     }
 
     public static JsonContext? Context { get; private set; }
 
+    private HashSet<dynamic> Tables { get; set; }
 
-    private HashSet<dynamic> Tables { get; }
+    private FileInfo DbFile { get; }
+    
+    public string DbPath { get; }
 
-    private DirectoryInfo Root { get; }
-
-    private ConcurrentDictionary<string, SemaphoreSlim> FileLocks { get; } = new();
+    private SemaphoreSlim DbLock { get; } = new(1, 1);
 
     public static void SetContext(JsonContext context)
     {
         Context = context;
     }
 
-    public JsonEntitySet<T> GetTable<T>()
+    public HashSet<T> GetTable<T>()
     {
-        return Tables.Single(j => j.GetGenericType() == typeof(T));
+        return Tables.Single(j => j.GetType().GenericTypeArguments[0] == typeof(T));
     }
 
     public async Task SaveChangesAsync()
     {
-        foreach (var json in Tables.Where(json => !json.IsSaved()))
+        await DbLock.WaitAsync();
+        try
         {
-            if (json.Path is not string path)
-            {
-                throw new InvalidCastException("Path can't be null");
-            }
-
-            var fileLock = FileLocks.GetOrAdd(path, _ => new SemaphoreSlim(1, 1));
-
-            await fileLock.WaitAsync();
-            try
-            {
-                await File.WriteAllTextAsync(path, JsonSerializerExtensions.ToJson(json), Encoding.UTF8);
-                json.MarkSaved();
-            }
-            finally
-            {
-                fileLock.Release();
-            }
+            await File.WriteAllTextAsync(DbPath, Tables.ToJson(), Encoding.UTF8);
+        }
+        finally
+        {
+            DbLock.Release();
         }
     }
 
     public void SaveChanges()
     {
-        foreach (var json in Tables.Where(json => !json.IsSaved()))
+        DbLock.Wait();
+        try
         {
-            if (json.Path is not string path)
-            {
-                throw new InvalidCastException("Path can't be null");
-            }
-
-            var fileLock = FileLocks.GetOrAdd(path, _ => new SemaphoreSlim(1, 1));
-
-            fileLock.Wait();
-            try
-            {
-                File.WriteAllText(path, JsonSerializerExtensions.ToJson(json), Encoding.UTF8);
-                json.MarkSaved();
-            }
-            finally
-            {
-                fileLock.Release();
-            }
+            File.WriteAllText(DbPath, Tables.ToJson(), Encoding.UTF8);
+        }
+        finally
+        {
+            DbLock.Release();
         }
     }
 
     public async Task RollbackAsync()
     {
-        foreach (var table in Tables.Where(t => !t.IsSaved()))
+        await DbLock.WaitAsync();
+
+        try
         {
-            var path = (string)table.Path;
+            await using var fileStream = File.Open(DbPath, FileMode.Open);
+            using var reader = new StreamReader(fileStream);
 
-            var fileLock = FileLocks.GetOrAdd(path, _ => new SemaphoreSlim(1, 1));
+            var json = await reader.ReadToEndAsync();
 
-            await fileLock.WaitAsync();
+            dynamic db = JsonConvert.DeserializeObject(json, Tables.GetType(),JsonSerializerExtensions.Options);
 
-            try
-            {
-                await using var fileStream = File.Open(path, FileMode.Open);
-                using var reader = new StreamReader(fileStream);
-                    
-                var json = await reader.ReadToEndAsync();
-
-                table.Clear();
-                
-                var type = (Type)table.GetGenericType();
-
-                var list = JsonConvert.DeserializeObject(
-                    json,
-                    typeof(List<>).MakeGenericType(type),
-                    JsonSerializerExtensions.Options
-                );
-                
-                if (list != null)
-                    foreach (var item in (IEnumerable)list)
-                    {   
-                        dynamic casted = item;
-                        table.Add(casted);
-                    }
-
-                table.MarkSaved();
-
-                fileStream.Close();
-            }
-            finally
-            {
-                fileLock.Release();
-            }
+            Tables = db!;
+        }
+        finally
+        {
+            DbLock.Release();
         }
     }
 
     public void Rollback()
     {
-        foreach (var table in Tables.Where(t => !t.IsSaved()))
+        DbLock.Wait();
+
+        try
         {
-            var path = (string)table.Path;
+            using var fileStream = File.Open(DbPath, FileMode.Open);
+            using var reader = new StreamReader(fileStream);
 
-            var fileLock = FileLocks.GetOrAdd(path, _ => new SemaphoreSlim(1, 1));
+            var json = reader.ReadToEnd();
 
-            fileLock.Wait();
-
-            try
-            {
-                using var fileStream = File.Open(path, FileMode.Open);
-                using var reader = new StreamReader(fileStream);
-                    
-                var json = reader.ReadToEnd();
-
-                table.Clear();
-
-                var type = (Type)table.GetGenericType();
-
-                var list = JsonConvert.DeserializeObject(
-                    json,
-                    typeof(List<>).MakeGenericType(type),
-                    JsonSerializerExtensions.Options
-                );
-                
-                if (list != null)
-                    foreach (var item in (IEnumerable)list)
-                    {
-                        dynamic casted = item;
-                        table.Add(casted);
-                    }
-
-                table.MarkSaved();
-
-                fileStream.Close();
-            }
-            finally
-            {
-                fileLock.Release();
-            }
+            dynamic db = JsonConvert.DeserializeObject(json, Tables.GetType(),JsonSerializerExtensions.Options);
+            
+            Tables = db!;
+        }
+        finally
+        {
+            DbLock.Release();
         }
     }
 }

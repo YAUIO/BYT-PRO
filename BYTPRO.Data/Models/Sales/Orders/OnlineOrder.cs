@@ -10,7 +10,7 @@ namespace BYTPRO.Data.Models.Sales.Orders;
 public class OnlineOrder : Order
 {
     // ----------< Class Extent >----------
-    [JsonIgnore] private static JsonEntitySet<OnlineOrder> Extent => JsonContext.Context.GetTable<OnlineOrder>();
+    [JsonIgnore] private static HashSet<OnlineOrder> Extent => JsonContext.Context.GetTable<OnlineOrder>();
 
     [JsonIgnore] public new static IReadOnlyList<OnlineOrder> All => Extent.ToList().AsReadOnly();
 

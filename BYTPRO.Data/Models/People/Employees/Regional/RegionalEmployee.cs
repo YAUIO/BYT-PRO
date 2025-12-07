@@ -10,7 +10,7 @@ public class RegionalEmployee : Employee
 {
     // ----------< Class Extent >----------
     [JsonIgnore]
-    private static JsonEntitySet<RegionalEmployee> Extent => JsonContext.Context.GetTable<RegionalEmployee>();
+    private static HashSet<RegionalEmployee> Extent => JsonContext.Context.GetTable<RegionalEmployee>();
 
     [JsonIgnore] public new static IReadOnlyList<RegionalEmployee> All => Extent.ToList().AsReadOnly();
 

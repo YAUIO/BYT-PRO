@@ -9,7 +9,7 @@ namespace BYTPRO.Data.Models.People;
 public class Customer : Person
 {
     // ----------< Class Extent >----------
-    [JsonIgnore] private static JsonEntitySet<Customer> Extent => JsonContext.Context.GetTable<Customer>();
+    [JsonIgnore] private static HashSet<Customer> Extent => JsonContext.Context.GetTable<Customer>();
 
     [JsonIgnore] public new static IReadOnlyList<Customer> All => Extent.ToList().AsReadOnly();
 

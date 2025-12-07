@@ -31,8 +31,7 @@ public class AggregationTests
 
         var ctx = new JsonContextBuilder()
             .AddJsonEntity<Product>()
-            .BuildEntity()
-            .WithRoot(new DirectoryInfo(DbRoot))
+            .WithDbFile(new FileInfo(DbRoot))
             .Build();
 
         JsonContext.SetContext(ctx);
