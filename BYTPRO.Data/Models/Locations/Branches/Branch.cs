@@ -9,21 +9,26 @@ namespace BYTPRO.Data.Models.Locations.Branches;
 
 public abstract class Branch
 {
-    // ----------< Class Extent >----------
+    #region ----------< Class Extent >----------
+
     [JsonIgnore] private static readonly List<Branch> Extent = [];
 
     [JsonIgnore] public static IReadOnlyList<Branch> All => Extent.ToList().AsReadOnly();
 
+    #endregion
 
-    // ----------< Attributes >----------
+    #region ----------< Attributes >----------
+
     private readonly Address _address;
     private readonly string _name;
     private string _openingHours;
     private readonly decimal _totalArea;
     private readonly List<ProductEntry> _stockCart;
 
+    #endregion
 
-    // ----------< Properties with validation >----------
+    #region ----------< Properties with validation >----------
+
     public Address Address
     {
         get => _address;
@@ -96,8 +101,10 @@ public abstract class Branch
         }
     }
 
+    #endregion
 
-    // ----------< Constructor >----------
+    #region ----------< Construction >----------
+
     protected Branch(
         Address address,
         string name,
@@ -112,7 +119,6 @@ public abstract class Branch
         StockCart = stockCart ?? [];
     }
 
-    // -----< Post Construct >-----
     protected void FinishConstruction()
     {
         // child-specifics hook
@@ -126,10 +132,12 @@ public abstract class Branch
     {
     }
 
+    #endregion
 
-    // ----------< Associations >----------
+    #region ----------< Associations >----------
 
-    // -----< Composition >-----
+    #region -----< Composition >-----
+
     private readonly HashSet<LocalEmployee> _employees = [];
 
     [JsonIgnore] public HashSet<LocalEmployee> Employees => [.._employees];
@@ -159,7 +167,10 @@ public abstract class Branch
         _employees.Remove(employee);
     }
 
-    // -----< Aggregation >-----
+    #endregion
+
+    #region -----< Aggregation >-----
+
     private readonly HashSet<BranchProductStock> _stocks = [];
 
     [JsonIgnore] public HashSet<BranchProductStock> Stocks => [.._stocks];
@@ -223,8 +234,12 @@ public abstract class Branch
             ReduceProductStock(item.Product, item.Quantity);
     }
 
+    #endregion
 
-    // ----------< JSON >----------
+    #endregion
+
+    #region ----------< JSON >----------
+
     [OnSerializing]
     private void OnSerializing(StreamingContext context)
     {
@@ -252,4 +267,6 @@ public abstract class Branch
         foreach (var item in _stockCart)
             AddProductStock(item.Product, item.Quantity);
     }
+
+    #endregion
 }

@@ -8,19 +8,24 @@ namespace BYTPRO.Data.Models.Locations.Branches;
 
 public class Store : Branch
 {
-    // ----------< Class Extent >----------
+    #region ----------< Class Extent >----------
+
     [JsonIgnore] private static HashSet<Store> Extent => JsonContext.Context.GetTable<Store>();
 
     [JsonIgnore] public new static IReadOnlyList<Store> All => Extent.ToList().AsReadOnly();
 
+    #endregion
 
-    // ----------< Attributes >----------
+    #region ----------< Attributes >----------
+
     private int _posCount;
     private decimal _salesArea;
     private int _selfCheckouts;
 
+    #endregion
 
-    // ----------< Properties with validation >----------
+    #region ----------< Properties with validation >----------
+
     public int PosCount
     {
         get => _posCount;
@@ -54,8 +59,10 @@ public class Store : Branch
         }
     }
 
+    #endregion
 
-    // ----------< Constructor >----------
+    #region ----------< Construction >----------
+
     public Store(
         Address address,
         string name,
@@ -73,14 +80,15 @@ public class Store : Branch
         FinishConstruction();
     }
 
-    // -----< Post Construct >-----
     protected override void OnAfterConstruction()
     {
         Extent.Add(this);
     }
 
+    #endregion
 
-    // ----------< Associations >----------
+    #region ----------< Associations >----------
+
     private readonly HashSet<OfflineOrder> _offlineOrders = [];
 
     [JsonIgnore] public HashSet<OfflineOrder> OfflineOrders => [.._offlineOrders];
@@ -96,4 +104,6 @@ public class Store : Branch
         base.Delete();
         Extent.Remove(this);
     }
+
+    #endregion
 }

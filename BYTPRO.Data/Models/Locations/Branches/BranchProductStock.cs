@@ -6,11 +6,14 @@ using Sales;
 
 public class BranchProductStock
 {
-    // ----------< Attributes >----------
+    #region ----------< Attributes >----------
+
     private int _quantity;
 
+    #endregion
 
-    // ----------< Properties >----------
+    #region ----------< Properties >----------
+
     public Branch Branch { get; }
 
     public Product Product { get; }
@@ -25,8 +28,10 @@ public class BranchProductStock
         }
     }
 
+    #endregion
 
-    // ----------< Constructor >----------
+    #region ----------< Constructor >----------
+
     public BranchProductStock(
         Branch branch,
         Product product,
@@ -40,4 +45,6 @@ public class BranchProductStock
         Product = product;
         Quantity = quantity;
     }
+
+    #endregion
 }

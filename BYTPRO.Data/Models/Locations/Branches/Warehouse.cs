@@ -7,19 +7,24 @@ namespace BYTPRO.Data.Models.Locations.Branches;
 
 public class Warehouse : Branch
 {
-    // ----------< Class Extent >----------
+    #region ----------< Class Extent >----------
+
     [JsonIgnore] private static HashSet<Warehouse> Extent => JsonContext.Context.GetTable<Warehouse>();
 
     [JsonIgnore] public new static IReadOnlyList<Warehouse> All => Extent.ToList().AsReadOnly();
 
+    #endregion
 
-    // ----------< Attributes >----------
+    #region ----------< Attributes >----------
+
     private readonly decimal _maxStorageCapacity;
     private int _dockCount;
     private decimal _currentStorageCapacity;
 
+    #endregion
 
-    // ----------< Properties with validation >----------
+    #region ----------< Properties with validation >----------
+
     public decimal MaxStorageCapacity
     {
         get => _maxStorageCapacity;
@@ -55,8 +60,10 @@ public class Warehouse : Branch
         }
     }
 
+    #endregion
 
-    // ----------< Constructor >----------
+    #region ----------< Construction >----------
+
     public Warehouse(
         Address address,
         string name,
@@ -73,17 +80,20 @@ public class Warehouse : Branch
         FinishConstruction();
     }
 
-    // -----< Post Construct >-----
     protected override void OnAfterConstruction()
     {
         Extent.Add(this);
     }
 
+    #endregion
 
-    // ----------< Associations >----------
+    #region ----------< Associations >----------
+
     public new void Delete()
     {
         base.Delete();
         Extent.Remove(this);
     }
+
+    #endregion
 }
