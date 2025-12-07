@@ -121,11 +121,11 @@ public abstract class Branch
 
     protected void FinishConstruction()
     {
+        // parent-specifics
+        Extent.Add(this);
+
         // child-specifics hook
         OnAfterConstruction();
-
-        // only parent-specifics
-        Extent.Add(this);
     }
 
     protected virtual void OnAfterConstruction()
@@ -144,6 +144,7 @@ public abstract class Branch
 
     public void Delete()
     {
+        // parent-specifics
         if (_stocks.Count > 0)
             throw new InvalidOperationException("Redistribute stocks before deleting a branch.");
 
@@ -153,6 +154,13 @@ public abstract class Branch
         _employees.Clear();
 
         Extent.Remove(this);
+
+        // child-specifics hook
+        OnDelete();
+    }
+
+    protected virtual void OnDelete()
+    {
     }
 
     public void AddEmployee(LocalEmployee employee)
