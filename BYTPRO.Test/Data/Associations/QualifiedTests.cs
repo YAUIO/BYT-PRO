@@ -50,7 +50,6 @@ public class QualifiedAssociationTest
         const string trackingNumber = "TRACK-ABC-123";
 
         var order = new OnlineOrder(
-            id: 101,
             creationDate: DateTime.Now,
             status: OrderStatus.InProgress,
             cart: [new ProductEntry(product, 2)],
