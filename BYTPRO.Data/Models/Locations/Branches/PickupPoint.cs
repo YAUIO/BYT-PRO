@@ -7,9 +7,7 @@ namespace BYTPRO.Data.Models.Locations.Branches;
 public class PickupPoint : Branch
 {
     // ----------< Class Extent >----------
-    [JsonIgnore] private static HashSet<PickupPoint> Extent {
-        get => JsonContext.Context.GetTable<PickupPoint>();
-    }
+    [JsonIgnore] private static HashSet<PickupPoint> Extent => JsonContext.Context.GetTable<PickupPoint>();
 
     [JsonIgnore] public new static IReadOnlyList<PickupPoint> All => Extent.ToList().AsReadOnly();
 
