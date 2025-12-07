@@ -6,7 +6,8 @@ namespace BYTPRO.Data.Models.People.Employees;
 
 public abstract class Employee : Person
 {
-    // ----------< Class Extent >----------
+    #region ----------< Class Extent >----------
+
     [JsonIgnore] private static readonly List<Employee> Extent = [];
 
     [JsonIgnore] public new static IReadOnlyList<Employee> All => Extent.ToList().AsReadOnly();
@@ -15,14 +16,18 @@ public abstract class Employee : Person
 
     protected void DeleteEmployee() => Extent.Remove(this);
 
+    #endregion
 
-    // ----------< Attributes >----------
+    #region ----------< Attributes >----------
+
     private readonly string _pesel;
     private decimal _salary;
     private EmploymentType _employmentType;
 
+    #endregion
 
-    // ----------< Properties with validation >----------
+    #region ----------< Properties with validation >----------
+
     public string Pesel
     {
         get => _pesel;
@@ -42,7 +47,7 @@ public abstract class Employee : Person
             _salary = value;
         }
     }
-    
+
     [JsonConverter(typeof(StringEnumConverter))]
     public EmploymentType EmploymentType
     {
@@ -54,8 +59,10 @@ public abstract class Employee : Person
         }
     }
 
+    #endregion
 
-    // ----------< Constructor >----------
+    #region ----------< Constructor >----------
+
     protected Employee(
         int id,
         string name,
@@ -72,4 +79,6 @@ public abstract class Employee : Person
         Salary = salary;
         EmploymentType = employmentType;
     }
+
+    #endregion
 }
