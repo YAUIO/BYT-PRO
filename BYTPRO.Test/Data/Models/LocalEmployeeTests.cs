@@ -20,12 +20,8 @@ public class LocalEmployeeTests
 
         var ctx = new JsonContextBuilder()
             .AddJsonEntity<LocalEmployee>()
-            .WithFileName("localEmployees")
-            .BuildEntity()
             .AddJsonEntity<Store>() 
-            .WithFileName("stores")
-            .BuildEntity()
-            .WithRoot(new DirectoryInfo(DbRoot))
+            .WithDbFile(new FileInfo(DbRoot))
             .Build();
 
         JsonContext.SetContext(ctx);

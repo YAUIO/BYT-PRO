@@ -19,12 +19,9 @@ public class QualifiedAssociationTest
 
         var ctx = new JsonContextBuilder()
             .AddJsonEntity<Product>()
-            .BuildEntity()
             .AddJsonEntity<Customer>()
-            .BuildEntity()
             .AddJsonEntity<OnlineOrder>()
-            .BuildEntity()
-            .WithRoot(new DirectoryInfo(DbRoot))
+            .WithDbFile(new FileInfo(DbRoot))
             .Build();
 
         JsonContext.SetContext(ctx);

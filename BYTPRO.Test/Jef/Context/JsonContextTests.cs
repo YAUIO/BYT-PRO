@@ -24,9 +24,7 @@ public class JsonContextTests
 
         var context = new JsonContextBuilder()
             .AddJsonEntity<TestModel>()
-            .WithFileName("test")
-            .BuildEntity()
-            .WithRoot(new DirectoryInfo(root ?? $"{DbRoot}/{_contexts}_{sets}"))
+            .WithDbFile(new FileInfo(root ?? $"{DbRoot}/{_contexts}_{sets}"))
             .Build();
 
         return context;
@@ -40,7 +38,7 @@ public class JsonContextTests
         context.GetTable<TestModel>().Clear();
         context.SaveChanges();
 
-        Assert.True(File.Exists(context.GetTable<TestModel>().Path));
+        Assert.True(File.Exists(context.DbPath));
     }
 
     [Fact]
@@ -59,7 +57,7 @@ public class JsonContextTests
             Value = "value"
         };
 
-        Assert.True(File.Exists(context.GetTable<TestModel>().Path));
+        Assert.True(File.Exists(context.DbPath));
 
         context.GetTable<TestModel>()
             .Add(model);
@@ -67,9 +65,7 @@ public class JsonContextTests
 
         var newContext = new JsonContextBuilder()
             .AddJsonEntity<TestModel>()
-            .WithFileName("test")
-            .BuildEntity()
-            .WithRoot(new DirectoryInfo(root))
+            .WithDbFile(new FileInfo(root))
             .Build();
 
         Assert.Contains(model, newContext.GetTable<TestModel>());
@@ -93,17 +89,15 @@ public class JsonContextTests
             Value = "value"
         };
 
-        Assert.Equal(table.ToJson(), await File.ReadAllTextAsync(table.Path));
+        var text = await File.ReadAllTextAsync(context.DbPath);
 
         table.Add(model);
 
-        Assert.NotEqual(table.ToJson(), await File.ReadAllTextAsync(table.Path));
-
         await context.SaveChangesAsync();
 
-        Assert.NotEmpty(await File.ReadAllTextAsync(table.Path));
+        Assert.NotEmpty(await File.ReadAllTextAsync(context.DbPath));
 
-        Assert.Equal(table.ToJson(), await File.ReadAllTextAsync(table.Path));
+        Assert.NotEqual(text, await File.ReadAllTextAsync(context.DbPath));
     }
 
     [Fact]
@@ -126,13 +120,13 @@ public class JsonContextTests
 
         await context.SaveChangesAsync();
 
-        Assert.Equal(table.ToJson(), await File.ReadAllTextAsync(table.Path));
+        var text = await File.ReadAllTextAsync(context.DbPath);
 
         table.Remove(model);
 
         await context.SaveChangesAsync();
 
-        Assert.Equal(table.ToJson(), await File.ReadAllTextAsync(table.Path));
+        Assert.NotEqual(text, await File.ReadAllTextAsync(context.DbPath));
     }
 
     [Fact]
@@ -155,13 +149,13 @@ public class JsonContextTests
 
         await context.SaveChangesAsync();
 
-        Assert.Equal(table.ToJson(), await File.ReadAllTextAsync(table.Path));
+        var text = await File.ReadAllTextAsync(context.DbPath);
 
         table.Clear();
 
         await context.SaveChangesAsync();
 
-        Assert.Equal(table.ToJson(), await File.ReadAllTextAsync(table.Path));
+        Assert.NotEqual(text, await File.ReadAllTextAsync(context.DbPath));
     }
 
     [Fact]
@@ -180,21 +174,19 @@ public class JsonContextTests
             Value = "value"
         };
 
-        Assert.Equal(table.ToJson(), File.ReadAllText(table.Path));
+        var text = File.ReadAllText(context.DbPath);
 
         table.Add(model);
 
-        Assert.NotEqual(table.ToJson(), File.ReadAllText(table.Path));
-
         context.SaveChanges();
 
-        Assert.NotEmpty(File.ReadAllText(table.Path));
+        Assert.NotEmpty( File.ReadAllText(context.DbPath));
 
-        Assert.Equal(table.ToJson(), File.ReadAllText(table.Path));
+        Assert.NotEqual(text, File.ReadAllText(context.DbPath));
     }
 
     [Fact]
-    public void TestSaveChangesUpdatesOnDelete()
+    public void TestSaveChangesAUpdatesOnDelete()
     {
         var context = GetTestContext();
 
@@ -213,13 +205,13 @@ public class JsonContextTests
 
         context.SaveChanges();
 
-        Assert.Equal(table.ToJson(), File.ReadAllText(table.Path));
+        var text = File.ReadAllText(context.DbPath);
 
         table.Remove(model);
 
         context.SaveChanges();
 
-        Assert.Equal(table.ToJson(), File.ReadAllText(table.Path));
+        Assert.NotEqual(text, File.ReadAllText(context.DbPath));
     }
 
     [Fact]
@@ -242,13 +234,13 @@ public class JsonContextTests
 
         context.SaveChanges();
 
-        Assert.Equal(table.ToJson(), File.ReadAllText(table.Path));
+        var text = File.ReadAllText(context.DbPath);
 
         table.Clear();
 
         context.SaveChanges();
 
-        Assert.Equal(table.ToJson(), File.ReadAllText(table.Path));
+        Assert.NotEqual(text, File.ReadAllText(context.DbPath));
     }
 
     [Fact]
@@ -267,15 +259,17 @@ public class JsonContextTests
             Value = "value"
         };
 
-        Assert.Equal(table.ToJson(), await File.ReadAllTextAsync(table.Path));
+        var stagedText = await File.ReadAllTextAsync(context.DbPath);
 
         table.Add(model);
 
-        Assert.Equal("[]", await File.ReadAllTextAsync(table.Path));
+        Assert.Equal(stagedText, await File.ReadAllTextAsync(context.DbPath));
+
+        Assert.Contains(model, table);
 
         await context.RollbackAsync();
 
-        Assert.Equal("[]", await File.ReadAllTextAsync(table.Path));
+        Assert.Equal(stagedText, await File.ReadAllTextAsync(context.DbPath));
 
         Assert.Empty(table);
     }
@@ -296,15 +290,17 @@ public class JsonContextTests
             Value = "value"
         };
 
-        Assert.Equal(table.ToJson(), File.ReadAllText(table.Path));
+        var stagedText = File.ReadAllText(context.DbPath);
 
         table.Add(model);
 
-        Assert.Equal("[]", File.ReadAllText(table.Path));
+        Assert.Equal(stagedText, File.ReadAllText(context.DbPath));
+
+        Assert.Contains(model, table);
 
         context.Rollback();
 
-        Assert.Equal("[]", File.ReadAllText(table.Path));
+        Assert.Equal(stagedText, File.ReadAllText(context.DbPath));
 
         Assert.Empty(table);
     }

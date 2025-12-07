@@ -20,54 +20,18 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
 
     static PersistenceShowcase()
     {
-        if (!Directory.Exists(DbRoot)) Directory.CreateDirectory(DbRoot);
-
         var context = new JsonContextBuilder()
-            // ----------< Locations >----------
             .AddJsonEntity<PickupPoint>()
-            .WithFileName("pickupPoints")
-            .BuildEntity()
-            //------------------------------
             .AddJsonEntity<Store>()
-            .WithFileName("stores")
-            .BuildEntity()
-            //------------------------------
             .AddJsonEntity<Warehouse>()
-            .WithFileName("warehouses")
-            .BuildEntity()
-
-            // ----------< People >----------
             .AddJsonEntity<Customer>()
-            .WithFileName("customers")
-            .BuildEntity()
-            // ------------------------------
             .AddJsonEntity<LocalEmployee>()
-            .WithFileName("localEmployees")
-            .BuildEntity()
-            //------------------------------
             .AddJsonEntity<RegionalEmployee>()
-            .WithFileName("regionalEmployees")
-            .BuildEntity()
-
-            // ----------< Sales >----------
             .AddJsonEntity<Product>()
-            .WithFileName("products")
-            .BuildEntity()
-            //------------------------------
             .AddJsonEntity<OnlineOrder>()
-            .WithFileName("onlineOrders")
-            .BuildEntity()
-            //------------------------------
             .AddJsonEntity<OfflineOrder>()
-            .WithFileName("offlineOrders")
-            .BuildEntity()
-            //------------------------------
             .AddJsonEntity<BranchOrder>()
-            .WithFileName("branchOrders")
-            .BuildEntity()
-
-            //------------------------------
-            .WithRoot(new DirectoryInfo(DbRoot))
+            .WithDbFile(new FileInfo(DbRoot))
             .Build();
 
         JsonContext.SetContext(context);

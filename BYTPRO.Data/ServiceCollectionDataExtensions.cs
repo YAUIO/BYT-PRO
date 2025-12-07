@@ -16,49 +16,29 @@ public static class ServiceCollectionDataExtensions
         var context = new JsonContextBuilder()
             // ----------< People >----------
             .AddJsonEntity<Customer>()
-            .WithFileName("customers")
-            .BuildEntity()
             // ------------------------------
             .AddJsonEntity<LocalEmployee>()
-            .WithFileName("localEmployees")
-            .BuildEntity()
             //------------------------------
             .AddJsonEntity<RegionalEmployee>()
-            .WithFileName("regionalEmployees")
-            .BuildEntity()
 
             // ----------< Locations >----------
             .AddJsonEntity<PickupPoint>()
-            .WithFileName("pickupPoints")
-            .BuildEntity()
             //------------------------------
             .AddJsonEntity<Store>()
-            .WithFileName("stores")
-            .BuildEntity()
             //------------------------------
             .AddJsonEntity<Warehouse>()
-            .WithFileName("warehouses")
-            .BuildEntity()
 
             // ----------< Sales >----------
             .AddJsonEntity<Product>()
-            .WithFileName("products")
-            .BuildEntity()
             //------------------------------
             .AddJsonEntity<OnlineOrder>()
-            .WithFileName("onlineOrders")
-            .BuildEntity()
             //------------------------------
             .AddJsonEntity<OfflineOrder>()
-            .WithFileName("offlineOrders")
-            .BuildEntity()
             //------------------------------
             .AddJsonEntity<BranchOrder>()
-            .WithFileName("branchOrders")
-            .BuildEntity()
 
             //------------------------------
-            .WithRoot(new DirectoryInfo($"{Directory.GetCurrentDirectory()}/Db"))
+            .WithDbFile(new FileInfo($"{Directory.GetCurrentDirectory()}/Db"))
             .Build();
 
         JsonContext.SetContext(context);

@@ -19,10 +19,8 @@ public class WithAttributeTests
 
         var ctx = new JsonContextBuilder()
             .AddJsonEntity<Product>()
-            .BuildEntity()
             .AddJsonEntity<BranchOrder>()
-            .BuildEntity()
-            .WithRoot(new DirectoryInfo(DbRoot))
+            .WithDbFile(new FileInfo(DbRoot))
             .Build();
 
         JsonContext.SetContext(ctx);

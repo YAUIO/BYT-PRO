@@ -1,3 +1,3 @@
 ﻿namespace BYTPRO.JsonEntityFramework.Context;
 
-public record JsonEntityConfiguration(Type Target, string? FileName);
+public record JsonEntityConfiguration(Type Target);
