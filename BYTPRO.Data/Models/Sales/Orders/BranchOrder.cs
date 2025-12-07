@@ -8,7 +8,10 @@ namespace BYTPRO.Data.Models.Sales.Orders;
 public class BranchOrder : Order
 {
     // ----------< Class Extent >----------
-    [JsonIgnore] private static HashSet<BranchOrder> Extent => JsonContext.Context.GetTable<BranchOrder>();
+    [JsonIgnore] private static HashSet<BranchOrder> Extent
+    {
+        get => JsonContext.Context.GetTable<BranchOrder>();
+    }
 
     [JsonIgnore] public new static IReadOnlyList<BranchOrder> All => Extent.ToList().AsReadOnly();
 

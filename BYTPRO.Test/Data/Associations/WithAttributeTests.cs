@@ -11,12 +11,8 @@ public class WithAttributeTests
 
     private static void ResetContext(bool clearContext = true)
     {
-        if (Directory.Exists(DbRoot) && clearContext)
-            Directory.Delete(DbRoot, true);
-
-        if (!Directory.Exists(DbRoot))
-            Directory.CreateDirectory(DbRoot);
-
+        if (File.Exists(DbRoot) && clearContext)
+            File.Delete(DbRoot);
         var ctx = new JsonContextBuilder()
             .AddJsonEntity<Product>()
             .AddJsonEntity<BranchOrder>()

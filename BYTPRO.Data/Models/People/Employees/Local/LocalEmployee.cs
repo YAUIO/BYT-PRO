@@ -9,8 +9,10 @@ namespace BYTPRO.Data.Models.People.Employees.Local;
 public class LocalEmployee : Employee
 {
     // ----------< Class Extent >----------
-    [JsonIgnore] private static HashSet<LocalEmployee> Extent => JsonContext.Context.GetTable<LocalEmployee>();
-
+    [JsonIgnore] private static HashSet<LocalEmployee> Extent {
+        get => JsonContext.Context.GetTable<LocalEmployee>();
+    }
+    
     [JsonIgnore] public new static IReadOnlyList<LocalEmployee> All => Extent.ToList().AsReadOnly();
 
 
