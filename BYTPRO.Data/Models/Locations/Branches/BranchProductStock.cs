@@ -23,7 +23,7 @@ public class BranchProductStock
         get => _quantity;
         set
         {
-            value.IsNonNegative(nameof(Quantity)); // Allow setting to 0 items
+            value.IsNonNegative(nameof(Quantity));
             _quantity = value;
         }
     }
@@ -39,7 +39,6 @@ public class BranchProductStock
     {
         branch.IsNotNull(nameof(Branch));
         product.IsNotNull(nameof(Product));
-        quantity.IsPositive(nameof(Quantity)); // Require at least 1 item to create
 
         Branch = branch;
         Product = product;
