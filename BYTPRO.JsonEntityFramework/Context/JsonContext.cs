@@ -14,13 +14,15 @@ public class JsonContext
         Context ??= this;
 
         DbFile = dbFile;
-        Tables = [];
+        Tables = new ();
 
         DbPath = $"{DbFile.FullName}{(dbFile.Name.EndsWith(".json", StringComparison.CurrentCulture) ? "" : ".json")}";
 
         foreach (var ent in entities.Select(e => e.Target))
         {
-            Tables.TryAdd(ent, Activator.CreateInstance(typeof(HashSet<>).MakeGenericType(ent))!);
+            var set = Activator.CreateInstance(typeof(HashSet<>).MakeGenericType(ent))!;
+            if (!Tables.TryAdd(ent, set))
+                Tables[ent] = set;
         }
         
         if (!File.Exists(DbPath))
