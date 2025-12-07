@@ -6,19 +6,24 @@ namespace BYTPRO.Data.Models.Sales;
 
 public record ProductQuantityInOrder
 {
-    // ----------< Properties >----------
+    #region ----------< Properties >----------
+
     public Product Product { get; }
     public Order Order { get; }
     public int Quantity { get; }
 
+    #endregion
 
-    // ----------< Calculated Properties >----------
+    #region ----------< Calculated Properties >----------
+
     [JsonIgnore] public decimal TotalPrice => Quantity * Product.Price;
     [JsonIgnore] public decimal TotalWeight => Quantity * Product.Weight;
     [JsonIgnore] public decimal TotalDimensions => Quantity * Product.Dimensions.Volume;
 
+    #endregion
 
-    // ----------< Constructor with validation >----------
+    #region ----------< Constructor with validation >----------
+
     public ProductQuantityInOrder(
         Product product,
         Order order,
@@ -32,7 +37,6 @@ public record ProductQuantityInOrder
         Order = order;
         Quantity = quantity;
     }
-    
-    [JsonConstructor]
-    private ProductQuantityInOrder() {}
+
+    #endregion
 }

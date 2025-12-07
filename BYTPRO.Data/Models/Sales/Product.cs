@@ -8,13 +8,16 @@ namespace BYTPRO.Data.Models.Sales;
 
 public class Product
 {
-    // ----------< Class Extent >----------
+    #region ----------< Class Extent >----------
+
     [JsonIgnore] private static HashSet<Product> Extent => JsonContext.Context.GetTable<Product>();
 
     [JsonIgnore] public static IReadOnlyList<Product> All => Extent.ToList().AsReadOnly();
 
+    #endregion
 
-    // ----------< Attributes >----------
+    #region ----------< Attributes >----------
+
     private readonly string _name;
     private string _description;
     private readonly decimal _price;
@@ -22,8 +25,10 @@ public class Product
     private readonly decimal _weight;
     private readonly Dimensions _dimensions;
 
+    #endregion
 
-    // ----------< Properties with validation >----------
+    #region ----------< Properties with validation >----------
+
     public string Name
     {
         get => _name;
@@ -87,8 +92,10 @@ public class Product
         }
     }
 
+    #endregion
 
-    // ----------< Constructor >----------
+    #region ----------< Constructor >----------
+
     public Product(
         string name,
         string description,
@@ -110,10 +117,12 @@ public class Product
         Extent.Add(this);
     }
 
+    #endregion
 
-    // ----------< Associations >----------
+    #region ----------< Associations >----------
 
-    // -----< with attribute >-----
+    #region -----< with attribute >-----
+
     private readonly HashSet<ProductQuantityInOrder> _usedInOrders = [];
 
     [JsonIgnore] public HashSet<ProductQuantityInOrder> AssociatedOrders => [.._usedInOrders];
@@ -124,15 +133,14 @@ public class Product
         if (orderItem.Product != this)
             throw new ValidationException($"{nameof(orderItem.Product)} must reference this Product instance.");
 
-        if (_usedInOrders.Contains(orderItem))
-            return;
-
-        _usedInOrders.Add(orderItem);
-
-        orderItem.Order.AssociateWithProduct(orderItem);
+        if (_usedInOrders.Add(orderItem))
+            orderItem.Order.AssociateWithProduct(orderItem);
     }
 
-    // -----< Reflex >-----
+    #endregion
+
+    #region -----< Reflex >-----
+
     private readonly HashSet<Product>? _consistsOf;
 
     public HashSet<Product>? ConsistsOf
@@ -143,13 +151,10 @@ public class Product
             value?.AreAllElementsNotNull(nameof(ConsistsOf));
             _consistsOf = value;
 
-            if (value == null)
-                return;
+            if (value == null) return;
 
             foreach (var product in value)
-            {
                 product._consistsIn.Add(this);
-            }
         }
     }
 
@@ -158,7 +163,10 @@ public class Product
 
     [JsonIgnore] public HashSet<Product> ConsistsIn => [.._consistsIn];
 
-    // -----< Aggregation >-----
+    #endregion
+
+    #region -----< Aggregation >-----
+
     private readonly HashSet<BranchProductStock> _stockedIn = [];
 
     [JsonIgnore] public HashSet<BranchProductStock> StockedIn => [.._stockedIn];
@@ -168,4 +176,8 @@ public class Product
         stock.IsNotNull(nameof(stock));
         _stockedIn.Add(stock);
     }
+
+    #endregion
+
+    #endregion
 }

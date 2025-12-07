@@ -136,11 +136,7 @@ public abstract class Order
         if (orderItem.Order != this)
             throw new ValidationException($"{nameof(orderItem.Order)} must reference this Order instance.");
 
-        if (_associatedProducts.Contains(orderItem))
-            return;
-
-        _associatedProducts.Add(orderItem);
-
-        orderItem.Product.AssociateWithOrder(orderItem);
+        if (_associatedProducts.Add(orderItem))
+            orderItem.Product.AssociateWithOrder(orderItem);
     }
 }
