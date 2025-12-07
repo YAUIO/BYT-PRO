@@ -6,11 +6,14 @@ namespace BYTPRO.Data.Models.People.Employees.Roles;
 
 public class Manager
 {
-    // ----------< Attributes >----------
+    #region ----------< Attributes >----------
+
     private ManagerialLevel _managerialLevel;
 
+    #endregion
 
-    // ----------< Properties with validation >----------
+    #region ----------< Properties with validation >----------
+
     [JsonConverter(typeof(StringEnumConverter))]
     public ManagerialLevel ManagerialLevel
     {
@@ -22,10 +25,15 @@ public class Manager
         }
     }
 
+    #endregion
 
-    // ----------< Constructor >----------
-    public Manager(ManagerialLevel managerialLevel)
+    #region ----------< Constructor >----------
+
+    public Manager(
+        ManagerialLevel managerialLevel)
     {
         ManagerialLevel = managerialLevel;
     }
+
+    #endregion
 }

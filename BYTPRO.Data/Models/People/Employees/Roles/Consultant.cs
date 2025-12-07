@@ -5,12 +5,15 @@ namespace BYTPRO.Data.Models.People.Employees.Roles;
 
 public class Consultant
 {
-    // ----------< Attributes >----------
+    #region ----------< Attributes >----------
+
     private string _specialization;
     private readonly DeserializableReadOnlyList<string> _languages;
 
+    #endregion
 
-    // ----------< Properties with validation >----------
+    #region ----------< Properties with validation >----------
+
     public string Specialization
     {
         get => _specialization;
@@ -32,14 +35,17 @@ public class Consultant
         }
     }
 
+    #endregion
 
-    // ----------< Constructor >----------
+    #region ----------< Constructor >----------
+
     public Consultant(
         string specialization,
-        DeserializableReadOnlyList<string> languages
-    )
+        DeserializableReadOnlyList<string> languages)
     {
         Specialization = specialization;
         Languages = languages;
     }
+
+    #endregion
 }

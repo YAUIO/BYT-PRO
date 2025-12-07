@@ -4,13 +4,16 @@ namespace BYTPRO.Data.Models.People.Employees.Roles;
 
 public class Cashier
 {
-    // ----------< Attributes >----------
+    #region ----------< Attributes >----------
+
     private readonly int _registerCode;
     private readonly int _pinCode;
     private bool _canMakeReturn;
 
+    #endregion
 
-    // ----------< Properties with validation >----------
+    #region ----------< Properties with validation >----------
+
     public int RegisterCode
     {
         get => _registerCode;
@@ -42,8 +45,10 @@ public class Cashier
         }
     }
 
+    #endregion
 
-    // ----------< Constructor >----------
+    #region ----------< Constructor >----------
+
     public Cashier(
         int registerCode,
         int pinCode,
@@ -53,4 +58,6 @@ public class Cashier
         PinCode = pinCode;
         CanMakeReturn = canMakeReturn;
     }
+
+    #endregion
 }
