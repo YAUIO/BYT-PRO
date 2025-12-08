@@ -87,7 +87,7 @@ public class Customer : Person
         if (order.Customer != this)
             throw new ValidationException($"{nameof(order.Customer)} must reference this Customer instance.");
 
-        _ordersByTrackingNumber.TryAdd(order.TrackingNumber, order);
+        _ordersByTrackingNumber.Add(order.TrackingNumber, order);
     }
 
     #endregion
