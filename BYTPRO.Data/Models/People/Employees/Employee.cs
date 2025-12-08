@@ -12,8 +12,6 @@ public abstract class Employee : Person
 
     [JsonIgnore] public new static IReadOnlyList<Employee> All => Extent.ToList().AsReadOnly();
 
-    protected void RegisterEmployee() => Extent.Add(this);
-
     protected void DeleteEmployee() => Extent.Remove(this);
 
     #endregion
@@ -61,7 +59,7 @@ public abstract class Employee : Person
 
     #endregion
 
-    #region ----------< Constructor >----------
+    #region ----------< Construction >----------
 
     protected Employee(
         int id,
@@ -78,6 +76,11 @@ public abstract class Employee : Person
         Pesel = pesel;
         Salary = salary;
         EmploymentType = employmentType;
+    }
+
+    protected override void OnAfterConstruction()
+    {
+        Extent.Add(this);
     }
 
     #endregion

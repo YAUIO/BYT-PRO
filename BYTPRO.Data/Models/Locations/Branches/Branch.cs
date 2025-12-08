@@ -166,6 +166,9 @@ public abstract class Branch
     public void AddEmployee(LocalEmployee employee)
     {
         employee.IsNotNull(nameof(employee));
+        if (employee.Branch != this)
+            throw new ValidationException($"{nameof(employee.Branch)} must reference this Branch instance.");
+
         _employees.Add(employee);
     }
 
