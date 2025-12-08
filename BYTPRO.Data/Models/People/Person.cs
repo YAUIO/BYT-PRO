@@ -116,8 +116,13 @@ public abstract class Person
         Password = password;
     }
 
+    [JsonIgnore] private bool IsConstructed { get; set; }
+
     protected void FinishConstruction()
     {
+        if (IsConstructed) return;
+        IsConstructed = true;
+
         // parent-specifics
         Extent.Add(this);
 
