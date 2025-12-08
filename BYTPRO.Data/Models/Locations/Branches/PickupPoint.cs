@@ -71,7 +71,7 @@ public class PickupPoint : Branch
 
     #region ----------< Associations >----------
 
-    protected override void OnDelete()
+    protected override void OnBranchClose()
     {
         Extent.Remove(this);
     }
