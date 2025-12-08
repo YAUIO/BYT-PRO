@@ -182,8 +182,8 @@ public abstract class Branch
         employee.IsNotNull(nameof(employee));
         if (employee.Branch != this)
             throw new ValidationException($"{nameof(employee.Branch)} must reference this Branch instance.");
-        
-        if(_employees.Remove(employee)) 
+
+        if (_employees.Remove(employee))
             employee.Delete();
     }
 
