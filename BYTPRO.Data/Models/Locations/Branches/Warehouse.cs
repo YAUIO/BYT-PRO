@@ -70,12 +70,13 @@ public class Warehouse : Branch
         string openingHours,
         decimal totalArea,
         decimal maxStorageCapacity,
-        int dockCount)
+        int dockCount,
+        decimal currentStorageCapacity = 0)
         : base(address, name, openingHours, totalArea)
     {
         MaxStorageCapacity = maxStorageCapacity;
         DockCount = dockCount;
-        CurrentStorageCapacity = 0;
+        CurrentStorageCapacity = currentStorageCapacity;
 
         FinishConstruction();
     }
