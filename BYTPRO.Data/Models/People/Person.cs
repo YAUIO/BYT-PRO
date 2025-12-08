@@ -12,8 +12,6 @@ public abstract class Person
 
     [JsonIgnore] public static IReadOnlyList<Person> All => Extent.ToList().AsReadOnly();
 
-    protected void DeletePerson() => Extent.Remove(this);
-
     #endregion
 
     #region ----------< Attributes >----------
@@ -131,6 +129,21 @@ public abstract class Person
     }
 
     protected virtual void OnAfterConstruction()
+    {
+    }
+
+    #endregion
+
+    #region ----------< Associations >----------
+
+    public void Delete()
+    {
+        Extent.Remove(this);
+
+        OnDelete();
+    }
+
+    protected virtual void OnDelete()
     {
     }
 

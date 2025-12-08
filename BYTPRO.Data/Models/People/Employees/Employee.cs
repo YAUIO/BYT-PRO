@@ -12,8 +12,6 @@ public abstract class Employee : Person
 
     [JsonIgnore] public new static IReadOnlyList<Employee> All => Extent.ToList().AsReadOnly();
 
-    protected void DeleteEmployee() => Extent.Remove(this);
-
     #endregion
 
     #region ----------< Attributes >----------
@@ -81,6 +79,15 @@ public abstract class Employee : Person
     protected override void OnAfterConstruction()
     {
         Extent.Add(this);
+    }
+
+    #endregion
+
+    #region ----------< Associations >----------
+
+    protected override void OnDelete()
+    {
+        Extent.Remove(this);
     }
 
     #endregion

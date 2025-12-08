@@ -79,4 +79,17 @@ public class RegionalEmployee : Employee
     }
 
     #endregion
+
+    #region ----------< Associations >----------
+
+    protected override void OnDelete()
+    {
+        // since this is the third level class in an inheritance tree,
+        // we need to call for the second one (Employee class)
+        base.OnDelete();
+
+        Extent.Remove(this);
+    }
+
+    #endregion
 }

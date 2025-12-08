@@ -92,5 +92,10 @@ public class Customer : Person
 
     #endregion
 
+    protected override void OnDelete()
+    {
+        Extent.Remove(this);
+    }
+
     #endregion
 }
