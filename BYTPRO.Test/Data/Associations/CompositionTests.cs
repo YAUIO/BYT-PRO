@@ -71,6 +71,78 @@ public class BranchCompositionTest
         Assert.DoesNotContain(employee, LocalEmployee.All);
         Assert.DoesNotContain(employee, Employee.All);
         Assert.DoesNotContain(employee, Person.All);
-        Assert.Empty(branch.Employees);
+        Assert.DoesNotContain(employee, branch.Employees);
+    }
+    
+    // Test Reverse connections
+    
+    [Fact]
+    private void TestEmployeeDeletionRemovesFromBranch()
+    {
+        ResetContext();
+
+        var branch = new TestBranch("Composition Branch");
+
+        var employee = new LocalEmployee(
+            100,
+            "Bob",
+            "Johnson",
+            "+48111222555",
+            "bob.johnson@example.com",
+            "password789",
+            "90010112347",
+            5500m,
+            EmploymentType.FullTime,
+            ["Safety"],
+            "12:00",
+            branch
+        );
+
+        Assert.Contains(employee, LocalEmployee.All);
+        Assert.Contains(employee, Employee.All);
+        Assert.Contains(employee, Person.All);
+        Assert.Single(branch.Employees);
+
+        employee.Delete();
+
+        Assert.DoesNotContain(employee, LocalEmployee.All);
+        Assert.DoesNotContain(employee, Employee.All);
+        Assert.DoesNotContain(employee, Person.All);
+        Assert.DoesNotContain(employee, branch.Employees);
+    }
+    
+    [Fact]
+    private void TestBranchRemoveEmployeeRemovesFromBranch()
+    {
+        ResetContext();
+
+        var branch = new TestBranch("Composition Branch");
+
+        var employee = new LocalEmployee(
+            100,
+            "Bob",
+            "Johnson",
+            "+48111222555",
+            "bob.johnson@example.com",
+            "password789",
+            "90010112347",
+            5500m,
+            EmploymentType.FullTime,
+            ["Safety"],
+            "12:00",
+            branch
+        );
+
+        Assert.Contains(employee, LocalEmployee.All);
+        Assert.Contains(employee, Employee.All);
+        Assert.Contains(employee, Person.All);
+        Assert.Single(branch.Employees);
+
+        branch.RemoveEmployee(employee);
+
+        Assert.DoesNotContain(employee, LocalEmployee.All);
+        Assert.DoesNotContain(employee, Employee.All);
+        Assert.DoesNotContain(employee, Person.All);
+        Assert.DoesNotContain(employee, branch.Employees);
     }
 }

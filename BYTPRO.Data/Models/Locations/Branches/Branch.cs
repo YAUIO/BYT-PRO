@@ -154,7 +154,7 @@ public abstract class Branch
             throw new InvalidOperationException("Redistribute stocks before deleting a branch.");
 
         foreach (var employee in _employees.ToList())
-            employee.Delete();
+            RemoveEmployee(employee);
 
         _employees.Clear();
 
@@ -180,7 +180,11 @@ public abstract class Branch
     public void RemoveEmployee(LocalEmployee employee)
     {
         employee.IsNotNull(nameof(employee));
-        _employees.Remove(employee);
+        if (employee.Branch != this)
+            throw new ValidationException($"{nameof(employee.Branch)} must reference this Branch instance.");
+        
+        if(_employees.Remove(employee)) 
+            employee.Delete();
     }
 
     #endregion
