@@ -24,7 +24,7 @@ public static class CollectionValidator
 
     public static void AreAllElementsNotNull<T>(this ICollection<T>? collection, string fieldName = "ICollection")
     {
-        IsNotNullOrEmpty(collection, fieldName);
+        collection.IsNotNull(fieldName);
 
         if (collection!.Any(item => item == null))
             throw new ValidationException($"{fieldName} contains a null element.");

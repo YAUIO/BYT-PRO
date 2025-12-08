@@ -111,8 +111,15 @@ public class Product
         Images = images;
         Weight = weight;
         Dimensions = dimensions;
+        ConsistsOf = consistsOf ?? [];
 
-        ConsistsOf = consistsOf;
+        FinishConstruction();
+    }
+
+    private void FinishConstruction()
+    {
+        foreach (var product in _consistsOf)
+            product._consistsIn.Add(this);
 
         Extent.Add(this);
     }
@@ -141,20 +148,16 @@ public class Product
 
     #region -----< Reflex >-----
 
-    private readonly HashSet<Product>? _consistsOf;
+    private readonly HashSet<Product> _consistsOf;
 
-    public HashSet<Product>? ConsistsOf
+    public HashSet<Product> ConsistsOf
     {
-        get => _consistsOf == null ? null : [.._consistsOf];
+        get => [.._consistsOf];
         init
         {
-            value?.AreAllElementsNotNull(nameof(ConsistsOf));
+            value.IsNotNull(nameof(ConsistsOf));
+            value.AreAllElementsNotNull(nameof(ConsistsOf));
             _consistsOf = value;
-
-            if (value == null) return;
-
-            foreach (var product in value)
-                product._consistsIn.Add(this);
         }
     }
 
