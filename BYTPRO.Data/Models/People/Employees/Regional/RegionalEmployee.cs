@@ -47,7 +47,7 @@ public class RegionalEmployee : Employee
 
     #endregion
 
-    #region ----------< Constructor >----------
+    #region ----------< Construction >----------
 
     public RegionalEmployee(
         int id,
@@ -66,11 +66,15 @@ public class RegionalEmployee : Employee
         BadgeNumber = badgeNumber;
         SupervisionScope = supervisionScope;
 
-        // IMPORTANT NOTE:
-        // We defer registration to super class (adding to super Class Extent)
-        // until all properties are validated and set for child class.
-        RegisterPerson();
-        RegisterEmployee();
+        FinishConstruction();
+    }
+
+    protected override void OnAfterConstruction()
+    {
+        // since this is the third level class in an inheritance tree,
+        // we need to call for the second one (Employee class)
+        base.OnAfterConstruction();
+
         Extent.Add(this);
     }
 

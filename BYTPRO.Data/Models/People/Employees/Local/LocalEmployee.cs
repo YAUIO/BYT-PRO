@@ -47,7 +47,7 @@ public class LocalEmployee : Employee
 
     #endregion
 
-    #region ----------< Constructor >----------
+    #region ----------< Construction >----------
 
     public LocalEmployee(
         int id,
@@ -68,13 +68,17 @@ public class LocalEmployee : Employee
         BreakSchedule = breakSchedule;
         Branch = branch;
 
+        FinishConstruction();
+    }
+
+    protected override void OnAfterConstruction()
+    {
+        // since this is the third level class in an inheritance tree,
+        // we need to call for the second one (Employee class)
+        base.OnAfterConstruction();
+
         Branch.AddEmployee(this);
 
-        // IMPORTANT NOTE:
-        // We defer registration to super class (adding to super Class Extent)
-        // until all properties are validated and set for child class.
-        RegisterPerson();
-        RegisterEmployee();
         Extent.Add(this);
     }
 

@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using BYTPRO.Data.Models.Sales.Orders;
+using BYTPRO.Data.Validation;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
 
@@ -48,7 +49,7 @@ public class Customer : Person
 
     #endregion
 
-    #region ----------< Constructor >----------
+    #region ----------< Construction >----------
 
     public Customer(
         int id,
@@ -62,10 +63,11 @@ public class Customer : Person
     {
         RegistrationDate = registrationDate;
 
-        // IMPORTANT NOTE:
-        // We defer registration to super class (adding to super Class Extent)
-        // until all properties are validated and set for child class.
-        RegisterPerson();
+        FinishConstruction();
+    }
+
+    protected override void OnAfterConstruction()
+    {
         Extent.Add(this);
     }
 
@@ -82,6 +84,9 @@ public class Customer : Person
     internal void AddOrder(OnlineOrder order)
     {
         order.IsNotNull(nameof(order));
+        if (order.Customer != this)
+            throw new ValidationException($"{nameof(order.Customer)} must reference this Customer instance.");
+
         _ordersByTrackingNumber.TryAdd(order.TrackingNumber, order);
     }
 

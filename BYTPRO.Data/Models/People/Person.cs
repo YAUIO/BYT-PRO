@@ -12,8 +12,6 @@ public abstract class Person
 
     [JsonIgnore] public static IReadOnlyList<Person> All => Extent.ToList().AsReadOnly();
 
-    protected void RegisterPerson() => Extent.Add(this);
-
     protected void DeletePerson() => Extent.Remove(this);
 
     #endregion
@@ -100,7 +98,7 @@ public abstract class Person
 
     #endregion
 
-    #region ----------< Constructor >----------
+    #region ----------< Construction >----------
 
     protected Person(
         int id,
@@ -116,6 +114,19 @@ public abstract class Person
         Phone = phone;
         Email = email;
         Password = password;
+    }
+
+    protected void FinishConstruction()
+    {
+        // parent-specifics
+        Extent.Add(this);
+
+        // child-specifics hook
+        OnAfterConstruction();
+    }
+
+    protected virtual void OnAfterConstruction()
+    {
     }
 
     #endregion
