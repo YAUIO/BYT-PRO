@@ -75,17 +75,13 @@ public class CollectionValidatorTests
 
 
     // AreAllElementsNotNull();
+
+    // Throws
+
     [Fact]
     public void TestAllElementsNotNullForNullCollection()
     {
         List<int?>? list = null;
-        Assert.Throws<ValidationException>(() => list.AreAllElementsNotNull());
-    }
-
-    [Fact]
-    public void TestAllElementsNotNullForEmptyCollection()
-    {
-        var list = new List<int?>();
         Assert.Throws<ValidationException>(() => list.AreAllElementsNotNull());
     }
 
@@ -101,6 +97,16 @@ public class CollectionValidatorTests
     {
         var list = new List<int?> { null, null };
         Assert.Throws<ValidationException>(() => list.AreAllElementsNotNull());
+    }
+
+    // Does not throw
+
+    [Fact]
+    public void TestAllElementsNotNullForEmptyCollection()
+    {
+        var list = new List<int?>();
+        var ex = Record.Exception(() => list.AreAllElementsNotNull());
+        Assert.Null(ex);
     }
 
     [Fact]
