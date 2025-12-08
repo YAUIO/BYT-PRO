@@ -57,6 +57,7 @@ public class WithAttributeTests
         var today = DateTime.Today;
 
         Order order = new BranchOrder(
+            301,
             today,
             OrderStatus.InProgress,
             [new ProductEntry(product3, 1), new ProductEntry(product1, 2)],
@@ -111,6 +112,7 @@ public class WithAttributeTests
         Assert.Throws<ValidationException>(() =>
         {
             Order order = new BranchOrder(
+                302,
                 today,
                 OrderStatus.InProgress,
                 [new ProductEntry(product3, 1), new ProductEntry(product1, -1)],

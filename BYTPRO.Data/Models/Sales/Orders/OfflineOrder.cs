@@ -38,12 +38,13 @@ public class OfflineOrder : Order
     #region ----------< Construction >----------
 
     public OfflineOrder(
+        int id,
         DateTime creationDate,
         OrderStatus status,
         DeserializableReadOnlyList<ProductEntry> cart,
         string? phone,
         Store store
-    ) : base(creationDate, status, cart)
+    ) : base(id, creationDate, status, cart)
     {
         Phone = phone;
         Store = store;

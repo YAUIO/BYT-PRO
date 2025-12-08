@@ -74,6 +74,7 @@ public class BasicTests
         store.AddProductStock(product2, 10);
 
         var offlineOrder = new OfflineOrder(
+            101,
             DateTime.Now,
             OrderStatus.InProgress,
             [new ProductEntry(product1, 2), new ProductEntry(product2, 2)],
@@ -119,6 +120,7 @@ public class BasicTests
         store.AddProductStock(product2, 10);
 
         var offlineOrder = new OfflineOrder(
+            102,
             DateTime.Now,
             OrderStatus.InProgress,
             [new ProductEntry(product1, 2), new ProductEntry(product2, 2)],
@@ -188,6 +190,7 @@ public class BasicTests
         Assert.Throws<ValidationException>(() =>
         {
             var offlineOrder = new OfflineOrder(
+                103,
                 DateTime.Now,
                 OrderStatus.InProgress,
                 [new ProductEntry(product1, 2), new ProductEntry(product3, 2)],
@@ -246,6 +249,7 @@ public class BasicTests
         Assert.Throws<ValidationException>(() =>
         {
             var offlineOrder = new OfflineOrder(
+                104,
                 DateTime.Now,
                 OrderStatus.InProgress,
                 [new ProductEntry(product1, 10), new ProductEntry(product2, 2)],

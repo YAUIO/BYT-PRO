@@ -132,6 +132,7 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
 
 
         var onlineOrder = new OnlineOrder(
+            1,
             DateTime.Now,
             OrderStatus.InProgress,
             [new ProductEntry(product1, 1), new ProductEntry(product2, 5)],
@@ -142,6 +143,7 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
         );
 
         var offlineOrder = new OfflineOrder(
+            2,
             DateTime.Now,
             OrderStatus.InProgress,
             [new ProductEntry(product1, 2), new ProductEntry(product2, 2)],

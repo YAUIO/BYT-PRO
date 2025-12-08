@@ -40,11 +40,12 @@ public class BranchOrder : Order
     #region ----------< Construction >----------
 
     public BranchOrder(
+        int id,
         DateTime creationDate,
         OrderStatus status,
         DeserializableReadOnlyList<ProductEntry> cart,
         DateTime expectedDeliveryDate
-    ) : base(creationDate, status, cart)
+    ) : base(id, creationDate, status, cart)
     {
         ExpectedDeliveryDate = expectedDeliveryDate;
 
