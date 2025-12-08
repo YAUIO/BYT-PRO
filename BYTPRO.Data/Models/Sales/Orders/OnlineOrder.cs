@@ -61,6 +61,10 @@ public class OnlineOrder : Order
         {
             value.IsNotNullOrEmpty(nameof(TrackingNumber));
             value.IsBelowMaxLength(50);
+
+            if (Extent.Any(o => o.TrackingNumber == value))
+                throw new ValidationException($"OnlineOrder with TrackingNumber {value} already exists.");
+
             _trackingNumber = value;
         }
     }

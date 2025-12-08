@@ -1,6 +1,7 @@
 ﻿using BYTPRO.Data.Models.People;
 using BYTPRO.Data.Models.Sales;
 using BYTPRO.Data.Models.Sales.Orders;
+using BYTPRO.Data.Validation;
 using BYTPRO.JsonEntityFramework.Context;
 
 namespace BYTPRO.Test.Data.Associations;
@@ -24,18 +25,18 @@ public class QualifiedAssociationTest
     }
 
     [Fact]
-    public void CreateOnlineOrderShouldAddItToCustomerAccessibleByTrackingNumber()
+    public void TestCreateOnlineOrderShouldAddItToCustomerAccessibleByTrackingNumber()
     {
         ResetContext();
 
         var customer = new Customer(
-            id: 101,
-            name: "Alice",
-            surname: "Wonderland",
-            phone: "+123456789",
-            email: "alice@example.com",
-            password: "password123",
-            registrationDate: DateTime.Now.AddDays(-10)
+            101,
+            "Alice",
+            "Wonderland",
+            "+123456789",
+            "alice@example.com",
+            "password123",
+            DateTime.Now.AddDays(-10)
         );
 
         var product = new Product(
@@ -68,5 +69,61 @@ public class QualifiedAssociationTest
         Assert.Equal(trackingNumber, retrievedOrder.TrackingNumber);
 
         Assert.Same(customer, retrievedOrder.Customer);
+    }
+
+    [Fact]
+    public void TestCreateOnlineOrderFailsIfTrackingNumberAlreadyExists()
+    {
+        ResetContext();
+
+        var customer = new Customer(
+            1002,
+            "John",
+            "Smith",
+            "+123456789",
+            "john.smith@example.com",
+            "password123",
+            DateTime.Now.AddDays(-10)
+        );
+
+        var product = new Product(
+            "Product",
+            "Description",
+            100m,
+            ["img.png"],
+            1.5m,
+            new Dimensions(10, 10, 10)
+        );
+
+        var order1 = new OnlineOrder(
+            202,
+            creationDate: DateTime.Now,
+            status: OrderStatus.InProgress,
+            cart: [new ProductEntry(product, 2)],
+            isPaid: true,
+            cancellationDate: null,
+            trackingNumber: "TRACK-ABC-12345",
+            customer: customer
+        );
+
+        Assert.Contains(order1, Order.All);
+        Assert.Contains(order1, OnlineOrder.All);
+
+        Assert.True(customer.OnlineOrders.ContainsKey("TRACK-ABC-12345"));
+        Assert.True(customer.OnlineOrders.ContainsValue(order1));
+
+        Assert.Throws<ValidationException>(() =>
+        {
+            var order2 = new OnlineOrder(
+                203,
+                creationDate: DateTime.Now,
+                status: OrderStatus.InProgress,
+                cart: [new ProductEntry(product, 5)],
+                isPaid: false,
+                cancellationDate: null,
+                trackingNumber: "TRACK-ABC-12345",
+                customer: customer
+            );
+        });
     }
 }
