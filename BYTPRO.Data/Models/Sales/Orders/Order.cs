@@ -104,8 +104,13 @@ public abstract class Order
         Cart = cart;
     }
 
+    [JsonIgnore] private bool IsConstructed { get; set; }
+
     protected void FinishConstruction()
     {
+        if (IsConstructed) return;
+        IsConstructed = true;
+
         // parent-specifics
         CreateProductAssociations();
         Extent.Add(this);

@@ -119,8 +119,13 @@ public abstract class Branch
         StockCart = stockCart ?? [];
     }
 
+    [JsonIgnore] private bool IsConstructed { get; set; }
+
     protected void FinishConstruction()
     {
+        if (IsConstructed) return;
+        IsConstructed = true;
+
         // parent-specifics
         Extent.Add(this);
 
