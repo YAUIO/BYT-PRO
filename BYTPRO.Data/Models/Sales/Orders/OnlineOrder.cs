@@ -70,6 +70,7 @@ public class OnlineOrder : Order
     #region ----------< Construction >----------
 
     public OnlineOrder(
+        int id,
         DateTime creationDate,
         OrderStatus status,
         DeserializableReadOnlyList<ProductEntry> cart,
@@ -77,7 +78,7 @@ public class OnlineOrder : Order
         DateTime? cancellationDate,
         string trackingNumber,
         Customer customer
-    ) : base(creationDate, status, cart)
+    ) : base(id, creationDate, status, cart)
     {
         IsPaid = isPaid;
         CancellationDate = cancellationDate;
