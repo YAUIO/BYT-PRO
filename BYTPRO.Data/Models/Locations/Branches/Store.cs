@@ -93,9 +93,12 @@ public class Store : Branch
 
     [JsonIgnore] public HashSet<OfflineOrder> OfflineOrders => [.._offlineOrders];
 
-    internal void AddOrder(OfflineOrder order)
+    public void AddOrder(OfflineOrder order)
     {
         order.IsNotNull(nameof(order));
+        if (order.Store != this)
+            throw new ValidationException($"{nameof(order.Store)} must reference this Store instance.");
+
         _offlineOrders.Add(order);
     }
 
