@@ -38,7 +38,7 @@ public class BranchCompositionTest
     }
 
     [Fact]
-    private void TestBranchDeletionCascadesToEmployees()
+    private void TestBranchClosureRemovesEmployees()
     {
         ResetContext();
 
@@ -65,7 +65,7 @@ public class BranchCompositionTest
         Assert.Contains(employee, Person.All);
         Assert.Single(branch.Employees);
 
-        branch.Delete();
+        branch.CloseBranch();
 
         Assert.DoesNotContain(branch, Branch.All);
         Assert.DoesNotContain(employee, LocalEmployee.All);

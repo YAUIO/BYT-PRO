@@ -147,7 +147,7 @@ public abstract class Branch
 
     [JsonIgnore] public HashSet<LocalEmployee> Employees => [.._employees];
 
-    public void Delete()
+    public void CloseBranch()
     {
         // parent-specifics
         if (_stocks.Count > 0)
@@ -161,10 +161,10 @@ public abstract class Branch
         Extent.Remove(this);
 
         // child-specifics hook
-        OnDelete();
+        OnBranchClose();
     }
 
-    protected virtual void OnDelete()
+    protected virtual void OnBranchClose()
     {
     }
 

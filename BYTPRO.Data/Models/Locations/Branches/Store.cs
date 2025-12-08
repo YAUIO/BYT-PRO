@@ -102,7 +102,7 @@ public class Store : Branch
         _offlineOrders.Add(order);
     }
 
-    protected override void OnDelete()
+    protected override void OnBranchClose()
     {
         Extent.Remove(this);
     }

@@ -34,7 +34,7 @@ public class AggregationTests
     }
 
     [Fact]
-    public void DeleteBranchWithStockShouldThrowExceptionAndNotDelete()
+    public void TestCloseBranchWithStockShouldThrowExceptionAndNotClose()
     {
         ResetContext();
 
@@ -54,7 +54,7 @@ public class AggregationTests
         Assert.NotEmpty(branch.Stocks);
         Assert.Contains(branch, Branch.All);
 
-        Assert.Throws<InvalidOperationException>(() => { branch.Delete(); });
+        Assert.Throws<InvalidOperationException>(() => { branch.CloseBranch(); });
 
         Assert.Contains(branch, Branch.All);
     }
