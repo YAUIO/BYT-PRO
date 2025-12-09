@@ -16,7 +16,7 @@ public class ReflexTests(ITestOutputHelper console)
 
         var ctx = new JsonContextBuilder()
             .AddJsonEntity<Product>()
-            .BuildWithDbFile(new FileInfo(DbRoot));
+            .BuildWithDbRoot(DbRoot);
 
         JsonContext.SetContext(ctx);
     }

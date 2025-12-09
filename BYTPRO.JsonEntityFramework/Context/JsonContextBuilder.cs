@@ -10,9 +10,8 @@ public class JsonContextBuilder
         return this;
     }
 
-    public JsonContext BuildWithDbFile(FileInfo dbFile)
+    public JsonContext BuildWithDbRoot(string dbRoot)
     {
-        ArgumentNullException.ThrowIfNull(dbFile);
-        return new JsonContext(RegisteredEntities, dbFile);
+        return new JsonContext(RegisteredEntities, new FileInfo(dbRoot));
     }
 }

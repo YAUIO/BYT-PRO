@@ -31,7 +31,7 @@ public static class ServiceCollectionDataExtensions
             .AddJsonEntity<BranchOrder>()
 
             //------------------------------
-            .BuildWithDbFile(new FileInfo($"{Directory.GetCurrentDirectory()}/Db.json"));
+            .BuildWithDbRoot($"{Directory.GetCurrentDirectory()}/Db.json");
 
         JsonContext.SetContext(context);
 
