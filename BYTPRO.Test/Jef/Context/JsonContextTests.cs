@@ -8,7 +8,7 @@ public class JsonContextTests
 
     private static int _contexts;
 
-    public static JsonContext GetTestContext(int sets = 0, string? root = null)
+    private static JsonContext GetTestContext(int sets = 0, string? root = null)
     {
         if (!Directory.Exists(DbRoot))
             Directory.CreateDirectory(DbRoot);

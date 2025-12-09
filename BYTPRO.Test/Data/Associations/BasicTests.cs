@@ -4,32 +4,14 @@ using BYTPRO.Data.Models.People;
 using BYTPRO.Data.Models.Sales;
 using BYTPRO.Data.Models.Sales.Orders;
 using BYTPRO.Data.Validation;
-using BYTPRO.JsonEntityFramework.Context;
 
 namespace BYTPRO.Test.Data.Associations;
 
 public class BasicTests
 {
-    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/BYT_PRO_TESTS/Basic.json";
-
-    private static void ResetContext(bool removeContext = true)
-    {
-        if (File.Exists(DbRoot) && removeContext)
-            File.Delete(DbRoot);
-
-        new JsonContextBuilder()
-            .AddJsonEntity<Product>()
-            .AddJsonEntity<OfflineOrder>()
-            .AddJsonEntity<Store>()
-            .AddJsonEntity<Customer>()
-            .BuildWithDbRoot(DbRoot);
-    }
-
     [Fact]
-    private void TestCreate()
+    public void TestCreate()
     {
-        ResetContext();
-
         var store = new Store(
             new Address("Street2", "20/2", null, "01-345", "City2"),
             "Store1",
@@ -82,10 +64,8 @@ public class BasicTests
     }
 
     [Fact]
-    private void TestCreateChangesStock()
+    public void TestCreateChangesStock()
     {
-        ResetContext();
-
         var store = new Store(
             new Address("Street2", "20/2", null, "01-345", "City2"),
             "Store1",
@@ -131,10 +111,8 @@ public class BasicTests
     }
 
     [Fact]
-    private void TestCreateFailsIfNoProductIsPresent()
+    public void TestCreateFailsIfNoProductIsPresent()
     {
-        ResetContext();
-
         var store = new Store(
             new Address("Street2", "20/2", null, "01-345", "City2"),
             "Store1",
@@ -199,10 +177,8 @@ public class BasicTests
     }
 
     [Fact]
-    private void TestCreateFailsIfNotEnoughQuantityInStock()
+    public void TestCreateFailsIfNotEnoughQuantityInStock()
     {
-        ResetContext();
-
         var store = new Store(
             new Address("Street2", "20/2", null, "01-345", "City2"),
             "Store1",

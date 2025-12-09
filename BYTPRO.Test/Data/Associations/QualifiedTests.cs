@@ -2,31 +2,14 @@
 using BYTPRO.Data.Models.Sales;
 using BYTPRO.Data.Models.Sales.Orders;
 using BYTPRO.Data.Validation;
-using BYTPRO.JsonEntityFramework.Context;
 
 namespace BYTPRO.Test.Data.Associations;
 
-public class QualifiedAssociationTest
+public class QualifiedTests
 {
-    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/BYT_PRO_TESTS/Qualified.json";
-
-    private static void ResetContext(bool removeContext = true)
-    {
-        if (File.Exists(DbRoot) && removeContext)
-            File.Delete(DbRoot);
-
-        new JsonContextBuilder()
-            .AddJsonEntity<Product>()
-            .AddJsonEntity<Customer>()
-            .AddJsonEntity<OnlineOrder>()
-            .BuildWithDbRoot(DbRoot);
-    }
-
     [Fact]
     public void TestCreateOnlineOrderShouldAddItToCustomerAccessibleByTrackingNumber()
     {
-        ResetContext();
-
         var customer = new Customer(
             101,
             "Alice",
@@ -72,8 +55,6 @@ public class QualifiedAssociationTest
     [Fact]
     public void TestCreateOnlineOrderFailsIfTrackingNumberAlreadyExists()
     {
-        ResetContext();
-
         var customer = new Customer(
             1002,
             "John",

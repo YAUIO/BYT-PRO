@@ -1,13 +1,12 @@
 ﻿using BYTPRO.Data.Models.Locations;
 using BYTPRO.Data.Models.Locations.Branches;
 using BYTPRO.Data.Models.Sales;
-using BYTPRO.JsonEntityFramework.Context;
 
 namespace BYTPRO.Test.Data.Associations;
 
 public class AggregationTests
 {
-    public class TestBranch : Branch
+    private sealed class TestBranch : Branch
     {
         public TestBranch(string name) : base(
             new Address("Street", "1", null, "00-000", "City"),
@@ -19,23 +18,9 @@ public class AggregationTests
         }
     }
 
-    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/BYT_PRO_TESTS/Aggregation.json";
-
-    private static void ResetContext(bool removeContext = true)
-    {
-        if (File.Exists(DbRoot) && removeContext)
-            File.Delete(DbRoot);
-
-        new JsonContextBuilder()
-            .AddJsonEntity<Product>()
-            .BuildWithDbRoot(DbRoot);
-    }
-
     [Fact]
     public void TestCloseBranchWithStockShouldThrowExceptionAndNotClose()
     {
-        ResetContext();
-
         var branch = new TestBranch("Stock Branch");
 
         var product = new Product(
