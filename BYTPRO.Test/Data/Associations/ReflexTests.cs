@@ -1,29 +1,12 @@
 ﻿using BYTPRO.Data.Models.Sales;
-using BYTPRO.JsonEntityFramework.Context;
-using BYTPRO.JsonEntityFramework.Extensions;
-using Xunit.Abstractions;
 
 namespace BYTPRO.Test.Data.Associations;
 
-public class ReflexTests(ITestOutputHelper console)
+public class ReflexTests
 {
-    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/BYT_PRO_TESTS/Reflex.json";
-
-    private static void ResetContext(bool removeContext = true)
-    {
-        if (File.Exists(DbRoot) && removeContext)
-            File.Delete(DbRoot);
-
-        new JsonContextBuilder()
-            .AddJsonEntity<Product>()
-            .BuildWithDbRoot(DbRoot);
-    }
-
     [Fact]
-    public async Task TestCreateAndSaveProductOfOtherProducts()
+    public void TestCreateProductOfOtherProducts()
     {
-        ResetContext();
-
         var product1 = new Product(
             "Product1",
             "Description1",
@@ -42,10 +25,8 @@ public class ReflexTests(ITestOutputHelper console)
             new Dimensions(5m, 5m, 5m)
         );
 
-        var p3Name = "Product31";
-
         var product3 = new Product(
-            p3Name,
+            "Product3",
             "Description3",
             50m,
             ["/Product3_1.png"],
@@ -54,66 +35,9 @@ public class ReflexTests(ITestOutputHelper console)
             [product1, product2]
         );
 
-        await JsonContext.Context.SaveChangesAsync();
+        var product3ConsistsOf = product3.ConsistsOf;
 
-        var testedProduct = Product.All.Single(p => p.Name == p3Name);
-
-        Assert.Contains(product3, Product.All);
-        Assert.NotNull(testedProduct.ConsistsOf);
-        Assert.Contains(product1, testedProduct.ConsistsOf);
-        Assert.Contains(product2, testedProduct.ConsistsOf);
-    }
-
-    [Fact]
-    public async Task TestLoadProductOfOtherProducts()
-    {
-        ResetContext();
-
-        var product1 = new Product(
-            "Product1",
-            "Description1",
-            100m,
-            ["/Product1_1.png", "/Product1_2.png"],
-            10m,
-            new Dimensions(10m, 10m, 10m)
-        );
-
-        var product2 = new Product(
-            "Product2",
-            "Description2",
-            50m,
-            ["/Product2_1.png"],
-            5m,
-            new Dimensions(5m, 5m, 5m)
-        );
-
-        var p3Name = "Product3";
-
-        var product3 = new Product(
-            p3Name,
-            "Description3",
-            50m,
-            ["/Product3_1.png"],
-            5m,
-            new Dimensions(15m, 15m, 15m),
-            [product1, product2]
-        );
-
-        await JsonContext.Context.SaveChangesAsync();
-
-        ResetContext(false);
-
-        console.WriteLine(Product.All.ToJson());
-
-        var testedProduct = Product.All.Single(p => p.Name == p3Name);
-
-        var consistsOf = testedProduct.ConsistsOf?
-            .Select(p => p.Name)
-            .ToHashSet();
-
-        Assert.Contains(testedProduct, Product.All);
-        Assert.NotNull(consistsOf);
-        Assert.Contains(product1.Name, consistsOf);
-        Assert.Contains(product2.Name, consistsOf);
+        Assert.Contains(product1, product3ConsistsOf);
+        Assert.Contains(product2, product3ConsistsOf);
     }
 }

@@ -1,30 +1,14 @@
 ﻿using BYTPRO.Data.Models.Sales;
 using BYTPRO.Data.Models.Sales.Orders;
 using BYTPRO.Data.Validation;
-using BYTPRO.JsonEntityFramework.Context;
 
 namespace BYTPRO.Test.Data.Associations;
 
 public class WithAttributeTests
 {
-    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/BYT_PRO_TESTS/WithAttribute.json";
-
-    private static void ResetContext(bool clearContext = true)
-    {
-        if (File.Exists(DbRoot) && clearContext)
-            File.Delete(DbRoot);
-
-        new JsonContextBuilder()
-            .AddJsonEntity<Product>()
-            .AddJsonEntity<BranchOrder>()
-            .BuildWithDbRoot(DbRoot);
-    }
-
     [Fact]
-    public async Task TestBranchOrderCreation()
+    public void TestBranchOrderCreation()
     {
-        ResetContext();
-
         var product1 = new Product(
             "Product1",
             "Description1",
@@ -53,17 +37,13 @@ public class WithAttributeTests
             [product1, product2]
         );
 
-        var today = DateTime.Today;
-
-        Order order = new BranchOrder(
+        var order = new BranchOrder(
             301,
-            today,
+            DateTime.Today,
             OrderStatus.InProgress,
             [new ProductEntry(product3, 1), new ProductEntry(product1, 2)],
-            today.AddDays(1)
+            DateTime.Today.AddDays(1)
         );
-
-        await JsonContext.Context.SaveChangesAsync();
 
         var items = order.AssociatedProducts
             .Select(s => s.Product)
@@ -74,10 +54,8 @@ public class WithAttributeTests
     }
 
     [Fact]
-    public async Task TestInvalidBranchOrderCreation()
+    public void TestInvalidBranchOrderCreation()
     {
-        ResetContext();
-
         var product1 = new Product(
             "Product1",
             "Description1",
@@ -106,16 +84,14 @@ public class WithAttributeTests
             [product1, product2]
         );
 
-        var today = DateTime.Today;
-
         Assert.Throws<ValidationException>(() =>
         {
-            Order order = new BranchOrder(
+            var order = new BranchOrder(
                 302,
-                today,
+                DateTime.Today,
                 OrderStatus.InProgress,
                 [new ProductEntry(product3, 1), new ProductEntry(product1, -1)],
-                today.AddDays(1)
+                DateTime.Today.AddDays(1)
             );
         });
     }

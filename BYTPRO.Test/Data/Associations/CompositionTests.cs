@@ -3,14 +3,12 @@ using BYTPRO.Data.Models.Locations.Branches;
 using BYTPRO.Data.Models.People;
 using BYTPRO.Data.Models.People.Employees;
 using BYTPRO.Data.Models.People.Employees.Local;
-using BYTPRO.JsonEntityFramework.Context;
-
 
 namespace BYTPRO.Test.Data.Associations;
 
-public class BranchCompositionTest
+public class CompositionTests
 {
-    public class TestBranch : Branch
+    private sealed class TestBranch : Branch
     {
         public TestBranch(string name) : base(
             new Address("Street", "1", null, "00-000", "City"),
@@ -22,24 +20,9 @@ public class BranchCompositionTest
         }
     }
 
-    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/BYT_PRO_TESTS/Composition.json";
-
-    private static void ResetContext(bool removeContext = true)
-    {
-        if (File.Exists(DbRoot) && removeContext)
-            File.Delete(DbRoot);
-
-        new JsonContextBuilder()
-            .AddJsonEntity<LocalEmployee>()
-            .AddJsonEntity<TestBranch>()
-            .BuildWithDbRoot(DbRoot);
-    }
-
     [Fact]
-    private void TestBranchClosureRemovesEmployees()
+    public void TestBranchClosureRemovesEmployees()
     {
-        ResetContext();
-
         var branch = new TestBranch("Composition Branch");
 
         var employee = new LocalEmployee(
@@ -75,10 +58,8 @@ public class BranchCompositionTest
     // Test Reverse connections
 
     [Fact]
-    private void TestEmployeeDeletionRemovesFromBranch()
+    public void TestEmployeeDeletionRemovesFromBranch()
     {
-        ResetContext();
-
         var branch = new TestBranch("Composition Branch");
 
         var employee = new LocalEmployee(
@@ -110,10 +91,8 @@ public class BranchCompositionTest
     }
 
     [Fact]
-    private void TestBranchRemoveEmployeeRemovesFromBranch()
+    public void TestBranchRemoveEmployeeRemovesFromBranch()
     {
-        ResetContext();
-
         var branch = new TestBranch("Composition Branch");
 
         var employee = new LocalEmployee(

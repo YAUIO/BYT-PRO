@@ -4,25 +4,11 @@ using BYTPRO.Data.Models.People;
 using BYTPRO.Data.Models.People.Employees;
 using BYTPRO.Data.Models.People.Employees.Local;
 using BYTPRO.Data.Validation;
-using BYTPRO.JsonEntityFramework.Context;
 
 namespace BYTPRO.Test.Data.Models;
 
 public class LocalEmployeeTests
 {
-    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/BYT_PRO_TESTS/LocalEmployee.json";
-
-    static LocalEmployeeTests()
-    {
-        if (File.Exists(DbRoot))
-            File.Delete(DbRoot);
-
-        new JsonContextBuilder()
-            .AddJsonEntity<LocalEmployee>()
-            .AddJsonEntity<Store>()
-            .BuildWithDbRoot(DbRoot);
-    }
-
     private static Store CreateTestStore()
     {
         var address = new Address("Main St", "Warsaw", null, "00-001", "Poland");
