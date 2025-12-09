@@ -208,9 +208,19 @@ public abstract class Branch
         {
             // Case 2: Product does not exist in stock
             var stock = new BranchProductStock(this, product, quantity);
-            _stocks.Add(stock);
-            product.AddStock(stock);
+            stock.Branch.AssociateWithProduct(stock);
+            stock.Product.AssociateWithBranch(stock);
         }
+    }
+
+    public void AssociateWithProduct(BranchProductStock stockItem)
+    {
+        stockItem.IsNotNull(nameof(stockItem));
+        if (stockItem.Branch != this)
+            throw new ValidationException($"{nameof(stockItem.Branch)} must reference this Branch instance.");
+
+        if (_stocks.Add(stockItem))
+            stockItem.Product.AssociateWithBranch(stockItem);
     }
 
     private void ReduceProductStock(Product product, int quantity)
