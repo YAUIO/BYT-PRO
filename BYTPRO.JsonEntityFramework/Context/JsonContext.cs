@@ -9,8 +9,6 @@ public class JsonContext
 {
     public JsonContext(HashSet<JsonEntityConfiguration> entities, FileInfo dbFile)
     {
-        Context = this;
-
         DbFile = dbFile;
         Entities = entities;
         Tables = new ConcurrentDictionary<Type, dynamic>();
@@ -57,7 +55,7 @@ public class JsonContext
         }
     }
 
-    public static JsonContext? Context { get; private set; }
+    public static JsonContext? Context { get; set; }
 
     private ConcurrentDictionary<Type, dynamic> Tables { get; set; }
 

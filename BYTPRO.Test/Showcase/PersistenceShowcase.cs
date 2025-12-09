@@ -14,28 +14,10 @@ using Xunit.Abstractions;
 
 namespace BYTPRO.Test.Showcase;
 
-public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
+public class PersistenceShowcase(ITestOutputHelper console, JsonContext context)
 {
-    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/BYT_PRO_TESTS/Showcase.json";
-
-    static PersistenceShowcase()
-    {
-        new JsonContextBuilder()
-            .AddJsonEntity<PickupPoint>()
-            .AddJsonEntity<Store>()
-            .AddJsonEntity<Warehouse>()
-            .AddJsonEntity<Customer>()
-            .AddJsonEntity<LocalEmployee>()
-            .AddJsonEntity<RegionalEmployee>()
-            .AddJsonEntity<Product>()
-            .AddJsonEntity<OnlineOrder>()
-            .AddJsonEntity<OfflineOrder>()
-            .AddJsonEntity<BranchOrder>()
-            .BuildWithDbRoot(DbRoot);
-    }
-
     [Fact]
-    private void TestClassExtent()
+    private void CreateSampleEntities()
     {
         // ----------< Locations >----------
         var pickupPoint = new PickupPoint(
@@ -128,7 +110,6 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
         );
         store.AddProductStock(product2, 10);
 
-
         var onlineOrder = new OnlineOrder(
             1,
             DateTime.Now,
@@ -149,14 +130,11 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
             store
         );
 
-
-        JsonContext.Context.SaveChanges();
-
-        ShowAll();
+        context.SaveChanges();
     }
 
     [Fact]
-    private void ShowAll()
+    private void OutputAllExtents()
     {
         var sections = new (string Title, IEnumerable Data)[]
         {
@@ -198,13 +176,13 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
             }
         }
 
-        testOutputHelper.WriteLine(sb.ToString());
+        console.WriteLine(sb.ToString());
     }
 
     [Fact]
-    public void Delete()
+    public void DeleteDatabaseFile()
     {
-        if (File.Exists(DbRoot))
-            File.Delete(DbRoot);
+        console.WriteLine("Deleting (if exists): " + context.DbPath);
+        File.Delete(context.DbPath);
     }
 }
