@@ -14,8 +14,7 @@ public class JsonContext
         DbFile = dbFile;
         Entities = entities;
         Tables = new ConcurrentDictionary<Type, dynamic>();
-
-        DbPath = $"{DbFile.FullName}{(dbFile.Name.EndsWith(".json", StringComparison.CurrentCulture) ? "" : ".json")}";
+        DbPath = DbFile.FullName;
 
         foreach (var ent in entities.Select(e => e.Target))
         {
@@ -26,6 +25,9 @@ public class JsonContext
 
         if (!File.Exists(DbPath))
         {
+            var dir = DbFile.DirectoryName ?? Directory.GetCurrentDirectory();
+            Directory.CreateDirectory(dir);
+
             var file = DbFile.Create();
             file.Close();
             return;
