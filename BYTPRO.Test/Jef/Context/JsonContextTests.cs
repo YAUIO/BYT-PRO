@@ -22,7 +22,7 @@ public class JsonContextTests
 
         var context = new JsonContextBuilder()
             .AddJsonEntity<TestModel>()
-            .BuildWithDbFile(new FileInfo(root ?? $"{DbRoot}/{_contexts}_{sets}.json"));
+            .BuildWithDbRoot(root ?? $"{DbRoot}/{_contexts}_{sets}.json");
 
         return context;
     }
@@ -62,7 +62,7 @@ public class JsonContextTests
 
         var newContext = new JsonContextBuilder()
             .AddJsonEntity<TestModel>()
-            .BuildWithDbFile(new FileInfo(root));
+            .BuildWithDbRoot(root);
 
         Assert.Contains(model, newContext.GetTable<TestModel>());
 

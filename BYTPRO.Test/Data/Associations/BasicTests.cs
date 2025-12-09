@@ -22,7 +22,7 @@ public class BasicTests
             .AddJsonEntity<OfflineOrder>()
             .AddJsonEntity<Store>()
             .AddJsonEntity<Customer>()
-            .BuildWithDbFile(new FileInfo(DbRoot));
+            .BuildWithDbRoot(DbRoot);
 
         JsonContext.SetContext(ctx);
     }
