@@ -13,12 +13,11 @@ public class WithAttributeTests
     {
         if (File.Exists(DbRoot) && clearContext)
             File.Delete(DbRoot);
-        var ctx = new JsonContextBuilder()
+
+        new JsonContextBuilder()
             .AddJsonEntity<Product>()
             .AddJsonEntity<BranchOrder>()
             .BuildWithDbRoot(DbRoot);
-
-        JsonContext.SetContext(ctx);
     }
 
     [Fact]

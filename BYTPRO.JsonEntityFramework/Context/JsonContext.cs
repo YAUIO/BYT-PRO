@@ -9,7 +9,7 @@ public class JsonContext
 {
     public JsonContext(HashSet<JsonEntityConfiguration> entities, FileInfo dbFile)
     {
-        Context ??= this;
+        Context = this;
 
         DbFile = dbFile;
         Entities = entities;
@@ -68,11 +68,6 @@ public class JsonContext
     public string DbPath { get; }
 
     private SemaphoreSlim DbLock { get; } = new(1, 1);
-
-    public static void SetContext(JsonContext context)
-    {
-        Context = context;
-    }
 
     public HashSet<T> GetTable<T>()
     {

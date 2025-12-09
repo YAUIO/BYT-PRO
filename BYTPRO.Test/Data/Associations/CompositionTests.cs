@@ -29,12 +29,10 @@ public class BranchCompositionTest
         if (File.Exists(DbRoot) && removeContext)
             File.Delete(DbRoot);
 
-        var ctx = new JsonContextBuilder()
+        new JsonContextBuilder()
             .AddJsonEntity<LocalEmployee>()
             .AddJsonEntity<TestBranch>()
             .BuildWithDbRoot(DbRoot);
-
-        JsonContext.SetContext(ctx);
     }
 
     [Fact]
@@ -73,9 +71,9 @@ public class BranchCompositionTest
         Assert.DoesNotContain(employee, Person.All);
         Assert.DoesNotContain(employee, branch.Employees);
     }
-    
+
     // Test Reverse connections
-    
+
     [Fact]
     private void TestEmployeeDeletionRemovesFromBranch()
     {
@@ -110,7 +108,7 @@ public class BranchCompositionTest
         Assert.DoesNotContain(employee, Person.All);
         Assert.DoesNotContain(employee, branch.Employees);
     }
-    
+
     [Fact]
     private void TestBranchRemoveEmployeeRemovesFromBranch()
     {

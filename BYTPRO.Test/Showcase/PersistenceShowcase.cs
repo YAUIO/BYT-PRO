@@ -20,7 +20,7 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
 
     static PersistenceShowcase()
     {
-        var context = new JsonContextBuilder()
+        new JsonContextBuilder()
             .AddJsonEntity<PickupPoint>()
             .AddJsonEntity<Store>()
             .AddJsonEntity<Warehouse>()
@@ -32,8 +32,6 @@ public class PersistenceShowcase(ITestOutputHelper testOutputHelper)
             .AddJsonEntity<OfflineOrder>()
             .AddJsonEntity<BranchOrder>()
             .BuildWithDbRoot(DbRoot);
-
-        JsonContext.SetContext(context);
     }
 
     [Fact]

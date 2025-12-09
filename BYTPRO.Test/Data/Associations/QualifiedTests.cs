@@ -15,13 +15,11 @@ public class QualifiedAssociationTest
         if (File.Exists(DbRoot) && removeContext)
             File.Delete(DbRoot);
 
-        var ctx = new JsonContextBuilder()
+        new JsonContextBuilder()
             .AddJsonEntity<Product>()
             .AddJsonEntity<Customer>()
             .AddJsonEntity<OnlineOrder>()
             .BuildWithDbRoot(DbRoot);
-
-        JsonContext.SetContext(ctx);
     }
 
     [Fact]
