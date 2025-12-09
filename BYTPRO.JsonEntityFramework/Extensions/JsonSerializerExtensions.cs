@@ -12,7 +12,7 @@ public static class JsonSerializerExtensions
         TypeNameHandling = TypeNameHandling.Auto,
         PreserveReferencesHandling = PreserveReferencesHandling.Objects,
         ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-        ContractResolver = new ParentFirstContractResolver()
+        ContractResolver = new BaseClassFirstContractResolver()
     };
 
     static JsonSerializerExtensions()
