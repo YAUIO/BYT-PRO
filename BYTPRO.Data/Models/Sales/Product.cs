@@ -174,10 +174,14 @@ public class Product
 
     [JsonIgnore] public HashSet<BranchProductStock> StockedIn => [.._stockedIn];
 
-    public void AddStock(BranchProductStock stock)
+    public void AssociateWithBranch(BranchProductStock stockItem)
     {
-        stock.IsNotNull(nameof(stock));
-        _stockedIn.Add(stock);
+        stockItem.IsNotNull(nameof(stockItem));
+        if (stockItem.Product != this)
+            throw new ValidationException($"{nameof(stockItem.Product)} must reference this Product instance.");
+
+        if (_stockedIn.Add(stockItem))
+            stockItem.Branch.AssociateWithProduct(stockItem);
     }
 
     #endregion
