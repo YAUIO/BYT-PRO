@@ -17,14 +17,12 @@ public class BasicTests
         if (File.Exists(DbRoot) && removeContext)
             File.Delete(DbRoot);
 
-        var ctx = new JsonContextBuilder()
+        new JsonContextBuilder()
             .AddJsonEntity<Product>()
             .AddJsonEntity<OfflineOrder>()
             .AddJsonEntity<Store>()
             .AddJsonEntity<Customer>()
             .BuildWithDbRoot(DbRoot);
-
-        JsonContext.SetContext(ctx);
     }
 
     [Fact]

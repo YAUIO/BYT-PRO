@@ -33,8 +33,6 @@ public static class ServiceCollectionDataExtensions
             //------------------------------
             .BuildWithDbRoot($"{Directory.GetCurrentDirectory()}/Db.json");
 
-        JsonContext.SetContext(context);
-
         services.AddSingleton(context);
 
         return services;

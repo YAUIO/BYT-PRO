@@ -17,12 +17,10 @@ public class LocalEmployeeTests
         if (File.Exists(DbRoot))
             File.Delete(DbRoot);
 
-        var ctx = new JsonContextBuilder()
+        new JsonContextBuilder()
             .AddJsonEntity<LocalEmployee>()
             .AddJsonEntity<Store>()
             .BuildWithDbRoot(DbRoot);
-
-        JsonContext.SetContext(ctx);
     }
 
     private static Store CreateTestStore()
