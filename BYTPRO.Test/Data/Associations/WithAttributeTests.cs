@@ -272,6 +272,36 @@ public class WithAttributeTests
     }
     
     [Fact]
+    public void TestAssociateAddStockAddsQuantity()
+    {
+        var product3 = new Product(
+            "Product3",
+            "Description3",
+            50m,
+            ["/Product3_1.png"],
+            5m,
+            new Dimensions(15m, 15m, 15m)
+        );
+        
+        var pickupPoint = new PickupPoint(
+            new Address("Street1", "10/2", "app1", "01-234", "City1"),
+            "PickupPoint1",
+            "10:00-22:00",
+            100m,
+            50,
+            10m
+        );
+        
+        pickupPoint.AddProductStock(product3, 1);
+        
+        pickupPoint.AddProductStock(product3, 1);
+
+        Assert.Contains(pickupPoint, product3.StockedIn.Select(s => s.Branch));
+        Assert.Equal(2, pickupPoint.Stocks.Single(s => s.Product.Name == product3.Name).Quantity);
+        Assert.Contains(product3, pickupPoint.Stocks.Select(p => p.Product));
+    }
+    
+    [Fact]
     public void TestAssociateWithProductAddsToBranches()
     {
         var product3 = new Product(
