@@ -42,7 +42,9 @@ public class WithAttributeTests
             DateTime.Today,
             OrderStatus.InProgress,
             [new ProductEntry(product3, 1), new ProductEntry(product1, 2)],
-            DateTime.Today.AddDays(1)
+            DateTime.Today.AddDays(1),
+            "Warehouse A", 
+            "Store B"
         );
 
         var items = order.AssociatedProducts
@@ -91,7 +93,9 @@ public class WithAttributeTests
                 DateTime.Today,
                 OrderStatus.InProgress,
                 [new ProductEntry(product3, 1), new ProductEntry(product1, -1)],
-                DateTime.Today.AddDays(1)
+                DateTime.Today.AddDays(1),
+                "Warehouse A", 
+                "Store B"
             );
         });
     }

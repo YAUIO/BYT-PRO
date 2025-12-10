@@ -17,15 +17,14 @@ public class FromToBranchTests
         if (!Directory.Exists(DbRoot))
             Directory.CreateDirectory(DbRoot);
         
+        JsonContext.Context = null;
+
         var ctx = new JsonContextBuilder()
             .AddJsonEntity<Product>()
-            .BuildEntity()
             .AddJsonEntity<BranchOrder>()
-            .BuildEntity()
-            .WithRoot(new DirectoryInfo(DbRoot))
-            .Build();
+            .BuildWithDbRoot(Path.Combine(DbRoot, "test.json"));
         
-        JsonContext.SetContext(ctx);
+        JsonContext.Context = ctx;
     }
 
     [Fact]
@@ -40,7 +39,8 @@ public class FromToBranchTests
         var order = new BranchOrder(
             1,
             today,
-            new Dictionary<Product, int> { { product, 5 } },
+            OrderStatus.InProgress,
+            [new ProductEntry(product, 5)],
             today.AddDays(1),
             "Warehouse A",
             "Store B"
@@ -66,7 +66,8 @@ public class FromToBranchTests
             new BranchOrder(
                 1,
                 today,
-                new Dictionary<Product, int> { { product, 5 } },
+                OrderStatus.InProgress,
+                [new ProductEntry(product, 5)],
                 today.AddDays(1),
                 "Store A",
                 "Store A"
@@ -87,7 +88,11 @@ public class FromToBranchTests
         Assert.Throws<ValidationException>(() =>
         {
             new BranchOrder(
-                1, DateTime.Today, new Dictionary<Product, int> { { product, 1 } }, DateTime.Today.AddDays(1),
+                1, 
+                DateTime.Today, 
+                OrderStatus.InProgress,
+                [new ProductEntry(product, 1)], 
+                DateTime.Today.AddDays(1),
                 "",
                 "Store B"
             );
@@ -105,9 +110,50 @@ public class FromToBranchTests
         Assert.Throws<ValidationException>(() =>
         {
             new BranchOrder(
-                1, DateTime.Today, new Dictionary<Product, int> { { product, 1 } }, DateTime.Today.AddDays(1),
+                1, 
+                DateTime.Today, 
+                OrderStatus.InProgress,
+                [new ProductEntry(product, 1)], 
+                DateTime.Today.AddDays(1),
                 "Store A",
                 ""
+            );
+        });
+    }
+
+    [Fact]
+    public void CreateBranchOrderWithFromExceedingMaxLength()
+    {
+        ResetContext();
+        
+        var images = new DeserializableReadOnlyList<string>(new List<string> { "image.png" }.AsReadOnly());
+        var product = new Product("P1", "D1", 10m, images, 1m, new Dimensions(1,1,1));
+        
+        string longName = new string('A', 51); 
+
+        Assert.Throws<ValidationException>(() =>
+        {
+            new BranchOrder(
+                1, DateTime.Today, OrderStatus.InProgress, [new ProductEntry(product, 1)], DateTime.Today.AddDays(1),
+                longName,
+                "Store B"
+            );
+        });
+    }
+
+    [Fact]
+    public void CreateBranchOrderWithNullFrom()
+    {
+        ResetContext();
+        var images = new DeserializableReadOnlyList<string>(new List<string> { "image.png" }.AsReadOnly());
+        var product = new Product("P1", "D1", 10m, images, 1m, new Dimensions(1,1,1));
+
+        Assert.ThrowsAny<Exception>(() =>
+        {
+            new BranchOrder(
+                1, DateTime.Today, OrderStatus.InProgress, [new ProductEntry(product, 1)], DateTime.Today.AddDays(1),
+                null!,
+                "Store B"
             );
         });
     }
