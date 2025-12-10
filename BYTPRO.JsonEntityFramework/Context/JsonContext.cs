@@ -7,23 +7,23 @@ namespace BYTPRO.JsonEntityFramework.Context;
 
 public class JsonContext
 {
+    public static JsonContext? Context { get; set; }
+
     public JsonContext(HashSet<JsonEntityConfiguration> entities, FileInfo dbFile)
     {
         Context ??= this; // Must be set early because deserialization may access JsonContext.Context.GetTable<T>()
 
-        DbFile = dbFile;
         Entities = entities;
-        DbPath = DbFile.FullName;
+        DbPath = dbFile.FullName;
 
         // 1. Always create empty tables for all requested entity types
-        Tables = new ConcurrentDictionary<Type, dynamic>();
         foreach (var ent in entities.Select(e => e.Target))
             Tables[ent] = Activator.CreateInstance(typeof(HashSet<>).MakeGenericType(ent))!;
 
         // 2. Ensure a file exists; if not, create an empty one and stop
         if (!File.Exists(DbPath))
         {
-            Directory.CreateDirectory(DbFile.DirectoryName ?? Directory.GetCurrentDirectory());
+            Directory.CreateDirectory(dbFile.DirectoryName ?? Directory.GetCurrentDirectory());
             File.WriteAllText(DbPath, "");
             return;
         }
@@ -54,15 +54,11 @@ public class JsonContext
         }
     }
 
-    public static JsonContext? Context { get; set; }
-
-    private ConcurrentDictionary<Type, dynamic> Tables { get; set; }
+    public string DbPath { get; }
 
     private HashSet<JsonEntityConfiguration> Entities { get; }
 
-    private FileInfo DbFile { get; }
-
-    public string DbPath { get; }
+    private ConcurrentDictionary<Type, dynamic> Tables { get; set; } = new();
 
     private SemaphoreSlim DbLock { get; } = new(1, 1);
 
