@@ -20,12 +20,9 @@ public class CompositionTests
         }
     }
 
-    [Fact]
-    public void TestBranchClosureRemovesEmployees()
+    private static LocalEmployee CreateLocalEmployee(Branch branch)
     {
-        var branch = new TestBranch("Composition Branch");
-
-        var employee = new LocalEmployee(
+        return new LocalEmployee(
             100,
             "John",
             "Doe",
@@ -39,11 +36,19 @@ public class CompositionTests
             "12:00",
             branch
         );
+    }
+
+    [Fact]
+    public void TestBranchClosureRemovesEmployees()
+    {
+        var branch = new TestBranch("Composition Branch");
+        var employee = CreateLocalEmployee(branch);
 
         Assert.Contains(branch, Branch.All);
         Assert.Contains(employee, LocalEmployee.All);
         Assert.Contains(employee, Employee.All);
         Assert.Contains(employee, Person.All);
+        Assert.Contains(employee, branch.Employees);
         Assert.Single(branch.Employees);
 
         branch.CloseBranch();
@@ -55,31 +60,16 @@ public class CompositionTests
         Assert.DoesNotContain(employee, branch.Employees);
     }
 
-    // Test Reverse connections
-
     [Fact]
     public void TestEmployeeDeletionRemovesFromBranch()
     {
         var branch = new TestBranch("Composition Branch");
-
-        var employee = new LocalEmployee(
-            100,
-            "Bob",
-            "Johnson",
-            "+48111222555",
-            "bob.johnson@example.com",
-            "password789",
-            "90010112347",
-            5500m,
-            EmploymentType.FullTime,
-            ["Safety"],
-            "12:00",
-            branch
-        );
+        var employee = CreateLocalEmployee(branch);
 
         Assert.Contains(employee, LocalEmployee.All);
         Assert.Contains(employee, Employee.All);
         Assert.Contains(employee, Person.All);
+        Assert.Contains(employee, branch.Employees);
         Assert.Single(branch.Employees);
 
         employee.Delete();
@@ -94,25 +84,12 @@ public class CompositionTests
     public void TestBranchRemoveEmployeeRemovesFromBranch()
     {
         var branch = new TestBranch("Composition Branch");
-
-        var employee = new LocalEmployee(
-            100,
-            "Bob",
-            "Johnson",
-            "+48111222555",
-            "bob.johnson@example.com",
-            "password789",
-            "90010112347",
-            5500m,
-            EmploymentType.FullTime,
-            ["Safety"],
-            "12:00",
-            branch
-        );
+        var employee = CreateLocalEmployee(branch);
 
         Assert.Contains(employee, LocalEmployee.All);
         Assert.Contains(employee, Employee.All);
         Assert.Contains(employee, Person.All);
+        Assert.Contains(employee, branch.Employees);
         Assert.Single(branch.Employees);
 
         branch.RemoveEmployee(employee);
