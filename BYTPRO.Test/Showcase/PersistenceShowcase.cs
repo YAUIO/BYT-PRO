@@ -118,7 +118,8 @@ public class PersistenceShowcase(ITestOutputHelper console, JsonContext context)
             true,
             null,
             "TRN12345",
-            customer
+            customer,
+            pickupPoint
         );
 
         var offlineOrder = new OfflineOrder(
