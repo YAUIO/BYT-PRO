@@ -301,7 +301,7 @@ public class WithAttributeTests
         pickupPoint.AddProductStock(product3, 1);
 
         Assert.Contains(pickupPoint, product3.StockedIn.Select(s => s.Branch));
-        Assert.Equal(2, pickupPoint.Stocks.Single(s => s.Product.Name == product3.Name).Quantity);
+        Assert.Equal(2, pickupPoint.Stocks.Single(s => s.Product == product3).Quantity);
         Assert.Contains(product3, pickupPoint.Stocks.Select(p => p.Product));
     }
     
