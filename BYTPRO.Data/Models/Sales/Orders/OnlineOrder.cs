@@ -1,3 +1,4 @@
+using BYTPRO.Data.Models.Locations.Branches;
 using Newtonsoft.Json;
 using BYTPRO.Data.Models.People;
 using BYTPRO.Data.Validation;
@@ -81,21 +82,45 @@ public class OnlineOrder : Order
         bool isPaid,
         DateTime? cancellationDate,
         string trackingNumber,
-        Customer customer
+        Customer customer,
+        PickupPoint pickupPoint
     ) : base(id, creationDate, status, cart)
     {
         IsPaid = isPaid;
         CancellationDate = cancellationDate;
         TrackingNumber = trackingNumber;
         Customer = customer;
+        PickupPoint = pickupPoint;
 
         FinishConstruction();
+    }
+    
+    [JsonConstructor]
+    private OnlineOrder(
+        int id,
+        DateTime creationDate,
+        OrderStatus status,
+        DeserializableReadOnlyList<ProductEntry> cart,
+        bool isPaid,
+        DateTime? cancellationDate,
+        string trackingNumber,
+        Customer customer,
+        PickupPoint pickupPoint,
+        bool fromJson = true
+    ) : base(id, creationDate, status, cart)
+    {
+        IsPaid = isPaid;
+        CancellationDate = cancellationDate;
+        _trackingNumber = trackingNumber;
+        Customer = customer;
+        PickupPoint = pickupPoint; 
     }
 
     protected override void OnAfterConstruction()
     {
         Customer.AddOrder(this);
-
+        PickupPoint.AddOrder(this);
+        
         Extent.Add(this);
     }
 
@@ -104,6 +129,7 @@ public class OnlineOrder : Order
     #region ----------< Associations >----------
 
     private readonly Customer _customer;
+    private readonly PickupPoint _pickupPoint;
 
     public Customer Customer
     {
@@ -114,6 +140,15 @@ public class OnlineOrder : Order
             _customer = value;
         }
     }
-
+    
+    public PickupPoint PickupPoint
+    {
+        get => _pickupPoint;
+        init
+        {
+            value.IsNotNull(nameof(PickupPoint));
+            _pickupPoint = value;
+        }
+    }
     #endregion
 }

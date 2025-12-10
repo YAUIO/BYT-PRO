@@ -1,3 +1,4 @@
+using BYTPRO.Data.Models.Sales.Orders;
 using Newtonsoft.Json;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
@@ -61,6 +62,9 @@ public class PickupPoint : Branch
 
         FinishConstruction();
     }
+    
+    [JsonConstructor]
+    private PickupPoint() : base(default!, default!, default!, default) { }
 
     protected override void OnAfterConstruction()
     {
@@ -70,7 +74,18 @@ public class PickupPoint : Branch
     #endregion
 
     #region ----------< Associations >----------
+    
+    private readonly HashSet<OnlineOrder> _onlineOrders = [];
 
+    [JsonIgnore] public HashSet<OnlineOrder> OnlineOrders => [.._onlineOrders];
+
+    internal void AddOrder(OnlineOrder order)
+    {
+        if (order is not null)
+        {
+            _onlineOrders.Add(order);
+        }
+    }
     protected override void OnBranchClose()
     {
         Extent.Remove(this);
