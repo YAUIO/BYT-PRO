@@ -99,7 +99,7 @@ public class OnlineOrder : Order
     {
         Customer.AddOrder(this);
         PickupPoint.AddOrder(this);
-        
+
         Extent.Add(this);
     }
 
@@ -119,7 +119,7 @@ public class OnlineOrder : Order
             _customer = value;
         }
     }
-    
+
     public PickupPoint PickupPoint
     {
         get => _pickupPoint;
@@ -129,5 +129,6 @@ public class OnlineOrder : Order
             _pickupPoint = value;
         }
     }
+
     #endregion
 }

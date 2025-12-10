@@ -19,9 +19,7 @@ public class BranchOrder : Order
     #region ----------< Attributes >----------
 
     private DateTime _expectedDeliveryDate;
-    
-    private readonly Warehouse _from;
-    private readonly Branch _to;
+
     #endregion
 
     #region ----------< Properties with validation >----------
@@ -34,36 +32,6 @@ public class BranchOrder : Order
             value.IsNotDefault(nameof(ExpectedDeliveryDate));
             CreationDate.IsBefore(value, nameof(CreationDate), nameof(ExpectedDeliveryDate));
             _expectedDeliveryDate = value;
-        }
-    }
-    
-    public Warehouse From
-    {
-        get => _from;
-        init
-        {
-            value.IsNotNull(nameof(From));
- 
-            if (_to is not null && value == _to)
-                throw new ValidationException($"{nameof(From)} cannot be the same branch as {nameof(To)}.");
-
-            _from = value;
-        }
-    }
-
-    public Branch To
-    {
-        get => _to;
-        init
-        {
-            value.IsNotNull(nameof(To));
-            
-            if (value is not Store && value is not PickupPoint)
-            {
-                throw new ValidationException($"{nameof(To)} must be a Store or a PickupPoint, not a general Branch or another Warehouse.");
-            }
-            
-            _to = value;
         }
     }
 
@@ -86,13 +54,45 @@ public class BranchOrder : Order
         ExpectedDeliveryDate = expectedDeliveryDate;
         From = from;
         To = to;
-        
+
         FinishConstruction();
     }
 
     protected override void OnAfterConstruction()
     {
         Extent.Add(this);
+    }
+
+    #endregion
+
+    #region ----------< Associations >----------
+
+    private readonly Warehouse _from;
+
+    public Warehouse From
+    {
+        get => _from;
+        init
+        {
+            value.IsNotNull(nameof(From));
+            _from = value;
+        }
+    }
+
+    private readonly Branch _to;
+
+    public Branch To
+    {
+        get => _to;
+        init
+        {
+            value.IsNotNull(nameof(To));
+
+            if (value is not Store && value is not PickupPoint)
+                throw new ValidationException($"{nameof(To)} must be a Store or a PickupPoint.");
+
+            _to = value;
+        }
     }
 
     #endregion

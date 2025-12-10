@@ -63,6 +63,7 @@ public class PickupPoint : Branch
 
         FinishConstruction();
     }
+
     protected override void OnAfterConstruction()
     {
         Extent.Add(this);
@@ -71,7 +72,7 @@ public class PickupPoint : Branch
     #endregion
 
     #region ----------< Associations >----------
-    
+
     private readonly HashSet<OnlineOrder> _onlineOrders = [];
 
     [JsonIgnore] public HashSet<OnlineOrder> OnlineOrders => [.._onlineOrders];
@@ -80,11 +81,11 @@ public class PickupPoint : Branch
     {
         order.IsNotNull(nameof(order));
         if (order.PickupPoint != this)
-            throw new ValidationException($"{nameof(order.PickupPoint)} must reference this Pickup Point instance.");
-        
+            throw new ValidationException($"{nameof(order.PickupPoint)} must reference this PickupPoint instance.");
+
         _onlineOrders.Add(order);
-        
     }
+
     protected override void OnBranchClose()
     {
         Extent.Remove(this);
