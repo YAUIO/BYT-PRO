@@ -9,23 +9,41 @@ namespace BYTPRO.Test.Data.Associations;
 
 public class FromToBranchTests
 {
-    [Fact]
-    public void ConstructorValidOrderSucceedsAndSetsProperties()
+    private sealed class TestStore : Store
+    {
+        public TestStore(string name) : base(
+            new Address("Street", "2", null, "00-000", "City"),
+            name,
+            "08-20",
+            150m,
+            3,
+            100m,
+            2)
+        {
+            FinishConstruction();
+        }
+    }
+
+    private static Product CreateProduct(string name)
     {
         var images = new DeserializableReadOnlyList<string>(new List<string> { "image.png" }.AsReadOnly());
-        var product = new Product("P1", "D1", 10m, images, 1m, new Dimensions(1,1,1));
-        var today = DateTime.Today;
+        return new Product(name, "D1", 10m, images, 1m, new Dimensions(1,1,1));
+    }
 
+    [Fact]
+    public void ConstructorValidOrderWarehouseToPickupPointSucceeds()
+    {
+        var product = CreateProduct("P1");
         var address = new Address("Street", "1", null, "00-000", "City");
         var warehouseFrom = new Warehouse(address, "Warehouse A", "09-18", 100m, 50m, 10, 0m);
         var branchTo = new PickupPoint(address, "Store B", "09-18", 50m, 20, 5m);
 
         var order = new BranchOrder(
-            1,
-            today,
+            101,
+            DateTime.Today,
             OrderStatus.InProgress,
             [new ProductEntry(product, 5)],
-            today.AddDays(1),
+            DateTime.Today.AddDays(1),
             warehouseFrom,
             branchTo 
         );
@@ -35,85 +53,54 @@ public class FromToBranchTests
         Assert.Equal("Warehouse A", order.From.Name);
         Assert.Contains(order, BranchOrder.All);
     }
+    
+    [Fact]
+    public void ConstructorValidOrderWarehouseToStoreSucceeds()
+    {
+        var product = CreateProduct("P2");
+        var address = new Address("Street", "1", null, "00-000", "City");
+        var warehouseFrom = new Warehouse(address, "Warehouse B", "09-18", 100m, 50m, 10, 0m);
+        var storeTo = new TestStore("Retail Store");
+
+        var order = new BranchOrder(
+            102,
+            DateTime.Today,
+            OrderStatus.InProgress,
+            [new ProductEntry(product, 2)],
+            DateTime.Today.AddDays(1),
+            warehouseFrom,
+            storeTo 
+        );
+
+        Assert.Same(warehouseFrom, order.From);
+        Assert.Same(storeTo, order.To);
+        Assert.Contains(order, BranchOrder.All);
+    }
 
     [Fact]
-    public void ConstructorSameFromAndToThrowsValidationException()
+    public void ConstructorWarehouseToWarehouseThrowsValidationException()
     {
-        var images = new DeserializableReadOnlyList<string>(new List<string> { "image.png" }.AsReadOnly());
-        var product = new Product("P1", "D1", 10m, images, 1m, new Dimensions(1,1,1));
-        var today = DateTime.Today;
-
+        var product = CreateProduct("P3");
         var address = new Address("Street", "1", null, "00-000", "City");
-        var warehouse = new Warehouse(address, "Store A", "09-18", 100m, 50m, 10, 0m);
+        var warehouseFrom = new Warehouse(address, "WH From", "09-18", 100m, 50m, 10, 0m);
+        var warehouseTo = new Warehouse(address, "WH To", "09-18", 100m, 50m, 10, 0m);
 
         var exception = Assert.Throws<ValidationException>(() =>
         {
             new BranchOrder(
-                1,
-                today,
+                103,
+                DateTime.Today,
                 OrderStatus.InProgress,
-                [new ProductEntry(product, 5)],
-                today.AddDays(1),
-                warehouse,
-                warehouse 
+                [new ProductEntry(product, 1)],
+                DateTime.Today.AddDays(1),
+                warehouseFrom,
+                warehouseTo
             );
         });
 
-        Assert.Contains("cannot be the same", exception.Message);
+        Assert.Contains("must be a Store or a PickupPoint", exception.Message);
     }
     
-    [Fact]
-    public void ConstructorDifferentObjectsSameNameSucceeds()
-    {
-        var images = new DeserializableReadOnlyList<string>(new List<string> { "image.png" }.AsReadOnly());
-        var product = new Product("P1", "D1", 10m, images, 1m, new Dimensions(1,1,1));
-        var today = DateTime.Today;
-
-        var address1 = new Address("Street1", "1", null, "00-000", "City");
-        var address2 = new Address("Street2", "2", null, "00-000", "City");
-        
-        var warehouseFrom = new Warehouse(address1, "Shared Name", "09-18", 100m, 50m, 10, 0m);
-        var branchTo = new PickupPoint(address2, "Shared Name", "09-18", 100m, 50, 10m);
-
-        var order = new BranchOrder(
-            1,
-            today,
-            OrderStatus.InProgress,
-            [new ProductEntry(product, 5)],
-            today.AddDays(1),
-            warehouseFrom,
-            branchTo 
-        );
-
-        Assert.NotSame(warehouseFrom, branchTo);
-        Assert.Equal(warehouseFrom.Name, branchTo.Name);
-        Assert.Same(warehouseFrom, order.From);
-        Assert.Same(branchTo, order.To);
-    }
-
-    [Fact]
-    public void ConstructorNullFromThrowsException()
-    {
-        var images = new DeserializableReadOnlyList<string>(new List<string> { "image.png" }.AsReadOnly());
-        var product = new Product("P1", "D1", 10m, images, 1m, new Dimensions(1,1,1));
-        
-        var address = new Address("Street", "1", null, "00-000", "City");
-        var branchTo = new PickupPoint(address, "Store B", "09-18", 50m, 20, 5m);
-
-        Assert.ThrowsAny<Exception>(() =>
-        {
-            new BranchOrder(
-                1, 
-                DateTime.Today, 
-                OrderStatus.InProgress, 
-                [new ProductEntry(product, 1)], 
-                DateTime.Today.AddDays(1),
-                null!,
-                branchTo
-            );
-        });
-    }
-
     [Fact]
     public void ConstructorNullToThrowsException()
     {
@@ -126,7 +113,7 @@ public class FromToBranchTests
         Assert.ThrowsAny<Exception>(() =>
         {
             new BranchOrder(
-                1, 
+                107,
                 DateTime.Today, 
                 OrderStatus.InProgress, 
                 [new ProductEntry(product, 1)], 
@@ -135,19 +122,5 @@ public class FromToBranchTests
                 null!
             );
         });
-    }
-    
-    [Fact]
-    public void ConstructorFromPickupPointCausesCompilationError()
-    {
-        var images = new DeserializableReadOnlyList<string>(new List<string> { "image.png" }.AsReadOnly());
-        var product = new Product("P1", "D1", 10m, images, 1m, new Dimensions(1,1,1));
-        var today = DateTime.Today;
-        
-        var address = new Address("Street", "1", null, "00-000", "City");
-        var pickupPointFrom = new PickupPoint(address, "Pickup Point", "09-18", 50m, 20, 5m);
-        var branchTo = new PickupPoint(address, "Store B", "09-18", 50m, 20, 5m);
-
-        Assert.True(true, " From has to be a Warehouse");
     }
 }

@@ -57,10 +57,12 @@ public class BranchOrder : Order
         init
         {
             value.IsNotNull(nameof(To));
-
-            if (_from is not null && value == _from)
-                throw new ValidationException($"{nameof(To)} cannot be the same as {nameof(From)}.");
-
+            
+            if (value is not Store && value is not PickupPoint)
+            {
+                throw new ValidationException($"{nameof(To)} must be a Store or a PickupPoint, not a general Branch or another Warehouse.");
+            }
+            
             _to = value;
         }
     }
