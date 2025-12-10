@@ -1,3 +1,4 @@
+using BYTPRO.Data.Models.Locations.Branches;
 using BYTPRO.Data.Validation;
 using Newtonsoft.Json;
 using BYTPRO.Data.Validation.Validators;
@@ -19,9 +20,8 @@ public class BranchOrder : Order
 
     private DateTime _expectedDeliveryDate;
     
-    private readonly string _from;
-    private readonly string _to;
-
+    private readonly Branch _from;
+    private readonly Branch _to;
     #endregion
 
     #region ----------< Properties with validation >----------
@@ -37,28 +37,26 @@ public class BranchOrder : Order
         }
     }
     
-    public string From
+    public Branch From
     {
         get => _from;
         init
         {
-            value.IsNotNullOrEmpty(nameof(From));
-            value.IsBelowMaxLength(50);
+            value.IsNotNull(nameof(From));
  
             if (_to is not null && value == _to)
-                throw new ValidationException($"{nameof(From)} cannot be the same as {nameof(To)}.");
+                throw new ValidationException($"{nameof(From)} cannot be the same branch as {nameof(To)}.");
 
             _from = value;
         }
     }
 
-    public string To
+    public Branch To
     {
         get => _to;
         init
         {
-            value.IsNotNullOrEmpty(nameof(To));
-            value.IsBelowMaxLength(50);
+            value.IsNotNull(nameof(To));
 
             if (_from is not null && value == _from)
                 throw new ValidationException($"{nameof(To)} cannot be the same as {nameof(From)}.");
@@ -79,8 +77,8 @@ public class BranchOrder : Order
         OrderStatus status,
         DeserializableReadOnlyList<ProductEntry> cart,
         DateTime expectedDeliveryDate,
-        string from,
-        string to
+        Branch from,
+        Branch to
     ) : base(id, creationDate, status, cart)
     {
         ExpectedDeliveryDate = expectedDeliveryDate;
@@ -88,24 +86,6 @@ public class BranchOrder : Order
         To = to;
         
         FinishConstruction();
-    }
-    
-    [JsonConstructor]
-    private BranchOrder(
-        int id,
-        DateTime creationDate,
-        OrderStatus status,
-        DeserializableReadOnlyList<ProductEntry> cart,
-        DateTime expectedDeliveryDate,
-        string from,
-        string to,
-        bool fromJson = true  
-    ) : base(id, creationDate, status, cart)
-    {
-        ExpectedDeliveryDate = expectedDeliveryDate;
-        
-        _from = from;
-        _to = to;
     }
 
     protected override void OnAfterConstruction()

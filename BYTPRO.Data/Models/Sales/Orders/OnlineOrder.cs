@@ -94,27 +94,6 @@ public class OnlineOrder : Order
 
         FinishConstruction();
     }
-    
-    [JsonConstructor]
-    private OnlineOrder(
-        int id,
-        DateTime creationDate,
-        OrderStatus status,
-        DeserializableReadOnlyList<ProductEntry> cart,
-        bool isPaid,
-        DateTime? cancellationDate,
-        string trackingNumber,
-        Customer customer,
-        PickupPoint pickupPoint,
-        bool fromJson = true
-    ) : base(id, creationDate, status, cart)
-    {
-        IsPaid = isPaid;
-        CancellationDate = cancellationDate;
-        _trackingNumber = trackingNumber;
-        Customer = customer;
-        PickupPoint = pickupPoint; 
-    }
 
     protected override void OnAfterConstruction()
     {
