@@ -213,7 +213,7 @@ public abstract class Branch
         }
     }
 
-    public void AssociateWithProduct(BranchProductStock stockItem)
+    internal void AssociateWithProduct(BranchProductStock stockItem)
     {
         stockItem.IsNotNull(nameof(stockItem));
         if (stockItem.Branch != this)

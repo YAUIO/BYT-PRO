@@ -108,7 +108,6 @@ public class OnlineOrder : Order
     #region ----------< Associations >----------
 
     private readonly Customer _customer;
-    private readonly PickupPoint _pickupPoint;
 
     public Customer Customer
     {
@@ -119,6 +118,8 @@ public class OnlineOrder : Order
             _customer = value;
         }
     }
+
+    private readonly PickupPoint _pickupPoint;
 
     public PickupPoint PickupPoint
     {

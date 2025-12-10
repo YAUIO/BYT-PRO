@@ -93,7 +93,7 @@ public class Store : Branch
 
     [JsonIgnore] public HashSet<OfflineOrder> OfflineOrders => [.._offlineOrders];
 
-    public void AddOrder(OfflineOrder order)
+    internal void AddOrder(OfflineOrder order)
     {
         order.IsNotNull(nameof(order));
         if (order.Store != this)

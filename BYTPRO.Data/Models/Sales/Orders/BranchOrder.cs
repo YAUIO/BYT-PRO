@@ -87,7 +87,6 @@ public class BranchOrder : Order
         init
         {
             value.IsNotNull(nameof(To));
-
             if (value is not Store && value is not PickupPoint)
                 throw new ValidationException($"{nameof(To)} must be a Store or a PickupPoint.");
 

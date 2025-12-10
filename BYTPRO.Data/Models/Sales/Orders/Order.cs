@@ -156,7 +156,7 @@ public abstract class Order
         }
     }
 
-    public void AssociateWithProduct(ProductQuantityInOrder orderItem)
+    internal void AssociateWithProduct(ProductQuantityInOrder orderItem)
     {
         orderItem.IsNotNull(nameof(orderItem));
         if (orderItem.Order != this)
