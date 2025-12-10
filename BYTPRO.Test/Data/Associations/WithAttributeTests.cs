@@ -173,4 +173,72 @@ public class WithAttributeTests
         Assert.Contains(order, product3.AssociatedOrders.Select(p => p.Order));
         Assert.Contains(product3, order.AssociatedProducts.Select(p => p.Product));
     }
+    
+    [Fact]
+    public void TestAssociateWithOrderThrows()
+    {
+        var product3 = new Product(
+            "Product3",
+            "Description3",
+            50m,
+            ["/Product3_1.png"],
+            5m,
+            new Dimensions(15m, 15m, 15m)
+        );
+        
+        var product2 = new Product(
+            "Product2",
+            "Description2",
+            50m,
+            ["/Product2_1.png"],
+            5m,
+            new Dimensions(5m, 5m, 5m)
+        );
+        
+        var order = new BranchOrder(
+            302,
+            DateTime.Today,
+            OrderStatus.InProgress,
+            [new(product2, 1)],
+            DateTime.Today.AddDays(1),
+            "Warehouse A", 
+            "Store B"
+        );
+        
+        Assert.Throws<ValidationException>(() => order.AssociateWithProduct(new ProductQuantityInOrder(product2, order, 1)));
+    }
+    
+    [Fact]
+    public void TestAssociateWithProductThrows()
+    {
+        var product3 = new Product(
+            "Product3",
+            "Description3",
+            50m,
+            ["/Product3_1.png"],
+            5m,
+            new Dimensions(15m, 15m, 15m)
+        );
+        
+        var product2 = new Product(
+            "Product2",
+            "Description2",
+            50m,
+            ["/Product2_1.png"],
+            5m,
+            new Dimensions(5m, 5m, 5m)
+        );
+        
+        var order = new BranchOrder(
+            303,
+            DateTime.Today,
+            OrderStatus.InProgress,
+            [new(product2, 1)],
+            DateTime.Today.AddDays(1),
+            "Warehouse A", 
+            "Store B"
+        );
+        
+        Assert.Throws<ValidationException>(() => product3.AssociateWithOrder(new ProductQuantityInOrder(product2, order, 1)));
+    }
 }
