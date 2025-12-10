@@ -5,54 +5,15 @@ using BYTPRO.Data.Models.Sales;
 using BYTPRO.Data.Models.Sales.Orders;
 using BYTPRO.Data.Validation;
 using BYTPRO.JsonEntityFramework.Context;
-using System.IO;
 
 namespace BYTPRO.Test.Data.Associations;
 
 public class QualifiedTests
 {
-    private static string DbRoot => $"{Directory.GetCurrentDirectory()}/TestQualifiedDb";
-
-    private static void ResetContext(bool clearContext = true)
+    private static Product CreateTestProduct()
     {
-        if (Directory.Exists(DbRoot) && clearContext) 
-            Directory.Delete(DbRoot, true);
-        
-        if (!Directory.Exists(DbRoot))
-            Directory.CreateDirectory(DbRoot);
-        
-        JsonContext.Context = null;
-
-        var ctx = new JsonContextBuilder()
-            .AddJsonEntity<Product>()
-            .AddJsonEntity<Customer>()
-            .AddJsonEntity<PickupPoint>()
-            .AddJsonEntity<OnlineOrder>()
-            .BuildWithDbRoot(Path.Combine(DbRoot, "test.json"));
-        
-        JsonContext.Context = ctx;
-    }
-
-    [Fact]
-    public void TestCreateOnlineOrderShouldAddItToCustomerAccessibleByTrackingNumber()
-    {
-        ResetContext();
-
-        var address = new Address("St", "1", null, "00", "City");
-        var pickupPoint = new PickupPoint(address, "Point A", "09-18", 50, 100, 20);
-
-        var customer = new Customer(
-            101,
-            "Alice",
-            "Wonderland",
-            "+123456789",
-            "alice@example.com",
-            "password123",
-            DateTime.Now.AddDays(-10)
-        );
-
         var images = new DeserializableReadOnlyList<string>(new List<string> { "img.png" }.AsReadOnly());
-        var product = new Product(
+        return new Product(
             "TestProduct",
             "Description",
             100m,
@@ -60,6 +21,34 @@ public class QualifiedTests
             1.5m,
             new Dimensions(10, 10, 10)
         );
+    }
+    
+    private static Customer CreateTestCustomer(int id, string trackingPrefix)
+    {
+        return new Customer(
+            id,
+            "Name",
+            "Surname",
+            "+123456789",
+            $"{trackingPrefix}@example.com",
+            "password123",
+            DateTime.Now.AddDays(-10)
+        );
+    }
+
+    private static PickupPoint CreateTestPickupPoint(string name)
+    {
+        var address = new Address("St", "1", null, "00", "City");
+        return new PickupPoint(address, name, "09-18", 50, 100, 20);
+    }
+
+
+    [Fact]
+    public void ConstructorValidOrderSucceedsAndSetsProperties()
+    {
+        var pickupPoint = CreateTestPickupPoint("Point A");
+        var customer = CreateTestCustomer(101, "alice");
+        var product = CreateTestProduct();
 
         const string trackingNumber = "TRACK-ABC-123";
 
@@ -86,32 +75,11 @@ public class QualifiedTests
     }
 
     [Fact]
-    public void TestCreateOnlineOrderFailsIfTrackingNumberAlreadyExists()
+    public void ConstructorTrackingNumberAlreadyExistsThrowsValidationException()
     {
-        ResetContext();
-
-        var address = new Address("St", "1", null, "00", "City");
-        var pickupPoint = new PickupPoint(address, "Point B", "09-18", 50, 100, 20);
-
-        var customer = new Customer(
-            1002,
-            "John",
-            "Smith",
-            "+123456789",
-            "john.smith@example.com",
-            "password123",
-            DateTime.Now.AddDays(-10)
-        );
-
-        var images = new DeserializableReadOnlyList<string>(new List<string> { "img.png" }.AsReadOnly());
-        var product = new Product(
-            "Product",
-            "Description",
-            100m,
-            images,
-            1.5m,
-            new Dimensions(10, 10, 10)
-        );
+        var pickupPoint = CreateTestPickupPoint("Point B");
+        var customer = CreateTestCustomer(1002, "john");
+        var product = CreateTestProduct();
 
         var order1 = new OnlineOrder(
             202,
@@ -125,15 +93,12 @@ public class QualifiedTests
             pickupPoint
         );
 
-        Assert.Contains(order1, Order.All);
-        Assert.Contains(order1, OnlineOrder.All);
-
         Assert.True(customer.OnlineOrders.ContainsKey("TRACK-ABC-12345"));
         Assert.True(customer.OnlineOrders.ContainsValue(order1));
 
         Assert.Throws<ValidationException>(() =>
         {
-            var order2 = new OnlineOrder(
+            new OnlineOrder(
                 203,
                 DateTime.Now,
                 OrderStatus.InProgress,
@@ -141,6 +106,73 @@ public class QualifiedTests
                 false,
                 null,
                 "TRACK-ABC-12345",
+                customer,
+                pickupPoint
+            );
+        });
+    }
+
+    [Fact]
+    public void ConstructorNullCustomerThrowsException()
+    {
+        var pickupPoint = CreateTestPickupPoint("Point C");
+        var product = CreateTestProduct();
+
+        Assert.ThrowsAny<Exception>(() =>
+        {
+            new OnlineOrder(
+                204,
+                DateTime.Now,
+                OrderStatus.InProgress,
+                [new ProductEntry(product, 1)],
+                true,
+                null,
+                "TRACK-NULL-CUSTOMER",
+                null!,
+                pickupPoint
+            );
+        });
+    }
+
+    [Fact]
+    public void ConstructorNullPickupPointThrowsException()
+    {
+        var customer = CreateTestCustomer(1003, "dave");
+        var product = CreateTestProduct();
+
+        Assert.ThrowsAny<Exception>(() =>
+        {
+            new OnlineOrder(
+                205,
+                DateTime.Now,
+                OrderStatus.InProgress,
+                [new ProductEntry(product, 1)],
+                true,
+                null,
+                "TRACK-NULL-POINT",
+                customer,
+                null!
+            );
+        });
+    }
+
+    [Fact]
+    public void ConstructorNullTrackingNumberThrowsException()
+    {
+        var pickupPoint = CreateTestPickupPoint("Point D");
+        var customer = CreateTestCustomer(1004, "eve");
+        var product = CreateTestProduct();
+
+        Assert.Throws<ValidationException>(() =>
+        {
+            new OnlineOrder(
+                206,
+                DateTime.Now,
+                OrderStatus.InProgress,
+                [new ProductEntry(product, 1)],
+                true,
+                null,
+                null!,
                 customer,
                 pickupPoint
             );

@@ -20,7 +20,7 @@ public class BranchOrder : Order
 
     private DateTime _expectedDeliveryDate;
     
-    private readonly Branch _from;
+    private readonly Warehouse _from;
     private readonly Branch _to;
     #endregion
 
@@ -37,7 +37,7 @@ public class BranchOrder : Order
         }
     }
     
-    public Branch From
+    public Warehouse From
     {
         get => _from;
         init
@@ -77,7 +77,7 @@ public class BranchOrder : Order
         OrderStatus status,
         DeserializableReadOnlyList<ProductEntry> cart,
         DateTime expectedDeliveryDate,
-        Branch from,
+        Warehouse from,
         Branch to
     ) : base(id, creationDate, status, cart)
     {

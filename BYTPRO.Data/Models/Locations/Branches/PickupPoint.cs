@@ -80,7 +80,7 @@ public class PickupPoint : Branch
     {
         order.IsNotNull(nameof(order));
         if (order.PickupPoint != this)
-            throw new ValidationException($"{nameof(order.PickupPoint)} must reference this Store instance.");
+            throw new ValidationException($"{nameof(order.PickupPoint)} must reference this Pickup Point instance.");
         
         _onlineOrders.Add(order);
         
