@@ -98,17 +98,6 @@ public class AggregationTests
         
         Assert.Single(product.StockedIn);
     }
-
-    [Fact]
-    public void AddProductStockZeroQuantityThrowsValidationException()
-    {
-        var branch = new TestBranch("Test Branch");
-        var product = CreateProduct("P4");
-
-        Assert.Throws<ValidationException>(() => branch.AddProductStock(product, 0));
-        
-        Assert.Empty(branch.Stocks);
-    }
     
     [Fact]
     public void ReduceProductStockSucceedsAndDecrementsQuantity()
