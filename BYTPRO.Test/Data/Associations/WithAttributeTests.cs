@@ -9,7 +9,7 @@ namespace BYTPRO.Test.Data.Associations;
 public class WithAttributeTests
 {
     private static readonly Address TestAddress = new("Street", "1", null, "00-000", "City");
-    private static readonly Warehouse WarehouseA = new Warehouse(TestAddress, "Warehouse A", "09-17", 100m, 50m, 10, 0);
+    private static readonly Warehouse WarehouseA = new Warehouse(TestAddress, "Warehouse A", "09-17", 100m, 50m, 10);
     private static readonly Branch BranchB = new PickupPoint(TestAddress, "Store B", "09-18", 100m, 50, 10m);
 
     [Fact]

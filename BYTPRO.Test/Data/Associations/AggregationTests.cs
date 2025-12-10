@@ -2,7 +2,6 @@
 using BYTPRO.Data.Models.Locations.Branches;
 using BYTPRO.Data.Models.Sales;
 using BYTPRO.Data.Validation;
-using BYTPRO.JsonEntityFramework.Context;
 
 namespace BYTPRO.Test.Data.Associations;
 
@@ -22,16 +21,13 @@ public class AggregationTests
 
     private static Product CreateProduct(string name)
     {
-        var imagesList = new DeserializableReadOnlyList<string>(new List<string> { "img.png" }.AsReadOnly());
-        
         return new Product(
             name,
             "Description",
             5.0m,
-            imagesList,
+            ["img.png"],
             1.0m,
-            new Dimensions(10, 10, 20),
-            null
+            new Dimensions(10, 10, 20)
         );
     }
 
@@ -63,7 +59,7 @@ public class AggregationTests
 
         Assert.DoesNotContain(branch, Branch.All);
     }
-    
+
     [Fact]
     public void AddProductStockNewProductSetsBidirectionalLink()
     {
@@ -77,12 +73,12 @@ public class AggregationTests
 
         Assert.Same(branch, stockItem.Branch);
         Assert.Contains(stockItem, branch.Stocks);
-        
+
         Assert.Same(product, stockItem.Product);
         Assert.Contains(stockItem, product.StockedIn);
         Assert.Equal(10, stockItem.Quantity);
     }
-    
+
     [Fact]
     public void AddProductStockExistingProductIncrementsQuantity()
     {
@@ -95,10 +91,10 @@ public class AggregationTests
         Assert.Single(branch.Stocks);
         var stockItem = branch.Stocks.First();
         Assert.Equal(20, stockItem.Quantity);
-        
+
         Assert.Single(product.StockedIn);
     }
-    
+
     [Fact]
     public void ReduceProductStockSucceedsAndDecrementsQuantity()
     {
@@ -106,9 +102,9 @@ public class AggregationTests
         var product = CreateProduct("P5");
 
         branch.AddProductStock(product, 100);
-        
+
         branch.ReduceStockForItems([new ProductEntry(product, 30)]);
-        
+
         var stockItem = branch.Stocks.First();
         Assert.Equal(70, stockItem.Quantity);
     }
@@ -120,33 +116,33 @@ public class AggregationTests
         var product = CreateProduct("P6");
 
         branch.AddProductStock(product, 5);
-        
-        Assert.Throws<InvalidOperationException>(() => 
+
+        Assert.Throws<InvalidOperationException>(() =>
             branch.ReduceStockForItems([new ProductEntry(product, 10)]));
-        
+
         Assert.Equal(5, branch.Stocks.First().Quantity);
     }
-    
+
     [Fact]
     public void ReduceProductStockNonExistingProductThrowsInvalidOperationException()
     {
         var branch = new TestBranch("Test Branch");
         var product = CreateProduct("P7");
         var missingProduct = CreateProduct("P8");
-        
+
         branch.AddProductStock(product, 5);
-        
-        Assert.Throws<InvalidOperationException>(() => 
+
+        Assert.Throws<InvalidOperationException>(() =>
             branch.ReduceStockForItems([new ProductEntry(missingProduct, 1)]));
     }
-    
+
     [Fact]
     public void BranchProductStockConstructorNegativeQuantityThrowsValidationException()
     {
         var branch = new TestBranch("Test Branch");
         var product = CreateProduct("P9");
 
-        Assert.Throws<ValidationException>(() => 
+        Assert.Throws<ValidationException>(() =>
             new BranchProductStock(branch, product, -1));
     }
 }
