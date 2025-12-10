@@ -39,7 +39,7 @@ public class FromToBranchTests
         var branchTo = new PickupPoint(address, "Store B", "09-18", 50m, 20, 5m);
 
         var order = new BranchOrder(
-            101,
+            501,
             DateTime.Today,
             OrderStatus.InProgress,
             [new ProductEntry(product, 5)],
@@ -63,7 +63,7 @@ public class FromToBranchTests
         var storeTo = new TestStore("Retail Store");
 
         var order = new BranchOrder(
-            102,
+            502,
             DateTime.Today,
             OrderStatus.InProgress,
             [new ProductEntry(product, 2)],

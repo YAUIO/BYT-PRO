@@ -12,7 +12,7 @@ public class PickupPointTests
     [Fact]
     public void CreateOnlineOrder()
     {
-        var customer = new Customer(1, "Alice", "Test", "123456789", "alice@test.com", "pass", DateTime.Now);
+        var customer = new Customer(11, "Alice", "Test", "+123456789", "alice@test.com", "pass", DateTime.Now);
         
         var images = new DeserializableReadOnlyList<string>(new List<string> { "img.png" }.AsReadOnly());
         var product = new Product("Prod1", "Desc", 100m, images, 1m, new Dimensions(1,1,1));
@@ -21,7 +21,7 @@ public class PickupPointTests
         var pickupPoint = new PickupPoint(address, "Point A", "09:00-20:00", 50m, 100, 20m);
 
         var order = new OnlineOrder(
-            101,
+            111,
             DateTime.Now,
             OrderStatus.InProgress,
             [new ProductEntry(product, 1)],
@@ -42,7 +42,7 @@ public class PickupPointTests
     [Fact]
     public void CreateMultipleOrders()
     {
-        var customer = new Customer(1, "Bob", "Test", "987654321", "bob@test.com", "pass", DateTime.Now);
+        var customer = new Customer(22, "Bob", "Test", "+987654321", "bob@test.com", "pass", DateTime.Now);
         
         var images = new DeserializableReadOnlyList<string>(new List<string> { "img.png" }.AsReadOnly());
         var product = new Product("Prod1", "Desc", 100m, images, 1m, new Dimensions(1,1,1));
@@ -50,8 +50,8 @@ public class PickupPointTests
         var address = new Address("Street", "2", null, "00-000", "City");
         var pickupPoint = new PickupPoint(address, "Point B", "10:00-20:00", 100m, 200, 20m);
 
-        var order1 = new OnlineOrder(201, DateTime.Now, OrderStatus.InProgress, [new ProductEntry(product, 1)], true, null, "T1", customer, pickupPoint);
-        var order2 = new OnlineOrder(202, DateTime.Now, OrderStatus.InProgress, [new ProductEntry(product, 1)], true, null, "T2", customer, pickupPoint);
+        var order1 = new OnlineOrder(401, DateTime.Now, OrderStatus.InProgress, [new ProductEntry(product, 1)], true, null, "T1", customer, pickupPoint);
+        var order2 = new OnlineOrder(402, DateTime.Now, OrderStatus.InProgress, [new ProductEntry(product, 1)], true, null, "T2", customer, pickupPoint);
 
         Assert.Equal(2, pickupPoint.OnlineOrders.Count);
         Assert.Contains(order1, pickupPoint.OnlineOrders);
@@ -61,14 +61,14 @@ public class PickupPointTests
     [Fact]
     public void CreateOnlineOrderWithNullPickupPoint()
     {
-        var customer = new Customer(1, "Alice", "Test", "123456789", "alice@test.com", "pass", DateTime.Now);
+        var customer = new Customer(33, "Maria", "Test", "+123456789", "maria@test.com", "pass", DateTime.Now);
         var images = new DeserializableReadOnlyList<string>(new List<string> { "img.png" }.AsReadOnly());
         var product = new Product("Prod1", "Desc", 100m, images, 1m, new Dimensions(1,1,1));
 
         Assert.ThrowsAny<Exception>(() =>
         {
             new OnlineOrder(
-                101,
+                121,
                 DateTime.Now,
                 OrderStatus.InProgress,
                 [new ProductEntry(product, 1)],
