@@ -7,37 +7,63 @@ public class ReflexTests
     [Fact]
     public void TestCreateProductOfOtherProducts()
     {
-        var product1 = new Product(
-            "Product1",
-            "Description1",
-            100m,
-            ["/Product1_1.png", "/Product1_2.png"],
-            10m,
-            new Dimensions(10m, 10m, 10m)
+        var cpu = new Product(
+            "CPU",
+            "Best Central Processor ever",
+            10000m,
+            ["/CPU1.png", "/CPU2.png"],
+            0.1m,
+            new Dimensions(0.1m, 0.1m, 0.1m)
         );
 
-        var product2 = new Product(
-            "Product2",
-            "Description2",
-            50m,
-            ["/Product2_1.png"],
-            5m,
-            new Dimensions(5m, 5m, 5m)
+        var gpu = new Product(
+            "GPU",
+            "Best Graphics Card ever",
+            20000m,
+            ["/GPU1.png", "/GPU2.png"],
+            1m,
+            new Dimensions(0.5m, 0.25m, 0.1m)
         );
 
-        var product3 = new Product(
-            "Product3",
-            "Description3",
-            50m,
-            ["/Product3_1.png"],
-            5m,
-            new Dimensions(15m, 15m, 15m),
-            [product1, product2]
+        var motherboard = new Product(
+            "Motherboard",
+            "Best Motherboard ever",
+            5000m,
+            ["/Motherboard.png"],
+            0.5m,
+            new Dimensions(0.5m, 0.5m, 0.2m)
         );
 
-        var product3ConsistsOf = product3.ConsistsOf;
+        var computer = new Product(
+            "Computer",
+            "Best Computer ever",
+            cpu.Price + gpu.Price + motherboard.Price + 2000m,
+            ["/Computer1.png", "/Computer2.png"],
+            3m,
+            new Dimensions(1m, 1m, 1m),
+            [cpu, gpu, motherboard]
+        );
 
-        Assert.Contains(product1, product3ConsistsOf);
-        Assert.Contains(product2, product3ConsistsOf);
+        // Extents
+        var registeredProducts = Product.All;
+        Assert.Contains(cpu, registeredProducts);
+        Assert.Contains(gpu, registeredProducts);
+        Assert.Contains(motherboard, registeredProducts);
+        Assert.Contains(computer, registeredProducts);
+
+        // Reflex connection
+        Assert.Empty(cpu.ConsistsOf);
+        Assert.Empty(gpu.ConsistsOf);
+        Assert.Empty(motherboard.ConsistsOf);
+
+        var computerParts = computer.ConsistsOf;
+        Assert.Contains(cpu, computerParts);
+        Assert.Contains(gpu, computerParts);
+        Assert.Contains(motherboard, computerParts);
+
+        // Reverse reflex connection
+        Assert.Contains(computer, cpu.ConsistsIn);
+        Assert.Contains(computer, gpu.ConsistsIn);
+        Assert.Contains(computer, motherboard.ConsistsIn);
     }
 }
