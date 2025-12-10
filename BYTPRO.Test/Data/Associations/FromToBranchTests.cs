@@ -1,7 +1,10 @@
-﻿using BYTPRO.Data.Models.Sales;
+﻿using BYTPRO.Data.Models.Locations;
+using BYTPRO.Data.Models.Locations.Branches;
+using BYTPRO.Data.Models.Sales;
 using BYTPRO.Data.Models.Sales.Orders;
 using BYTPRO.JsonEntityFramework.Context;
 using BYTPRO.Data.Validation;
+using System.IO;
 
 namespace BYTPRO.Test.Data.Associations;
 
@@ -21,6 +24,7 @@ public class FromToBranchTests
 
         var ctx = new JsonContextBuilder()
             .AddJsonEntity<Product>()
+            .AddJsonEntity<PickupPoint>()
             .AddJsonEntity<BranchOrder>()
             .BuildWithDbRoot(Path.Combine(DbRoot, "test.json"));
         
@@ -36,18 +40,24 @@ public class FromToBranchTests
         var product = new Product("P1", "D1", 10m, images, 1m, new Dimensions(1,1,1));
         var today = DateTime.Today;
 
+        var address = new Address("Street", "1", null, "00-000", "City");
+        var branchFrom = new PickupPoint(address, "Warehouse A", "09-18", 100m, 50, 10m);
+        var branchTo = new PickupPoint(address, "Store B", "09-18", 50m, 20, 5m);
+
         var order = new BranchOrder(
             1,
             today,
             OrderStatus.InProgress,
             [new ProductEntry(product, 5)],
             today.AddDays(1),
-            "Warehouse A",
-            "Store B"
+            branchFrom,
+            branchTo 
         );
 
-        Assert.Equal("Warehouse A", order.From);
-        Assert.Equal("Store B", order.To);
+        // 4. Проверяем
+        Assert.Same(branchFrom, order.From);
+        Assert.Same(branchTo, order.To);
+        Assert.Equal("Warehouse A", order.From.Name);
         Assert.Contains(order, BranchOrder.All);
     }
 
@@ -58,8 +68,10 @@ public class FromToBranchTests
 
         var images = new DeserializableReadOnlyList<string>(new List<string> { "image.png" }.AsReadOnly());
         var product = new Product("P1", "D1", 10m, images, 1m, new Dimensions(1,1,1));
-        
         var today = DateTime.Today;
+
+        var address = new Address("Street", "1", null, "00-000", "City");
+        var branch = new PickupPoint(address, "Store A", "09-18", 100m, 50, 10m);
 
         var exception = Assert.Throws<ValidationException>(() =>
         {
@@ -69,8 +81,8 @@ public class FromToBranchTests
                 OrderStatus.InProgress,
                 [new ProductEntry(product, 5)],
                 today.AddDays(1),
-                "Store A",
-                "Store A"
+                branch,
+                branch 
             );
         });
 
@@ -78,82 +90,51 @@ public class FromToBranchTests
     }
 
     [Fact]
-    public void CreateBranchOrderWithEmptyFrom()
-    {
-        ResetContext();
-        
-        var images = new DeserializableReadOnlyList<string>(new List<string> { "image.png" }.AsReadOnly());
-        var product = new Product("P1", "D1", 10m, images, 1m, new Dimensions(1,1,1));
-        
-        Assert.Throws<ValidationException>(() =>
-        {
-            new BranchOrder(
-                1, 
-                DateTime.Today, 
-                OrderStatus.InProgress,
-                [new ProductEntry(product, 1)], 
-                DateTime.Today.AddDays(1),
-                "",
-                "Store B"
-            );
-        });
-    }
-
-    [Fact]
-    public void CreateBranchOrderWithEmptyTo()
-    {
-        ResetContext();
-        
-        var images = new DeserializableReadOnlyList<string>(new List<string> { "image.png" }.AsReadOnly());
-        var product = new Product("P1", "D1", 10m, images, 1m, new Dimensions(1,1,1));
-        
-        Assert.Throws<ValidationException>(() =>
-        {
-            new BranchOrder(
-                1, 
-                DateTime.Today, 
-                OrderStatus.InProgress,
-                [new ProductEntry(product, 1)], 
-                DateTime.Today.AddDays(1),
-                "Store A",
-                ""
-            );
-        });
-    }
-
-    [Fact]
-    public void CreateBranchOrderWithFromExceedingMaxLength()
-    {
-        ResetContext();
-        
-        var images = new DeserializableReadOnlyList<string>(new List<string> { "image.png" }.AsReadOnly());
-        var product = new Product("P1", "D1", 10m, images, 1m, new Dimensions(1,1,1));
-        
-        string longName = new string('A', 51); 
-
-        Assert.Throws<ValidationException>(() =>
-        {
-            new BranchOrder(
-                1, DateTime.Today, OrderStatus.InProgress, [new ProductEntry(product, 1)], DateTime.Today.AddDays(1),
-                longName,
-                "Store B"
-            );
-        });
-    }
-
-    [Fact]
     public void CreateBranchOrderWithNullFrom()
     {
         ResetContext();
+        
         var images = new DeserializableReadOnlyList<string>(new List<string> { "image.png" }.AsReadOnly());
         var product = new Product("P1", "D1", 10m, images, 1m, new Dimensions(1,1,1));
+        
+        var address = new Address("Street", "1", null, "00-000", "City");
+        var branchTo = new PickupPoint(address, "Store B", "09-18", 50m, 20, 5m);
 
         Assert.ThrowsAny<Exception>(() =>
         {
             new BranchOrder(
-                1, DateTime.Today, OrderStatus.InProgress, [new ProductEntry(product, 1)], DateTime.Today.AddDays(1),
+                1, 
+                DateTime.Today, 
+                OrderStatus.InProgress, 
+                [new ProductEntry(product, 1)], 
+                DateTime.Today.AddDays(1),
                 null!,
-                "Store B"
+                branchTo
+            );
+        });
+    }
+
+    [Fact]
+    public void CreateBranchOrderWithNullTo()
+    {
+        ResetContext();
+        
+        var images = new DeserializableReadOnlyList<string>(new List<string> { "image.png" }.AsReadOnly());
+        var product = new Product("P1", "D1", 10m, images, 1m, new Dimensions(1,1,1));
+        
+        var address = new Address("Street", "1", null, "00-000", "City");
+        var branchFrom = new PickupPoint(address, "Store A", "09-18", 50m, 20, 5m);
+
+        Assert.ThrowsAny<Exception>(() =>
+        {
+            new BranchOrder(
+                1, 
+                DateTime.Today, 
+                OrderStatus.InProgress, 
+                [new ProductEntry(product, 1)], 
+                DateTime.Today.AddDays(1),
+                branchFrom,
+                null!
             );
         });
     }

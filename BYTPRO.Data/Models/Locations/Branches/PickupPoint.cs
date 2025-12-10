@@ -1,4 +1,5 @@
 using BYTPRO.Data.Models.Sales.Orders;
+using BYTPRO.Data.Validation;
 using Newtonsoft.Json;
 using BYTPRO.Data.Validation.Validators;
 using BYTPRO.JsonEntityFramework.Context;
@@ -62,10 +63,6 @@ public class PickupPoint : Branch
 
         FinishConstruction();
     }
-    
-    [JsonConstructor]
-    private PickupPoint() : base(default!, default!, default!, default) { }
-
     protected override void OnAfterConstruction()
     {
         Extent.Add(this);
@@ -81,10 +78,12 @@ public class PickupPoint : Branch
 
     internal void AddOrder(OnlineOrder order)
     {
-        if (order is not null)
-        {
-            _onlineOrders.Add(order);
-        }
+        order.IsNotNull(nameof(order));
+        if (order.PickupPoint != this)
+            throw new ValidationException($"{nameof(order.PickupPoint)} must reference this Store instance.");
+        
+        _onlineOrders.Add(order);
+        
     }
     protected override void OnBranchClose()
     {
