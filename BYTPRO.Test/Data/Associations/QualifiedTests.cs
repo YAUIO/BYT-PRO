@@ -4,7 +4,6 @@ using BYTPRO.Data.Models.People;
 using BYTPRO.Data.Models.Sales;
 using BYTPRO.Data.Models.Sales.Orders;
 using BYTPRO.Data.Validation;
-using BYTPRO.JsonEntityFramework.Context;
 
 namespace BYTPRO.Test.Data.Associations;
 
@@ -12,17 +11,16 @@ public class QualifiedTests
 {
     private static Product CreateTestProduct()
     {
-        var images = new DeserializableReadOnlyList<string>(new List<string> { "img.png" }.AsReadOnly());
         return new Product(
             "TestProduct",
             "Description",
             100m,
-            images,
+            ["img.png"],
             1.5m,
             new Dimensions(10, 10, 10)
         );
     }
-    
+
     private static Customer CreateTestCustomer(int id, string trackingPrefix)
     {
         return new Customer(

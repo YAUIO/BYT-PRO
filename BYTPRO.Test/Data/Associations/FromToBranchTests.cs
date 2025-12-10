@@ -27,7 +27,7 @@ public class FromToBranchTests
     private static Product CreateProduct(string name)
     {
         var images = new DeserializableReadOnlyList<string>(new List<string> { "image.png" }.AsReadOnly());
-        return new Product(name, "D1", 10m, images, 1m, new Dimensions(1,1,1));
+        return new Product(name, "D1", 10m, images, 1m, new Dimensions(1, 1, 1));
     }
 
     [Fact]
@@ -35,7 +35,7 @@ public class FromToBranchTests
     {
         var product = CreateProduct("P1");
         var address = new Address("Street", "1", null, "00-000", "City");
-        var warehouseFrom = new Warehouse(address, "Warehouse A", "09-18", 100m, 50m, 10, 0m);
+        var warehouseFrom = new Warehouse(address, "Warehouse A", "09-18", 100m, 50m, 10, 10m);
         var branchTo = new PickupPoint(address, "Store B", "09-18", 50m, 20, 5m);
 
         var order = new BranchOrder(
@@ -45,7 +45,7 @@ public class FromToBranchTests
             [new ProductEntry(product, 5)],
             DateTime.Today.AddDays(1),
             warehouseFrom,
-            branchTo 
+            branchTo
         );
 
         Assert.Same(warehouseFrom, order.From);
@@ -53,13 +53,13 @@ public class FromToBranchTests
         Assert.Equal("Warehouse A", order.From.Name);
         Assert.Contains(order, BranchOrder.All);
     }
-    
+
     [Fact]
     public void ConstructorValidOrderWarehouseToStoreSucceeds()
     {
         var product = CreateProduct("P2");
         var address = new Address("Street", "1", null, "00-000", "City");
-        var warehouseFrom = new Warehouse(address, "Warehouse B", "09-18", 100m, 50m, 10, 0m);
+        var warehouseFrom = new Warehouse(address, "Warehouse B", "09-18", 100m, 50m, 10, 10m);
         var storeTo = new TestStore("Retail Store");
 
         var order = new BranchOrder(
@@ -69,7 +69,7 @@ public class FromToBranchTests
             [new ProductEntry(product, 2)],
             DateTime.Today.AddDays(1),
             warehouseFrom,
-            storeTo 
+            storeTo
         );
 
         Assert.Same(warehouseFrom, order.From);
@@ -82,8 +82,8 @@ public class FromToBranchTests
     {
         var product = CreateProduct("P3");
         var address = new Address("Street", "1", null, "00-000", "City");
-        var warehouseFrom = new Warehouse(address, "WH From", "09-18", 100m, 50m, 10, 0m);
-        var warehouseTo = new Warehouse(address, "WH To", "09-18", 100m, 50m, 10, 0m);
+        var warehouseFrom = new Warehouse(address, "WH From", "09-18", 100m, 50m, 10, 10m);
+        var warehouseTo = new Warehouse(address, "WH To", "09-18", 100m, 50m, 10, 10m);
 
         var exception = Assert.Throws<ValidationException>(() =>
         {
@@ -100,23 +100,22 @@ public class FromToBranchTests
 
         Assert.Contains("must be a Store or a PickupPoint", exception.Message);
     }
-    
+
     [Fact]
     public void ConstructorNullToThrowsException()
     {
-        var images = new DeserializableReadOnlyList<string>(new List<string> { "image.png" }.AsReadOnly());
-        var product = new Product("P1", "D1", 10m, images, 1m, new Dimensions(1,1,1));
-        
+        var product = new Product("P1", "D1", 10m, ["image.png"], 1m, new Dimensions(1, 1, 1));
+
         var address = new Address("Street", "1", null, "00-000", "City");
-        var warehouseFrom = new Warehouse(address, "Store A", "09-18", 50m, 20m, 5, 0m);
+        var warehouseFrom = new Warehouse(address, "Store A", "09-18", 50m, 20m, 5, 10m);
 
         Assert.ThrowsAny<Exception>(() =>
         {
             new BranchOrder(
                 107,
-                DateTime.Today, 
-                OrderStatus.InProgress, 
-                [new ProductEntry(product, 1)], 
+                DateTime.Today,
+                OrderStatus.InProgress,
+                [new ProductEntry(product, 1)],
                 DateTime.Today.AddDays(1),
                 warehouseFrom,
                 null!
