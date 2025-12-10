@@ -134,7 +134,7 @@ public class Product
 
     [JsonIgnore] public HashSet<ProductQuantityInOrder> AssociatedOrders => [.._usedInOrders];
 
-    public void AssociateWithOrder(ProductQuantityInOrder orderItem)
+    internal void AssociateWithOrder(ProductQuantityInOrder orderItem)
     {
         orderItem.IsNotNull(nameof(orderItem));
         if (orderItem.Product != this)
@@ -174,7 +174,7 @@ public class Product
 
     [JsonIgnore] public HashSet<BranchProductStock> StockedIn => [.._stockedIn];
 
-    public void AssociateWithBranch(BranchProductStock stockItem)
+    internal void AssociateWithBranch(BranchProductStock stockItem)
     {
         stockItem.IsNotNull(nameof(stockItem));
         if (stockItem.Product != this)
