@@ -8,6 +8,10 @@ namespace BYTPRO.Test.Data.Associations;
 
 public class WithAttributeTests
 {
+    private static readonly Address TestAddress = new("Street", "1", null, "00-000", "City");
+    private static readonly Branch BranchA = new PickupPoint(TestAddress, "Warehouse A", "09-17", 100m, 50, 10m);
+    private static readonly Branch BranchB = new PickupPoint(TestAddress, "Store B", "09-18", 100m, 50, 10m);
+    
     [Fact]
     public void TestBranchOrderCreation()
     {
@@ -45,8 +49,8 @@ public class WithAttributeTests
             OrderStatus.InProgress,
             [new ProductEntry(product3, 1), new ProductEntry(product1, 2)],
             DateTime.Today.AddDays(1),
-            "Warehouse A", 
-            "Store B"
+            BranchA,
+            BranchB
         );
 
         var items = order.AssociatedProducts
@@ -96,8 +100,8 @@ public class WithAttributeTests
                 OrderStatus.InProgress,
                 [new ProductEntry(product3, 1), new ProductEntry(product1, -1)],
                 DateTime.Today.AddDays(1),
-                "Warehouse A", 
-                "Store B"
+                BranchA,
+                BranchB
             );
         });
     }
@@ -129,8 +133,8 @@ public class WithAttributeTests
             OrderStatus.InProgress,
             [new(product2, 1)],
             DateTime.Today.AddDays(1),
-            "Warehouse A", 
-            "Store B"
+            BranchA,
+            BranchB
         );
         
         order.AssociateWithProduct(new ProductQuantityInOrder(product3, order, 1));
@@ -166,8 +170,8 @@ public class WithAttributeTests
             OrderStatus.InProgress,
             [new(product2, 1)],
             DateTime.Today.AddDays(1),
-            "Warehouse A", 
-            "Store B"
+            BranchA,
+            BranchB
         );
         
         product3.AssociateWithOrder(new ProductQuantityInOrder(product3, order, 1));
@@ -203,8 +207,8 @@ public class WithAttributeTests
             OrderStatus.InProgress,
             [new(product2, 1)],
             DateTime.Today.AddDays(1),
-            "Warehouse A", 
-            "Store B"
+            BranchA,
+            BranchB
         );
         
         Assert.Throws<ValidationException>(() => order.AssociateWithProduct(new ProductQuantityInOrder(product2, order, 1)));
@@ -237,8 +241,8 @@ public class WithAttributeTests
             OrderStatus.InProgress,
             [new(product2, 1)],
             DateTime.Today.AddDays(1),
-            "Warehouse A", 
-            "Store B"
+            BranchA,
+            BranchB
         );
         
         Assert.Throws<ValidationException>(() => product3.AssociateWithOrder(new ProductQuantityInOrder(product2, order, 1)));
