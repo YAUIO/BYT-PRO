@@ -1,4 +1,5 @@
 ﻿using BYTPRO.Data.Models.Sales;
+using BYTPRO.Test.Data.Factories;
 
 namespace BYTPRO.Test.Data.Associations;
 
@@ -7,42 +8,10 @@ public class ReflexTests
     [Fact]
     public void TestCreateProductOfOtherProducts()
     {
-        var cpu = new Product(
-            "CPU",
-            "Best Central Processor ever",
-            10000m,
-            ["/CPU1.png", "/CPU2.png"],
-            0.1m,
-            new Dimensions(0.1m, 0.1m, 0.1m)
-        );
-
-        var gpu = new Product(
-            "GPU",
-            "Best Graphics Card ever",
-            20000m,
-            ["/GPU1.png", "/GPU2.png"],
-            1m,
-            new Dimensions(0.5m, 0.25m, 0.1m)
-        );
-
-        var motherboard = new Product(
-            "Motherboard",
-            "Best Motherboard ever",
-            5000m,
-            ["/Motherboard.png"],
-            0.5m,
-            new Dimensions(0.5m, 0.5m, 0.2m)
-        );
-
-        var computer = new Product(
-            "Computer",
-            "Best Computer ever",
-            cpu.Price + gpu.Price + motherboard.Price + 2000m,
-            ["/Computer1.png", "/Computer2.png"],
-            3m,
-            new Dimensions(1m, 1m, 1m),
-            [cpu, gpu, motherboard]
-        );
+        var cpu = SalesFactory.CreateProduct();
+        var gpu = SalesFactory.CreateProduct();
+        var motherboard = SalesFactory.CreateProduct();
+        var computer = SalesFactory.CreateProduct(consistsOf: [cpu, gpu, motherboard]);
 
         // Extents
         var registeredProducts = Product.All;

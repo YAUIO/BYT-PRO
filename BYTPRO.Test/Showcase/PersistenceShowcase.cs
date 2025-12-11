@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Text;
-using BYTPRO.Data.Models.Locations;
 using BYTPRO.Data.Models.Locations.Branches;
 using BYTPRO.Data.Models.People;
 using BYTPRO.Data.Models.People.Employees;
@@ -10,6 +9,7 @@ using BYTPRO.Data.Models.Sales;
 using BYTPRO.Data.Models.Sales.Orders;
 using BYTPRO.JsonEntityFramework.Context;
 using BYTPRO.JsonEntityFramework.Extensions;
+using BYTPRO.Test.Data.Factories;
 using Xunit.Abstractions;
 
 namespace BYTPRO.Test.Showcase;
@@ -20,114 +20,40 @@ public class PersistenceShowcase(ITestOutputHelper console, JsonContext context)
     private void CreateSampleEntities()
     {
         // ----------< Locations >----------
-        var pickupPoint = new PickupPoint(
-            new Address("Street1", "10/2", "app1", "01-234", "City1"),
-            "PickupPoint1",
-            "10:00-22:00",
-            100m,
-            50,
-            10m
-        );
-
-        var store = new Store(
-            new Address("Street2", "20/2", null, "01-345", "City2"),
-            "Store1",
-            "09:00-22:00",
-            1000m,
-            5,
-            500m,
-            3
-        );
-
-        var warehouse = new Warehouse(
-            new Address("Street3", "30/2", null, "01-456", "City3"),
-            "Warehouse1",
-            "00:00-24:00",
-            10000m,
-            50000m,
-            3
-        );
+        var pickupPoint = LocationsFactory.CreatePickupPoint();
+        var store = LocationsFactory.CreateStore();
+        LocationsFactory.CreateWarehouse();
 
         // ----------< People >----------
-        var customer = new Customer(
-            1,
-            "Artiom",
-            "Bezkorovainyi",
-            "+48000000000",
-            "s30000@pjwstk.edu.pl",
-            "12345678",
-            DateTime.Now
-        );
-
-        var localEmployee = new LocalEmployee(
-            104,
-            "John",
-            "Smith",
-            "+48123456789",
-            "john.smith2@gmail.com",
-            "12345",
-            "12345678901",
-            5000m,
-            EmploymentType.FullTime,
-            ["Basics"],
-            "12:00-13:00",
-            store
-        );
-
-        var regionalEmployee = new RegionalEmployee(
-            105,
-            "Jane",
-            "Smith",
-            "+48123456780",
-            "jane.smith@gmail.com",
-            "123456789",
-            "12345678902",
-            10000m,
-            EmploymentType.Intern,
-            "INTERN@12345",
-            SupervisionScope.Technical
-        );
+        var customer = PeopleFactory.CreateCustomer();
+        PeopleFactory.CreateLocalEmployee(store);
+        PeopleFactory.CreateRegionalEmployee();
 
         // ----------< Sales >----------
-        var product1 = new Product(
-            "Product1",
-            "Description1",
-            100m,
-            ["/Product1_1.png", "/Product1_2.png"],
-            10m,
-            new Dimensions(10m, 10m, 10m)
-        );
+        var product1 = SalesFactory.CreateProduct();
+        var product2 = SalesFactory.CreateProduct();
+
         store.AddProductStock(product1, 2);
         store.AddProductStock(product1, 3);
-
-        var product2 = new Product(
-            "Product2",
-            "Description2",
-            50m,
-            ["/Product2_1.png"],
-            5m,
-            new Dimensions(5m, 5m, 5m)
-        );
         store.AddProductStock(product2, 10);
 
-        var onlineOrder = new OnlineOrder(
-            1,
-            DateTime.Now,
-            OrderStatus.InProgress,
-            [new ProductEntry(product1, 1), new ProductEntry(product2, 5)],
-            true,
-            null,
-            "TRN12345",
+
+        SalesFactory.CreateOnlineOrder(
+            cart:
+            [
+                new ProductEntry(product1, 1),
+                new ProductEntry(product2, 5)
+            ],
             customer,
             pickupPoint
         );
 
-        var offlineOrder = new OfflineOrder(
-            2,
-            DateTime.Now,
-            OrderStatus.InProgress,
-            [new ProductEntry(product1, 2), new ProductEntry(product2, 2)],
-            null,
+        SalesFactory.CreateOfflineOrder(
+            cart:
+            [
+                new ProductEntry(product1, 2),
+                new ProductEntry(product2, 2)
+            ],
             store
         );
 

@@ -1,42 +1,17 @@
-﻿using BYTPRO.Data.Models.Locations;
-using BYTPRO.Data.Models.Locations.Branches;
+﻿using BYTPRO.Data.Models.Locations.Branches;
 using BYTPRO.Data.Models.Sales;
 using BYTPRO.Data.Validation;
+using BYTPRO.Test.Data.Factories;
 
 namespace BYTPRO.Test.Data.Associations;
 
 public class AggregationTests
 {
-    private static Store CreateBranch()
-    {
-        return new Store(
-            new Address("Street", "1", null, "00-000", "City"),
-            "Composition Branch",
-            "09:00-17:00",
-            250m,
-            5,
-            150m,
-            2
-        );
-    }
-
-    private static Product CreateProduct(string name)
-    {
-        return new Product(
-            name,
-            "Description",
-            5.0m,
-            ["img.png"],
-            1.0m,
-            new Dimensions(10, 10, 20)
-        );
-    }
-
     [Fact]
     public void CloseBranchWithStockThrowsExceptionAndNotClose()
     {
-        var branch = CreateBranch();
-        var product = CreateProduct("P1");
+        var branch = LocationsFactory.CreatePureBranch();
+        var product = SalesFactory.CreateProduct();
 
         branch.AddProductStock(product, 50);
 
@@ -51,7 +26,7 @@ public class AggregationTests
     [Fact]
     public void CloseBranchWithoutStockSucceedsAndRemovesFromExtent()
     {
-        var branch = CreateBranch();
+        var branch = LocationsFactory.CreatePureBranch();
 
         Assert.Empty(branch.Stocks);
         Assert.Contains(branch, Branch.All);
@@ -64,8 +39,8 @@ public class AggregationTests
     [Fact]
     public void AddProductStockNewProductSetsBidirectionalLink()
     {
-        var branch = CreateBranch();
-        var product = CreateProduct("P2");
+        var product = SalesFactory.CreateProduct();
+        var branch = LocationsFactory.CreatePureBranch();
 
         branch.AddProductStock(product, 10);
 
@@ -83,8 +58,8 @@ public class AggregationTests
     [Fact]
     public void AddProductStockExistingProductIncrementsQuantity()
     {
-        var branch = CreateBranch();
-        var product = CreateProduct("P3");
+        var branch = LocationsFactory.CreatePureBranch();
+        var product = SalesFactory.CreateProduct();
 
         branch.AddProductStock(product, 5);
         branch.AddProductStock(product, 15);
@@ -99,8 +74,8 @@ public class AggregationTests
     [Fact]
     public void ReduceProductStockSucceedsAndDecrementsQuantity()
     {
-        var branch = CreateBranch();
-        var product = CreateProduct("P5");
+        var branch = LocationsFactory.CreatePureBranch();
+        var product = SalesFactory.CreateProduct();
 
         branch.AddProductStock(product, 100);
 
@@ -113,8 +88,8 @@ public class AggregationTests
     [Fact]
     public void ReduceProductStockInsufficientQuantityThrowsInvalidOperationException()
     {
-        var branch = CreateBranch();
-        var product = CreateProduct("P6");
+        var branch = LocationsFactory.CreatePureBranch();
+        var product = SalesFactory.CreateProduct();
 
         branch.AddProductStock(product, 5);
 
@@ -127,9 +102,9 @@ public class AggregationTests
     [Fact]
     public void ReduceProductStockNonExistingProductThrowsInvalidOperationException()
     {
-        var branch = CreateBranch();
-        var product = CreateProduct("P7");
-        var missingProduct = CreateProduct("P8");
+        var branch = LocationsFactory.CreatePureBranch();
+        var product = SalesFactory.CreateProduct();
+        var missingProduct = SalesFactory.CreateProduct();
 
         branch.AddProductStock(product, 5);
 
@@ -140,8 +115,8 @@ public class AggregationTests
     [Fact]
     public void BranchProductStockConstructorNegativeQuantityThrowsValidationException()
     {
-        var branch = CreateBranch();
-        var product = CreateProduct("P9");
+        var branch = LocationsFactory.CreatePureBranch();
+        var product = SalesFactory.CreateProduct();
 
         Assert.Throws<ValidationException>(() =>
             new BranchProductStock(branch, product, -1));
