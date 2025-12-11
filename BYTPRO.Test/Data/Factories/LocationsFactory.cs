@@ -7,14 +7,14 @@ internal static class LocationsFactory
 {
     #region ----------< Default values >----------
 
-    private static Address DefaultAddress() =>
-        new(
-            "Test Street",
-            "14/c",
-            null,
-            "00000",
-            "Test City"
-        );
+    // Branch
+    private static Address DefaultAddress() => new(
+        "Test Street",
+        "14/c",
+        null,
+        "00000",
+        "Test City"
+    );
 
     private static string DefaultHours() => "08:00–22:00";
 

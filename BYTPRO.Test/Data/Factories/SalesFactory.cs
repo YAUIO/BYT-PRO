@@ -20,9 +20,7 @@ internal static class SalesFactory
 
     // Order
     private static int _orderIdCounter = 1;
-
     private static int DefaultOrderId() => Interlocked.Increment(ref _orderIdCounter);
-
     private static OrderStatus DefaultOrderStatus() => OrderStatus.InProgress;
     private static DateTime DefaultOrderDate() => DateTime.UtcNow;
 
