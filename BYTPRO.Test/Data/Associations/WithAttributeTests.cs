@@ -9,7 +9,7 @@ namespace BYTPRO.Test.Data.Associations;
 public class WithAttributeTests
 {
     private static readonly Address TestAddress = new("Street", "1", null, "00-000", "City");
-    private static readonly Warehouse WarehouseA = new Warehouse(TestAddress, "Warehouse A", "09-17", 100m, 50m, 10);
+    private static readonly Warehouse WarehouseA = new(TestAddress, "Warehouse A", "09-17", 100m, 50m, 10);
     private static readonly Branch BranchB = new PickupPoint(TestAddress, "Store B", "09-18", 100m, 50, 10m);
 
     [Fact]
@@ -33,33 +33,43 @@ public class WithAttributeTests
             new Dimensions(5m, 5m, 5m)
         );
 
-        var product3 = new Product(
-            "Product3",
-            "Description3",
-            50m,
-            ["/Product3_1.png"],
-            5m,
-            new Dimensions(15m, 15m, 15m),
-            [product1, product2]
-        );
-
         var order = new BranchOrder(
             301,
             DateTime.Today,
             OrderStatus.InProgress,
-            [new ProductEntry(product3, 1), new ProductEntry(product1, 2)],
+            [new ProductEntry(product1, 3), new ProductEntry(product2, 5)],
             DateTime.Today.AddDays(1),
             WarehouseA,
             BranchB
         );
 
-        var items = order.AssociatedProducts
+        // Check associations being created
+
+        // Order contains all products
+        var productsInOrder = order.AssociatedProducts
             .Select(s => s.Product)
             .ToHashSet();
 
-        Assert.Contains(order, Order.All);
-        Assert.Contains(product3, items);
+        Assert.Contains(product1, productsInOrder);
+        Assert.Contains(product2, productsInOrder);
+
+        // Product1 is used in order
+        var ordersWhereProduct1IsUsed = product1.AssociatedOrders
+            .Select(s => s.Order)
+            .ToHashSet();
+
+        Assert.Contains(order, ordersWhereProduct1IsUsed);
+
+        // Product2 is used in order
+        var ordersWhereProduct2IsUsed = product2.AssociatedOrders
+            .Select(s => s.Order)
+            .ToHashSet();
+
+        Assert.Contains(order, ordersWhereProduct2IsUsed);
     }
+
+
+    // BELOW - VALIDATION ONLY TESTS (NO ASSOCIATIONS TESTS)
 
     [Fact]
     public void TestInvalidBranchOrderCreation()

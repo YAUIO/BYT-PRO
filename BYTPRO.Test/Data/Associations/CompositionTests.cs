@@ -106,6 +106,9 @@ public class CompositionTests
         Assert.DoesNotContain(employee, LocalEmployee.All);
         Assert.DoesNotContain(employee, Employee.All);
         Assert.DoesNotContain(employee, Person.All);
+
+        // Whole still exists
+        Assert.Contains(branch, Branch.All);
     }
 
     [Fact]
@@ -132,5 +135,8 @@ public class CompositionTests
         Assert.DoesNotContain(employee, LocalEmployee.All);
         Assert.DoesNotContain(employee, Employee.All);
         Assert.DoesNotContain(employee, Person.All);
+
+        // Whole still exists
+        Assert.Contains(branch, Branch.All);
     }
 }
