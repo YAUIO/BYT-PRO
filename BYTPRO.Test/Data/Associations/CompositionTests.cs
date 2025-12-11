@@ -8,26 +8,27 @@ namespace BYTPRO.Test.Data.Associations;
 
 public class CompositionTests
 {
-    private sealed class TestBranch : Branch
+    private static Store CreateBranch()
     {
-        public TestBranch(string name) : base(
+        return new Store(
             new Address("Street", "1", null, "00-000", "City"),
-            name,
+            "Composition Branch",
             "09:00-17:00",
-            100m)
-        {
-            FinishConstruction();
-        }
+            250m,
+            5,
+            150m,
+            2
+        );
     }
 
     private static LocalEmployee CreateLocalEmployee(Branch branch)
     {
         return new LocalEmployee(
-            100,
+            Math.Abs(Guid.NewGuid().GetHashCode()),
             "John",
             "Doe",
             "+48111222333",
-            "john.doe@example.com",
+            $"john.doe{Math.Abs(Guid.NewGuid().GetHashCode())}@example.com",
             "password123",
             "90010112345",
             5000m,
@@ -39,64 +40,97 @@ public class CompositionTests
     }
 
     [Fact]
-    public void TestBranchClosureRemovesEmployees()
+    public void TestRemovingWholeRemovesPartsAndWhole()
     {
-        var branch = new TestBranch("Composition Branch");
-        var employee = CreateLocalEmployee(branch);
-
+        // Create whole
+        var branch = CreateBranch();
         Assert.Contains(branch, Branch.All);
+        Assert.Empty(branch.Employees);
+
+        // Create parts
+        var employee = CreateLocalEmployee(branch);
+        Assert.Equal(employee.Branch, branch);
+        Assert.Contains(employee, branch.Employees);
         Assert.Contains(employee, LocalEmployee.All);
         Assert.Contains(employee, Employee.All);
         Assert.Contains(employee, Person.All);
-        Assert.Contains(employee, branch.Employees);
-        Assert.Single(branch.Employees);
 
+        var employee2 = CreateLocalEmployee(branch);
+        Assert.Equal(employee2.Branch, branch);
+        Assert.Contains(employee2, branch.Employees);
+        Assert.Contains(employee2, LocalEmployee.All);
+        Assert.Contains(employee2, Employee.All);
+        Assert.Contains(employee2, Person.All);
+
+        // Removing the "whole" => must remove all its "parts" (LocalEmployees) and the "whole" (Branch) itself.
         branch.CloseBranch();
 
-        Assert.DoesNotContain(branch, Branch.All);
+        // Parts removed
+        Assert.DoesNotContain(employee, branch.Employees);
         Assert.DoesNotContain(employee, LocalEmployee.All);
         Assert.DoesNotContain(employee, Employee.All);
         Assert.DoesNotContain(employee, Person.All);
-        Assert.DoesNotContain(employee, branch.Employees);
+
+        Assert.DoesNotContain(employee2, branch.Employees);
+        Assert.DoesNotContain(employee2, LocalEmployee.All);
+        Assert.DoesNotContain(employee2, Employee.All);
+        Assert.DoesNotContain(employee2, Person.All);
+
+        Assert.Empty(branch.Employees);
+
+        // Whole removed
+        Assert.DoesNotContain(branch, Branch.All);
     }
 
     [Fact]
-    public void TestEmployeeDeletionRemovesFromBranch()
+    public void TestRemovingPartFromPartSide()
     {
-        var branch = new TestBranch("Composition Branch");
-        var employee = CreateLocalEmployee(branch);
+        // Create whole
+        var branch = CreateBranch();
+        Assert.Contains(branch, Branch.All);
+        Assert.Empty(branch.Employees);
 
+        // Create part
+        var employee = CreateLocalEmployee(branch);
+        Assert.Equal(employee.Branch, branch);
+        Assert.Contains(employee, branch.Employees);
         Assert.Contains(employee, LocalEmployee.All);
         Assert.Contains(employee, Employee.All);
         Assert.Contains(employee, Person.All);
-        Assert.Contains(employee, branch.Employees);
-        Assert.Single(branch.Employees);
 
+        // Removing the "part" => must remove "part" (LocalEmployee) from the "whole" (Branch).
         employee.Delete();
 
+        // Part removed
+        Assert.DoesNotContain(employee, branch.Employees);
         Assert.DoesNotContain(employee, LocalEmployee.All);
         Assert.DoesNotContain(employee, Employee.All);
         Assert.DoesNotContain(employee, Person.All);
-        Assert.DoesNotContain(employee, branch.Employees);
     }
 
     [Fact]
-    public void TestBranchRemoveEmployeeRemovesFromBranch()
+    public void TestRemovingPartFromWholeSide()
     {
-        var branch = new TestBranch("Composition Branch");
-        var employee = CreateLocalEmployee(branch);
+        // Create whole
+        var branch = CreateBranch();
+        Assert.Contains(branch, Branch.All);
+        Assert.Empty(branch.Employees);
 
+        // Create part
+        var employee = CreateLocalEmployee(branch);
+        Assert.Equal(employee.Branch, branch);
+        Assert.Contains(employee, branch.Employees);
         Assert.Contains(employee, LocalEmployee.All);
         Assert.Contains(employee, Employee.All);
         Assert.Contains(employee, Person.All);
-        Assert.Contains(employee, branch.Employees);
-        Assert.Single(branch.Employees);
 
+        // Removing the "part" => must remove "part" (LocalEmployee) from the "whole" (Branch).
         branch.RemoveEmployee(employee);
 
+        // Part removed
+        Assert.DoesNotContain(employee, branch.Employees);
         Assert.DoesNotContain(employee, LocalEmployee.All);
         Assert.DoesNotContain(employee, Employee.All);
         Assert.DoesNotContain(employee, Person.All);
-        Assert.DoesNotContain(employee, branch.Employees);
     }
 }
