@@ -9,7 +9,7 @@ namespace BYTPRO.Test.Data.Associations;
 
 public class QualifiedTests
 {
-    private static Product CreateTestProduct()
+    private static Product CreateProduct()
     {
         return new Product(
             "TestProduct",
@@ -21,63 +21,71 @@ public class QualifiedTests
         );
     }
 
-    private static Customer CreateTestCustomer(int id, string trackingPrefix)
+    private static Customer CreateCustomer(string prefix)
     {
         return new Customer(
-            id,
+            Math.Abs(Guid.NewGuid().GetHashCode()),
             "Name",
             "Surname",
             "+123456789",
-            $"{trackingPrefix}@example.com",
+            $"{prefix}@example.com",
             "password123",
             DateTime.Now.AddDays(-10)
         );
     }
 
-    private static PickupPoint CreateTestPickupPoint(string name)
+    private static PickupPoint CreatePickupPoint(string name)
     {
-        var address = new Address("St", "1", null, "00", "City");
-        return new PickupPoint(address, name, "09-18", 50, 100, 20);
+        return new PickupPoint(
+            new Address("St", "1", null, "00", "City"),
+            name,
+            "09-18",
+            50,
+            100,
+            20);
     }
 
-
     [Fact]
-    public void ConstructorValidOrderSucceedsAndSetsProperties()
+    public void TestCreateOnlineOrderWithQualifiedAssociations()
     {
-        var pickupPoint = CreateTestPickupPoint("Point A");
-        var customer = CreateTestCustomer(101, "alice");
-        var product = CreateTestProduct();
+        var product = CreateProduct();
+        var customer = CreateCustomer("alice");
+        var pickupPoint = CreatePickupPoint("Point A");
 
-        const string trackingNumber = "TRACK-ABC-123";
-
-        var order = new OnlineOrder(
+        var onlineOrder = new OnlineOrder(
             201,
             DateTime.Now,
             OrderStatus.InProgress,
             [new ProductEntry(product, 2)],
             true,
             null,
-            trackingNumber,
+            "TRACK-ABC-123",
             customer,
             pickupPoint
         );
 
-        Assert.True(customer.OnlineOrders.ContainsKey(trackingNumber));
+        // Check associations being created
 
-        var retrievedOrder = customer.OnlineOrders[trackingNumber];
+        // Basic
+        Assert.Equal(onlineOrder.Customer, customer);
+        Assert.Equal(onlineOrder.PickupPoint, pickupPoint);
+        Assert.Contains(onlineOrder, pickupPoint.OnlineOrders);
 
-        Assert.Same(order, retrievedOrder);
-        Assert.Equal(trackingNumber, retrievedOrder.TrackingNumber);
-
-        Assert.Same(customer, retrievedOrder.Customer);
+        // Qualified
+        Assert.Contains(onlineOrder.TrackingNumber, customer.OnlineOrders.Keys);
+        Assert.Contains(onlineOrder, customer.OnlineOrders.Values);
+        Assert.Equal(onlineOrder, customer.OnlineOrders[onlineOrder.TrackingNumber]);
     }
 
+
+    // BELOW - VALIDATION ONLY TESTS (NO ASSOCIATIONS TESTS)
+
     [Fact]
-    public void ConstructorTrackingNumberAlreadyExistsThrowsValidationException()
+    public void TrackingNumberAlreadyExistsThrowsValidationException()
     {
-        var pickupPoint = CreateTestPickupPoint("Point B");
-        var customer = CreateTestCustomer(1002, "john");
-        var product = CreateTestProduct();
+        var product = CreateProduct();
+        var customer = CreateCustomer("john");
+        var pickupPoint = CreatePickupPoint("Point B");
 
         var order1 = new OnlineOrder(
             202,
@@ -90,9 +98,6 @@ public class QualifiedTests
             customer,
             pickupPoint
         );
-
-        Assert.True(customer.OnlineOrders.ContainsKey("TRACK-ABC-12345"));
-        Assert.True(customer.OnlineOrders.ContainsValue(order1));
 
         Assert.Throws<ValidationException>(() =>
         {
@@ -113,8 +118,8 @@ public class QualifiedTests
     [Fact]
     public void ConstructorNullCustomerThrowsException()
     {
-        var pickupPoint = CreateTestPickupPoint("Point C");
-        var product = CreateTestProduct();
+        var pickupPoint = CreatePickupPoint("Point C");
+        var product = CreateProduct();
 
         Assert.ThrowsAny<Exception>(() =>
         {
@@ -135,8 +140,8 @@ public class QualifiedTests
     [Fact]
     public void ConstructorNullPickupPointThrowsException()
     {
-        var customer = CreateTestCustomer(1003, "dave");
-        var product = CreateTestProduct();
+        var customer = CreateCustomer("dave");
+        var product = CreateProduct();
 
         Assert.ThrowsAny<Exception>(() =>
         {
@@ -157,9 +162,9 @@ public class QualifiedTests
     [Fact]
     public void ConstructorNullTrackingNumberThrowsException()
     {
-        var pickupPoint = CreateTestPickupPoint("Point D");
-        var customer = CreateTestCustomer(1004, "eve");
-        var product = CreateTestProduct();
+        var pickupPoint = CreatePickupPoint("Point D");
+        var customer = CreateCustomer("eve");
+        var product = CreateProduct();
 
         Assert.Throws<ValidationException>(() =>
         {
