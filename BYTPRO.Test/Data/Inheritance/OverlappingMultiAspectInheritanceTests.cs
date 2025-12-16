@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 using BYTPRO.Data.Models.Locations;
 using BYTPRO.Data.Models.Locations.Branches;
 using BYTPRO.Data.Models.People.Employees;
@@ -85,32 +86,31 @@ public class OverlappingMultiAspectInheritanceTests
     }
     
     [Fact]
-    public void RoleApiDoesntProvideConstructors()
+    public void RoleApiDoesntProvidePublicConstructors()
     {
         var emp = PeopleFactory.CreateRegionalEmployee();
         
-        Assert.Empty(emp.CashierRole.GetType().GetConstructors());
-        Assert.Empty(emp.ManagerRole.GetType().GetConstructors());
-        Assert.Empty(emp.ConsultantRole.GetType().GetConstructors());
+        Assert.Empty(emp.CashierRole.GetType().GetConstructors(BindingFlags.Public));
+        Assert.Empty(emp.ManagerRole.GetType().GetConstructors(BindingFlags.Public));
+        Assert.Empty(emp.ConsultantRole.GetType().GetConstructors(BindingFlags.Public));
     }
     
-    // ----------< LocalEmployee Inheritance Tests >----------
-    private static class BranchTester
+    [Fact]
+    public void RoleDeclarationDoesntProvidePublicConstructors()
     {
-        public sealed class TestBranch : Branch
-        {
-            public TestBranch(string name) : base(
-                new Address("Street", "1", null, "00-000", "City"),
-                name, "09-18", 100m)
-            {
-                FinishConstruction();
-            }
-        }
+        var emp = PeopleFactory.CreateRegionalEmployee();
+        
+        Assert.Empty(emp.CashierRole.GetType().GetConstructors(BindingFlags.Public | BindingFlags.Instance));
+        Assert.Empty(emp.ManagerRole.GetType().GetConstructors(BindingFlags.Public | BindingFlags.Instance));
+        Assert.Empty(emp.ConsultantRole.GetType().GetConstructors(BindingFlags.Public | BindingFlags.Instance));
     }
+        
+    // ----------< LocalEmployee Inheritance Tests >----------
+    
     [Fact]
     public void CreateLocalEmployeeWithOneRole()
     {
-        var branch = new BranchTester.TestBranch("LocalTestBranch"); 
+        var branch = LocationsFactory.CreatePureBranch(); 
         
         var employee = PeopleFactory.CreateLocalEmployee(
             branch: branch,
@@ -131,7 +131,7 @@ public class OverlappingMultiAspectInheritanceTests
     [Fact]
     public void CreateLocalEmployeeWithTwoRoles()
     {
-        var branch = new BranchTester.TestBranch("LocalTestBranch"); 
+        var branch = LocationsFactory.CreatePureBranch(); 
         
         var employee = PeopleFactory.CreateLocalEmployee(
             branch: branch,
@@ -156,7 +156,7 @@ public class OverlappingMultiAspectInheritanceTests
     [Fact]
     public void CreateLocalEmployeeWithThreeRoles()
     {
-        var branch = new BranchTester.TestBranch("LocalTestBranch"); 
+        var branch = LocationsFactory.CreatePureBranch(); 
         
         var employee = PeopleFactory.CreateLocalEmployee(
             branch: branch,
@@ -184,20 +184,30 @@ public class OverlappingMultiAspectInheritanceTests
     [Fact]
     public void CreateLocalEmployeeWithNoRolesFails()
     {
-        var branch = new BranchTester.TestBranch("LocalTestBranch"); 
+        var branch = LocationsFactory.CreatePureBranch(); 
         
         Assert.Throws<ValidationException>(() => PeopleFactory.CreateLocalEmployeeWithNoRolesDefaults(branch));
     }
 
     [Fact]
-    public void LocalRoleApiDoesntProvideConstructors()
+    public void LocalRoleApiDoesntProvidePublicConstructors()
     {
-        var branch = new BranchTester.TestBranch("LocalTestBranch"); 
+        var branch = LocationsFactory.CreatePureBranch(); 
         var emp = PeopleFactory.CreateLocalEmployee(branch: branch);
-        
-        Assert.Empty(emp.CashierRole.GetType().GetConstructors());
-        Assert.Empty(emp.ManagerRole.GetType().GetConstructors());
-        Assert.Empty(emp.ConsultantRole.GetType().GetConstructors());
-    }
     
+        Assert.Empty(emp.CashierRole.GetType().GetConstructors(BindingFlags.Public));
+        Assert.Empty(emp.ManagerRole.GetType().GetConstructors(BindingFlags.Public));
+        Assert.Empty(emp.ConsultantRole.GetType().GetConstructors(BindingFlags.Public));
+    }
+
+    [Fact]
+    public void LocalRoleDeclarationDoesntProvidePublicConstructors()
+    {
+        var branch = LocationsFactory.CreatePureBranch(); 
+        var emp = PeopleFactory.CreateLocalEmployee(branch: branch);
+    
+        Assert.Empty(emp.CashierRole.GetType().GetConstructors(BindingFlags.Public | BindingFlags.Instance));
+        Assert.Empty(emp.ManagerRole.GetType().GetConstructors(BindingFlags.Public | BindingFlags.Instance));
+        Assert.Empty(emp.ConsultantRole.GetType().GetConstructors(BindingFlags.Public | BindingFlags.Instance));
+    }
 }
