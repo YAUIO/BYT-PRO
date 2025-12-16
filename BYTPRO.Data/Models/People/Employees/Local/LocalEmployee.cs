@@ -59,10 +59,13 @@ public class LocalEmployee : Employee
         string pesel,
         decimal salary,
         EmploymentType employmentType,
+        CashierParams? cashier,
+        ConsultantParams? consultant,
+        ManagerParams? manager,
         DeserializableReadOnlyList<string> trainingsCompleted,
         string breakSchedule,
         Branch branch
-    ) : base(id, name, surname, phone, email, password, pesel, salary, employmentType)
+    ) : base(id, name, surname, phone, email, password, pesel, salary, employmentType, cashier, consultant, manager)
     {
         TrainingsCompleted = trainingsCompleted;
         BreakSchedule = breakSchedule;
