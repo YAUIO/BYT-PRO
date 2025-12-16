@@ -1,5 +1,8 @@
+using System.ComponentModel.DataAnnotations;
 using BYTPRO.Data.Models.People.Employees;
+using BYTPRO.Data.Models.People.Employees.Regional;
 using BYTPRO.Test.Data.Factories;
+using ValidationException = BYTPRO.Data.Validation.ValidationException;
 
 namespace BYTPRO.Test.Data.Inheritance;
 
@@ -68,5 +71,21 @@ public class OverlappingMultiAspectInheritanceTests
         Assert.Contains("Polish", employee.ConsultantRole.Languages);
 
         Assert.Equal(Employee.ManagerialLevel.Senior, employee.ManagerRole.ManagerialLevel);
+    }
+    
+    [Fact]
+    public void CreateRegionalEmployeeWithNoRolesFails()
+    {
+        Assert.Throws<ValidationException>(() => PeopleFactory.CreateRegionalEmployeeWithNoRolesDefaults());
+    }
+    
+    [Fact]
+    public void RoleApiDoesntProvideConstructors()
+    {
+        var emp = PeopleFactory.CreateRegionalEmployee();
+        
+        Assert.Empty(emp.CashierRole.GetType().GetConstructors());
+        Assert.Empty(emp.ManagerRole.GetType().GetConstructors());
+        Assert.Empty(emp.ConsultantRole.GetType().GetConstructors());
     }
 }

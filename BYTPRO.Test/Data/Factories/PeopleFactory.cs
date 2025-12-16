@@ -13,7 +13,7 @@ internal static class PeopleFactory
 
     // Person
     private static int _personIdCounter = 1;
-    private static int DefaultId() => Interlocked.Increment(ref _personIdCounter);
+    public static int DefaultId() => Interlocked.Increment(ref _personIdCounter);
     private static string DefaultName() => "John";
     private static string DefaultSurname() => "Doe";
     private static string DefaultPhone() => "+1000000000";
@@ -160,6 +160,48 @@ internal static class PeopleFactory
             useDefaultRoles ? DefaultCashierParams() : cashier,
             useDefaultRoles ? DefaultConsultantParams() : consultant,
             useDefaultRoles ? DefaultManagerParams() : manager,
+            // ----------< RegionalEmployee >----------
+            badgeNumber ?? DefaultBadgeNumber(),
+            supervisionScope ?? DefaultSupervisionScope()
+        );
+    }
+    
+    public static RegionalEmployee CreateRegionalEmployeeWithNoRolesDefaults(
+        // ----------< Person >----------
+        int? id = null,
+        string? name = null,
+        string? surname = null,
+        string? phone = null,
+        string? email = null,
+        string? password = null,
+        // ----------< Employee >----------
+        string? pesel = null,
+        decimal? salary = null,
+        EmploymentType? employmentType = null,
+        Employee.CashierParams? cashier = null,
+        Employee.ConsultantParams? consultant = null,
+        Employee.ManagerParams? manager = null,
+        // ----------< RegionalEmployee >----------
+        string? badgeNumber = null,
+        SupervisionScope? supervisionScope = null)
+    {
+        var realId = id ?? DefaultId();
+        var useDefaultRoles = cashier == null && consultant == null && manager == null;
+        return new RegionalEmployee(
+            // ----------< Person >----------
+            realId,
+            name ?? DefaultName(),
+            surname ?? DefaultSurname(),
+            phone ?? DefaultPhone(),
+            email ?? DefaultEmail(realId),
+            password ?? DefaultPassword(),
+            // ----------< Employee >----------
+            pesel ?? DefaultPesel(),
+            salary ?? DefaultSalary(),
+            employmentType ?? DefaultEmploymentType(),
+            cashier,
+            consultant,
+            manager,
             // ----------< RegionalEmployee >----------
             badgeNumber ?? DefaultBadgeNumber(),
             supervisionScope ?? DefaultSupervisionScope()
