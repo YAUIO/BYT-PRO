@@ -123,6 +123,53 @@ internal static class PeopleFactory
             branch
         );
     }
+    
+    public static LocalEmployee CreateLocalEmployeeWithNoRolesDefaults(
+        // ----------< LocalEmployee (required) >----------
+        Branch branch,
+        // ----------< Person >----------
+        int? id = null,
+        string? name = null,
+        string? surname = null,
+        string? phone = null,
+        string? email = null,
+        string? password = null,
+        // ----------< Employee >----------
+        string? pesel = null,
+        decimal? salary = null,
+        EmploymentType? employmentType = null,
+        Employee.CashierParams? cashier = null,
+        Employee.ConsultantParams? consultant = null,
+        Employee.ManagerParams? manager = null,
+        // ----------< LocalEmployee >----------
+        DeserializableReadOnlyList<string>? trainingsCompleted = null,
+        string? breakSchedule = null)
+    {
+        var realId = id ?? DefaultId();
+    
+        return new LocalEmployee(
+            // ----------< Person >----------
+            realId,
+            name ?? DefaultName(),
+            surname ?? DefaultSurname(),
+            phone ?? DefaultPhone(),
+            email ?? DefaultEmail(realId),
+            password ?? DefaultPassword(),
+            // ----------< Employee >----------
+            pesel ?? DefaultPesel(),
+            salary ?? DefaultSalary(),
+            employmentType ?? DefaultEmploymentType(),
+        
+            cashier,
+            consultant,
+            manager,
+        
+            // ----------< LocalEmployee >----------
+            trainingsCompleted ?? DefaultTrainings(),
+            breakSchedule ?? DefaultBreakSchedule(),
+            branch
+        );
+    }
 
     public static RegionalEmployee CreateRegionalEmployee(
         // ----------< Person >----------
