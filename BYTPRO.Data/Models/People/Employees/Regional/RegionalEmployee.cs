@@ -59,9 +59,12 @@ public class RegionalEmployee : Employee
         string pesel,
         decimal salary,
         EmploymentType employmentType,
+        CashierParams? cashier,
+        ConsultantParams? consultant,
+        ManagerParams? manager,
         string badgeNumber,
         SupervisionScope supervisionScope
-    ) : base(id, name, surname, phone, email, password, pesel, salary, employmentType)
+    ) : base(id, name, surname, phone, email, password, pesel, salary, employmentType, cashier, consultant, manager)
     {
         BadgeNumber = badgeNumber;
         SupervisionScope = supervisionScope;

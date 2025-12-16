@@ -28,6 +28,16 @@ internal static class PeopleFactory
     private static decimal DefaultSalary() => 5000m;
     private static EmploymentType DefaultEmploymentType() => EmploymentType.FullTime;
 
+    // Roles
+    private static Employee.CashierParams DefaultCashierParams() =>
+        new(321, 123456, true);
+
+    private static Employee.ConsultantParams DefaultConsultantParams() =>
+        new("Technician", ["English", "Polish"]);
+
+    private static Employee.ManagerParams DefaultManagerParams() =>
+        new(Employee.ManagerialLevel.Junior);
+
     // LocalEmployee
     private static DeserializableReadOnlyList<string> DefaultTrainings() => ["Safety", "Onboarding"];
     private static string DefaultBreakSchedule() => "12:00-12:45";
@@ -83,11 +93,15 @@ internal static class PeopleFactory
         string? pesel = null,
         decimal? salary = null,
         EmploymentType? employmentType = null,
+        Employee.CashierParams? cashier = null,
+        Employee.ConsultantParams? consultant = null,
+        Employee.ManagerParams? manager = null,
         // ----------< LocalEmployee >----------
         DeserializableReadOnlyList<string>? trainingsCompleted = null,
         string? breakSchedule = null)
     {
         var realId = id ?? DefaultId();
+        var useDefaultRoles = cashier == null && consultant == null && manager == null;
         return new LocalEmployee(
             // ----------< Person >----------
             realId,
@@ -100,6 +114,9 @@ internal static class PeopleFactory
             pesel ?? DefaultPesel(),
             salary ?? DefaultSalary(),
             employmentType ?? DefaultEmploymentType(),
+            useDefaultRoles ? DefaultCashierParams() : cashier,
+            useDefaultRoles ? DefaultConsultantParams() : consultant,
+            useDefaultRoles ? DefaultManagerParams() : manager,
             // ----------< LocalEmployee >----------
             trainingsCompleted ?? DefaultTrainings(),
             breakSchedule ?? DefaultBreakSchedule(),
@@ -119,11 +136,15 @@ internal static class PeopleFactory
         string? pesel = null,
         decimal? salary = null,
         EmploymentType? employmentType = null,
+        Employee.CashierParams? cashier = null,
+        Employee.ConsultantParams? consultant = null,
+        Employee.ManagerParams? manager = null,
         // ----------< RegionalEmployee >----------
         string? badgeNumber = null,
         SupervisionScope? supervisionScope = null)
     {
         var realId = id ?? DefaultId();
+        var useDefaultRoles = cashier == null && consultant == null && manager == null;
         return new RegionalEmployee(
             // ----------< Person >----------
             realId,
@@ -136,6 +157,9 @@ internal static class PeopleFactory
             pesel ?? DefaultPesel(),
             salary ?? DefaultSalary(),
             employmentType ?? DefaultEmploymentType(),
+            useDefaultRoles ? DefaultCashierParams() : cashier,
+            useDefaultRoles ? DefaultConsultantParams() : consultant,
+            useDefaultRoles ? DefaultManagerParams() : manager,
             // ----------< RegionalEmployee >----------
             badgeNumber ?? DefaultBadgeNumber(),
             supervisionScope ?? DefaultSupervisionScope()
