@@ -13,7 +13,7 @@ internal static class PeopleFactory
 
     // Person
     private static int _personIdCounter = 1;
-    public static int DefaultId() => Interlocked.Increment(ref _personIdCounter);
+    private static int DefaultId() => Interlocked.Increment(ref _personIdCounter);
     private static string DefaultName() => "John";
     private static string DefaultSurname() => "Doe";
     private static string DefaultPhone() => "+1000000000";
