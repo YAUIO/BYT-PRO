@@ -1,3 +1,4 @@
+using System.Runtime.Serialization;
 using BYTPRO.Data.Validation;
 using Newtonsoft.Json;
 using BYTPRO.Data.Validation.Validators;
@@ -110,16 +111,24 @@ public abstract class Employee : Person
 
     #region ----------< Roles Aspect (overlapping) >----------
 
-    public ICashierRole? CashierRole { get; }
-    public IConsultantRole? ConsultantRole { get; }
-    public IManagerRole? ManagerRole { get; }
+    [JsonIgnore] public ICashierRole? CashierRole { get; }
+    [JsonIgnore] public IConsultantRole? ConsultantRole { get; }
+    [JsonIgnore] public IManagerRole? ManagerRole { get; }
 
     #region ----------< Cashier (role #1) >----------
 
     public sealed record CashierParams(
         int RegisterCode,
         int PinCode,
-        bool CanMakeReturn);
+        bool CanMakeReturn)
+    {
+        internal static CashierParams? ToParams(ICashierRole? role)
+        {
+            return role == null
+                ? null
+                : new CashierParams(role.RegisterCode, role.PinCode, role.CanMakeReturn);
+        }
+    }
 
     private sealed class Cashier : ICashierRole
     {
@@ -184,7 +193,15 @@ public abstract class Employee : Person
 
     public sealed record ConsultantParams(
         string Specialization,
-        DeserializableReadOnlyList<string> Languages);
+        DeserializableReadOnlyList<string> Languages)
+    {
+        internal static ConsultantParams? ToParams(IConsultantRole? role)
+        {
+            return role == null
+                ? null
+                : new ConsultantParams(role.Specialization, role.Languages);
+        }
+    }
 
     private sealed class Consultant : IConsultantRole
     {
@@ -236,7 +253,15 @@ public abstract class Employee : Person
     #region ----------< Manager (role #3) >----------
 
     public sealed record ManagerParams(
-        ManagerialLevel ManagerialLevel);
+        ManagerialLevel ManagerialLevel)
+    {
+        internal static ManagerParams? ToParams(IManagerRole? role)
+        {
+            return role == null
+                ? null
+                : new ManagerParams(role.ManagerialLevel);
+        }
+    }
 
     public enum ManagerialLevel
     {
@@ -280,6 +305,27 @@ public abstract class Employee : Person
     #endregion
 
     #endregion
+
+    #endregion
+
+    #region ----------< JSON >----------
+
+    [JsonProperty(nameof(Cashier))] private CashierParams? _cashierParams;
+    [JsonProperty(nameof(Consultant))] private ConsultantParams? _consultantParams;
+    [JsonProperty(nameof(Manager))] private ManagerParams? _managerParams;
+
+    [OnSerializing]
+    private void OnSerializing(StreamingContext context)
+    {
+        // (cashier, consultant, manager)Params = JSON (de)serializable representation of roles
+        // ICashierRole IConsultantRole IManagerRole = runtime representation of roles
+
+        // thus, before persisting, we update Params to reflect the current state of IRoles
+
+        _cashierParams = CashierParams.ToParams(CashierRole);
+        _consultantParams = ConsultantParams.ToParams(ConsultantRole);
+        _managerParams = ManagerParams.ToParams(ManagerRole);
+    }
 
     #endregion
 }
