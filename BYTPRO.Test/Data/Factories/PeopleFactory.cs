@@ -103,7 +103,8 @@ internal static class PeopleFactory
         bool useDefaultRolesWhenNoneProvided = true)
     {
         var realId = id ?? DefaultId();
-        var useDefaultRoles = !useDefaultRolesWhenNoneProvided ? useDefaultRolesWhenNoneProvided : cashier == null && consultant == null && manager == null;
+        var noRolesProvided = cashier == null && consultant == null && manager == null;
+        var assignDefaultRoles = noRolesProvided && useDefaultRolesWhenNoneProvided;
         return new LocalEmployee(
             // ----------< Person >----------
             realId,
@@ -116,9 +117,9 @@ internal static class PeopleFactory
             pesel ?? DefaultPesel(),
             salary ?? DefaultSalary(),
             employmentType ?? DefaultEmploymentType(),
-            useDefaultRoles ? DefaultCashierParams() : cashier,
-            useDefaultRoles ? DefaultConsultantParams() : consultant,
-            useDefaultRoles ? DefaultManagerParams() : manager,
+            assignDefaultRoles ? DefaultCashierParams() : cashier,
+            assignDefaultRoles ? DefaultConsultantParams() : consultant,
+            assignDefaultRoles ? DefaultManagerParams() : manager,
             // ----------< LocalEmployee >----------
             trainingsCompleted ?? DefaultTrainings(),
             breakSchedule ?? DefaultBreakSchedule(),
@@ -148,7 +149,8 @@ internal static class PeopleFactory
         bool useDefaultRolesWhenNoneProvided = true)
     {
         var realId = id ?? DefaultId();
-        var useDefaultRoles = !useDefaultRolesWhenNoneProvided ? useDefaultRolesWhenNoneProvided : cashier == null && consultant == null && manager == null;
+        var noRolesProvided = cashier == null && consultant == null && manager == null;
+        var assignDefaultRoles = noRolesProvided && useDefaultRolesWhenNoneProvided;
         return new RegionalEmployee(
             // ----------< Person >----------
             realId,
@@ -161,9 +163,9 @@ internal static class PeopleFactory
             pesel ?? DefaultPesel(),
             salary ?? DefaultSalary(),
             employmentType ?? DefaultEmploymentType(),
-            useDefaultRoles ? DefaultCashierParams() : cashier,
-            useDefaultRoles ? DefaultConsultantParams() : consultant,
-            useDefaultRoles ? DefaultManagerParams() : manager,
+            assignDefaultRoles ? DefaultCashierParams() : cashier,
+            assignDefaultRoles ? DefaultConsultantParams() : consultant,
+            assignDefaultRoles ? DefaultManagerParams() : manager,
             // ----------< RegionalEmployee >----------
             badgeNumber ?? DefaultBadgeNumber(),
             supervisionScope ?? DefaultSupervisionScope()
