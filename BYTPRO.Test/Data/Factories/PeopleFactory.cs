@@ -98,10 +98,12 @@ internal static class PeopleFactory
         Employee.ManagerParams? manager = null,
         // ----------< LocalEmployee >----------
         DeserializableReadOnlyList<string>? trainingsCompleted = null,
-        string? breakSchedule = null)
+        string? breakSchedule = null,
+        // ----------< Flags >----------
+        bool useDefaultRolesWhenNoneProvided = true)
     {
         var realId = id ?? DefaultId();
-        var useDefaultRoles = cashier == null && consultant == null && manager == null;
+        var useDefaultRoles = !useDefaultRolesWhenNoneProvided ? useDefaultRolesWhenNoneProvided : cashier == null && consultant == null && manager == null;
         return new LocalEmployee(
             // ----------< Person >----------
             realId,
@@ -117,53 +119,6 @@ internal static class PeopleFactory
             useDefaultRoles ? DefaultCashierParams() : cashier,
             useDefaultRoles ? DefaultConsultantParams() : consultant,
             useDefaultRoles ? DefaultManagerParams() : manager,
-            // ----------< LocalEmployee >----------
-            trainingsCompleted ?? DefaultTrainings(),
-            breakSchedule ?? DefaultBreakSchedule(),
-            branch
-        );
-    }
-    
-    public static LocalEmployee CreateLocalEmployeeWithNoRolesDefaults(
-        // ----------< LocalEmployee (required) >----------
-        Branch branch,
-        // ----------< Person >----------
-        int? id = null,
-        string? name = null,
-        string? surname = null,
-        string? phone = null,
-        string? email = null,
-        string? password = null,
-        // ----------< Employee >----------
-        string? pesel = null,
-        decimal? salary = null,
-        EmploymentType? employmentType = null,
-        Employee.CashierParams? cashier = null,
-        Employee.ConsultantParams? consultant = null,
-        Employee.ManagerParams? manager = null,
-        // ----------< LocalEmployee >----------
-        DeserializableReadOnlyList<string>? trainingsCompleted = null,
-        string? breakSchedule = null)
-    {
-        var realId = id ?? DefaultId();
-    
-        return new LocalEmployee(
-            // ----------< Person >----------
-            realId,
-            name ?? DefaultName(),
-            surname ?? DefaultSurname(),
-            phone ?? DefaultPhone(),
-            email ?? DefaultEmail(realId),
-            password ?? DefaultPassword(),
-            // ----------< Employee >----------
-            pesel ?? DefaultPesel(),
-            salary ?? DefaultSalary(),
-            employmentType ?? DefaultEmploymentType(),
-        
-            cashier,
-            consultant,
-            manager,
-        
             // ----------< LocalEmployee >----------
             trainingsCompleted ?? DefaultTrainings(),
             breakSchedule ?? DefaultBreakSchedule(),
@@ -188,10 +143,12 @@ internal static class PeopleFactory
         Employee.ManagerParams? manager = null,
         // ----------< RegionalEmployee >----------
         string? badgeNumber = null,
-        SupervisionScope? supervisionScope = null)
+        SupervisionScope? supervisionScope = null,
+        // ----------< Flags >----------
+        bool useDefaultRolesWhenNoneProvided = true)
     {
         var realId = id ?? DefaultId();
-        var useDefaultRoles = cashier == null && consultant == null && manager == null;
+        var useDefaultRoles = !useDefaultRolesWhenNoneProvided ? useDefaultRolesWhenNoneProvided : cashier == null && consultant == null && manager == null;
         return new RegionalEmployee(
             // ----------< Person >----------
             realId,
@@ -207,48 +164,6 @@ internal static class PeopleFactory
             useDefaultRoles ? DefaultCashierParams() : cashier,
             useDefaultRoles ? DefaultConsultantParams() : consultant,
             useDefaultRoles ? DefaultManagerParams() : manager,
-            // ----------< RegionalEmployee >----------
-            badgeNumber ?? DefaultBadgeNumber(),
-            supervisionScope ?? DefaultSupervisionScope()
-        );
-    }
-    
-    public static RegionalEmployee CreateRegionalEmployeeWithNoRolesDefaults(
-        // ----------< Person >----------
-        int? id = null,
-        string? name = null,
-        string? surname = null,
-        string? phone = null,
-        string? email = null,
-        string? password = null,
-        // ----------< Employee >----------
-        string? pesel = null,
-        decimal? salary = null,
-        EmploymentType? employmentType = null,
-        Employee.CashierParams? cashier = null,
-        Employee.ConsultantParams? consultant = null,
-        Employee.ManagerParams? manager = null,
-        // ----------< RegionalEmployee >----------
-        string? badgeNumber = null,
-        SupervisionScope? supervisionScope = null)
-    {
-        var realId = id ?? DefaultId();
-        var useDefaultRoles = cashier == null && consultant == null && manager == null;
-        return new RegionalEmployee(
-            // ----------< Person >----------
-            realId,
-            name ?? DefaultName(),
-            surname ?? DefaultSurname(),
-            phone ?? DefaultPhone(),
-            email ?? DefaultEmail(realId),
-            password ?? DefaultPassword(),
-            // ----------< Employee >----------
-            pesel ?? DefaultPesel(),
-            salary ?? DefaultSalary(),
-            employmentType ?? DefaultEmploymentType(),
-            cashier,
-            consultant,
-            manager,
             // ----------< RegionalEmployee >----------
             badgeNumber ?? DefaultBadgeNumber(),
             supervisionScope ?? DefaultSupervisionScope()
